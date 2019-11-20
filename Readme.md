@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анастасия Михайловская](https://up.htmlacademy.ru/ecmascript/10/user/518103).
-* Наставник: `Неизвестно`.
+* Наставник: [Максим Лыков](https://htmlacademy.ru/profile/id529621).
 
 ---
 
