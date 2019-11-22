@@ -3,6 +3,10 @@
 const DAY_COUNT = 1;
 const CARD_COUNT = 3;
 
+const siteTripInfoElement = document.querySelector(`.trip-info`);
+const siteControlsElement = document.querySelector(`.trip-controls`);
+const siteTripEventsElement = document.querySelector(`.trip-events`);
+
 const createMenuTemplate = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -415,26 +419,23 @@ const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const siteTripInfoElement = document.querySelector(`.trip-info`);
 render(siteTripInfoElement, createTripInfoTemplate(), `afterbegin`);
-
-const siteControlsElement = document.querySelector(`.trip-controls`);
 render(siteControlsElement, createMenuTemplate());
 render(siteControlsElement, createFilterTemplate());
-
-const siteTripEventsElement = document.querySelector(`.trip-events`);
 render(siteTripEventsElement, createAddEventTemplate());
 render(siteTripEventsElement, createDaysListTemplate());
+
+const siteTripDaysElement = document.querySelector(`.trip-days`);
 for (let i = 0; i < DAY_COUNT; i++) {
-  render(siteTripEventsElement, createDayTemplate());
+  render(siteTripDaysElement, createDayTemplate());
 }
 
 const tripDayElement = siteTripEventsElement.querySelector(`.day`);
 render(tripDayElement, createEventsListTemplate());
+
 const eventsList = tripDayElement.querySelector(`.trip-events__list`);
 for (let i = 0; i < CARD_COUNT; i++) {
   render(eventsList, createEventTemplate());
 }
-
 const eventElement = eventsList.querySelector(`.trip-events__item`);
 render(eventElement, createEditEventTemplate());
