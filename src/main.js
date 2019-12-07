@@ -8,6 +8,8 @@ import {createEventTemplate} from './components/event.js';
 import {createEditEventTemplate} from './components/event-edit.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
 
+import {generateEvent} from './mocks/event.js';
+
 const DAY_COUNT = 1;
 const CARD_COUNT = 3;
 
@@ -35,7 +37,7 @@ render(tripDayElement, createEventsListTemplate());
 
 const eventsList = tripDayElement.querySelector(`.trip-events__list`);
 for (let i = 0; i < CARD_COUNT; i++) {
-  render(eventsList, createEventTemplate());
+  render(eventsList, createEventTemplate(generateEvent()));
 }
 const eventElement = eventsList.querySelector(`.trip-events__item`);
-render(eventElement, createEditEventTemplate());
+render(eventElement, createEditEventTemplate(generateEvent()));
