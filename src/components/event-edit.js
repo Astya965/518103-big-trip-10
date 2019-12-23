@@ -1,3 +1,5 @@
+import {checkDate} from '../mocks/event.js';
+
 export const createEditEventTemplate = (newEvent) => {
   return (
     `<form class="event  event--edit" action="#" method="post">
@@ -145,7 +147,7 @@ export const createEditEventTemplate = (newEvent) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-          ${newEvent.type} at ${newEvent.city}
+          ${newEvent.type} at
           </label>
           <input
             class="event__input
@@ -172,7 +174,7 @@ export const createEditEventTemplate = (newEvent) => {
             id="event-start-time-1"
             type="text"
             name="event-start-time"
-            value="${newEvent.startDate}">
+            value="${checkDate(newEvent.startDate.getHours())}:${checkDate(newEvent.startDate.getMinutes())}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
@@ -183,7 +185,7 @@ export const createEditEventTemplate = (newEvent) => {
             id="event-end-time-1"
             type="text"
             name="event-end-time"
-            value="${newEvent.endDate}">
+            value="${checkDate(newEvent.endDate.getHours())}:${checkDate(newEvent.endDate.getMinutes())}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

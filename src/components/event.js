@@ -1,3 +1,5 @@
+import {checkDate} from '../mocks/event.js';
+
 export const createEventTemplate = (newEvent) => {
   return (
     `<li class="trip-events__item">
@@ -14,11 +16,15 @@ export const createEventTemplate = (newEvent) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+            <time class="event__start-time" datetime="${newEvent.startDate}">
+              ${checkDate(newEvent.startDate.getHours())}:${checkDate(newEvent.startDate.getMinutes())}
+            </time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+            <time class="event__end-time" datetime="${newEvent.endDate}">
+              ${checkDate(newEvent.endDate.getHours())}:${checkDate(newEvent.endDate.getMinutes())}
+            </time>
           </p>
-          <p class="event__duration">1H 30M</p>
+          <p class="event__duration">${newEvent.duration}</p>
         </div>
 
         <p class="event__price">

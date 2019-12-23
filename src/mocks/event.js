@@ -1,20 +1,7 @@
 import {getRandomNumber, getRandomElement, getRandomBoolean, mixArray} from '../util.js';
 
+const CARD_COUNT = 3;
 const OFFERS_AMOUNT = 2;
-
-const EVENT_TYPES = [
-  `Taxi`,
-  `Bus`,
-  `Train`,
-  `Ship`,
-  `Transport`,
-  `Drive`,
-  `Flight`,
-  `Check-in`,
-  `Sightseeing`,
-  `Restaurant`];
-
-const CITIES = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
 
 const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
   Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.
@@ -23,7 +10,35 @@ const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
   purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat.
   Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 
-const offers = [
+/**
+ * Максимальное и минимальное значение для даты, в формате Unix.
+ * Значение в милисекундах.
+ */
+const MIN_DATA = Date.now();
+const MAX_DATA = 1671062399 * 1000;
+const HOUR = 3600 * 1000;
+
+const Transfers = [
+  `Taxi`,
+  `Bus`,
+  `Train`,
+  `Ship`,
+  `Transport`,
+  `Drive`,
+  `Flight`,
+];
+
+const Activitys = [
+  `Check-in`,
+  `Sightseeing`,
+  `Restaurant`,
+];
+
+const EventTypes = Transfers.concat(Activitys);
+
+const EventCities = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
+
+const Offers = [
   {
     name: `Add luggage`,
     type: `luggage`,
@@ -58,12 +73,10 @@ const offers = [
 
 /**
  * Получает случайное время и дату
- * @return {String} Время и дата в формате DD/MM/YYYY HH:mm
+ * @return {Number} Время и дата в формате Unix
  */
 const getRandomDate = () => {
-  const randomDate = `${getRandomNumber(1, 30)}/${getRandomNumber(1, 12)}/${getRandomNumber(19, 22)} ${getRandomNumber(0, 23)}:${getRandomNumber(0, 59)}`;
-  const regExp = /\b([1-9])(?!\d)/g;
-  return `${randomDate.replace(regExp, `0$1`)}`;
+  return getRandomNumber(MIN_DATA, MAX_DATA);
 };
 
 /**
@@ -84,16 +97,43 @@ const getRandomDescription = (text) => {
 };
 
 /**
+ * Исправляет формат времени и даты
+ * @param {Number} anyDate - Изначальная дата в человекочитаемом формате
+ * @return {String} Исправленная версия DD/MM/YYYY HH:mm (на основе изначальной)
+ */
+export const checkDate = (anyDate) => {
+  const regExp = /\b([1-9])(?!\d)/g;
+  return `${anyDate.toString().replace(regExp, `0$1`)}`;
+};
+
+/**
+ * Перевод дистанции в человекочитаемый формат
+ * @param {Number} duration - Изначальная дата в формате Unix
+ * @return {String} Длительность события
+ */
+export const getDuration = (duration) => {
+  const hours = (duration / 3600 / 1000);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  return `${rhours}H ${rminutes}M`;
+};
+
+
+/**
  * Генерация мокков для точки маршрута
  * @return {Number} Данные для точки маршрута
  */
 export const generateEvent = () => {
+  let firstDate = getRandomDate();
+  let secondDate = firstDate + getRandomNumber(HOUR, HOUR * 24);
   return {
-    type: getRandomElement(EVENT_TYPES),
-    city: getRandomElement(CITIES),
-    startDate: getRandomDate(),
-    endDate: getRandomDate(),
-    offers: mixArray(offers).slice(0, OFFERS_AMOUNT),
+    type: getRandomElement(EventTypes),
+    city: getRandomElement(EventCities),
+    startDate: new Date(Math.min(firstDate, secondDate)),
+    endDate: new Date(Math.max(firstDate, secondDate)),
+    duration: getDuration(Math.max(firstDate, secondDate) - Math.min(firstDate, secondDate)),
+    offers: mixArray(Offers).slice(0, OFFERS_AMOUNT),
     price: Math.round(getRandomNumber(10, 100)),
     photos: Array(getRandomNumber(1, 4))
             .fill(``)
@@ -101,3 +141,36 @@ export const generateEvent = () => {
     discription: getRandomDescription(TEXT)
   };
 };
+
+export const generateEvents = (count) => {
+  return new Array(count)
+  .fill(null)
+  .map(generateEvent);
+};
+
+const tripEvents = generateEvents(CARD_COUNT);
+tripEvents.sort((a, b) => Date.parse(a.startDate) > Date.parse(b.startDate) ? 1 : -1);
+export {tripEvents};
+
+export const generateTripDays = () => {
+  let tripDays = [];
+  let dayEvents = [];
+
+  tripEvents.forEach((tripEvent, i) => {
+    let prevCard = i > 0 ? tripEvents[i - 1] : null;
+
+    if (tripEvent.startDate.getDate() && prevCard !== prevCard.startDate.getDate()) {
+      tripDays.push(dayEvents);
+      dayEvents = [];
+    }
+
+    dayEvents.push(tripEvent);
+
+    if (i === tripEvent.length - 1) {
+      tripDays.push(dayEvents);
+    }
+  });
+
+  return tripDays;
+};
+
