@@ -1,3 +1,7 @@
+/**
+ * Генерация разметки фильтра точек маршрута
+ * @return {String} Разметка фильтра точек маршрута
+ */
 export const createFilterTemplate = () => {
   return (
     `<form class="trip-filters" action="#" method="get">

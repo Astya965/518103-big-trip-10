@@ -1,41 +1,67 @@
 import {createMenuTemplate} from './components/site-menu.js';
 import {createFilterTemplate} from './components/filter.js';
+import {createTripSortTemplate} from './components/trip-sort.js';
 import {createDaysListTemplate} from './components/days-list.js';
-import {createDayTemplate} from './components/day.js';
 import {createAddEventTemplate} from './components/event-add.js';
-import {createEventsListTemplate} from './components/events-list.js';
-import {createEventTemplate} from './components/event.js';
 import {createEditEventTemplate} from './components/event-edit.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
 
-const DAY_COUNT = 1;
-const CARD_COUNT = 3;
+
+import {generateEvent, generateTripDays, tripCards, getTripCost} from './mocks/event.js';
+
+const cardEdit = generateEvent();
+const tripDays = generateTripDays(tripCards);
 
 const siteTripInfoElement = document.querySelector(`.trip-info`);
 const siteControlsElement = document.querySelector(`.trip-controls`);
 const siteTripEventsElement = document.querySelector(`.trip-events`);
+const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
-render(siteTripInfoElement, createTripInfoTemplate(), `afterbegin`);
+render(siteTripInfoElement, createTripInfoTemplate(tripDays), `afterbegin`);
+
+const siteTripInfoCostElement = document.querySelector(`.trip-info__cost-value`);
+siteTripInfoCostElement.textContent = getTripCost(tripDays);
+
 render(siteControlsElement, createMenuTemplate());
 render(siteControlsElement, createFilterTemplate());
-render(siteTripEventsElement, createAddEventTemplate());
-render(siteTripEventsElement, createDaysListTemplate());
 
-const siteTripDaysElement = document.querySelector(`.trip-days`);
-for (let i = 0; i < DAY_COUNT; i++) {
-  render(siteTripDaysElement, createDayTemplate());
-}
 
-const tripDayElement = siteTripEventsElement.querySelector(`.day`);
-render(tripDayElement, createEventsListTemplate());
+render(siteTripEventsElement, createTripSortTemplate());
+render(siteTripEventsElement, createDaysListTemplate(tripDays));
 
-const eventsList = tripDayElement.querySelector(`.trip-events__list`);
-for (let i = 0; i < CARD_COUNT; i++) {
-  render(eventsList, createEventTemplate());
-}
-const eventElement = eventsList.querySelector(`.trip-events__item`);
-render(eventElement, createEditEventTemplate());
+const siteTripEventsItemElement = document.querySelector(`.trip-events__item`);
+render(siteTripEventsItemElement, createEditEventTemplate(cardEdit, tripDays), `afterbegin`);
+
+/**
+ * @description Событие открытия формы добавления Эвента
+ */
+newEventButton.addEventListener(`click`, () => {
+  let newEventForm = document.querySelector(`form.trip-events__item`);
+  if (!siteTripEventsElement.contains(newEventForm)) {
+    render(siteTripEventsElement, createAddEventTemplate(), `afterbegin`);
+  }
+});
+
+/**
+ * @description Закрытие формы добавления Эвента
+ */
+const closeForm = function () {
+  const editForm = document.querySelector(`.event--edit`);
+  if (editForm) {
+    siteTripEventsElement.removeChild(editForm);
+  }
+};
+
+/**
+ * @description Событие закрытие формы добавления Эвента
+ */
+document.addEventListener(`click`, function (evt) {
+  if (evt.target.matches(`.event__reset-btn`)) {
+    closeForm();
+  }
+});
+

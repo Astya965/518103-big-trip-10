@@ -1,3 +1,7 @@
+/**
+ * Генерация разметки меню
+ * @return {String} Разметка меню
+ */
 export const createMenuTemplate = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
