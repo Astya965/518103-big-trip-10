@@ -1,3 +1,8 @@
+/**
+ * Генерация разметки сортировки точек маршрута
+ * @return {String} Разметка сортировки точек маршрута
+ */
+
 export const createTripSortTemplate = () => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">

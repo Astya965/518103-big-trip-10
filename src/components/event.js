@@ -1,5 +1,10 @@
 import {checkDate} from '../mocks/event.js';
 
+/**
+ * Генерация разметки точки маршрута
+ * @param {Array} tripDays - Массив дней путешествия
+ * @return {String} Разметка точки маршрута
+ */
 export const createEventTemplate = (tripDays) => {
   return (
     `<li class="trip-events__item">

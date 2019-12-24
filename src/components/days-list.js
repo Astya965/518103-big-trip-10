@@ -1,6 +1,11 @@
 import {createEventTemplate} from "../components/event";
 import {MonthNames} from "../util.js";
 
+/**
+ * Генерация разметки дней и точек маршрута
+ * @param {Array} tripDays - Массив дней путешествия
+ * @return {String} Разметка дней и точек маршрута
+ */
 export const createDaysListTemplate = (tripDays) => {
   return (
     `<ul class="trip-days">

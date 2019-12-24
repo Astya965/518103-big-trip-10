@@ -34,6 +34,9 @@ export const Activitys = [
   `Restaurant`,
 ];
 
+/**
+ * @description Объединение массивов Transfers и Activitys
+ */
 const EventTypes = Transfers.concat(Activitys);
 
 export const EventCities = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
@@ -112,11 +115,13 @@ export const checkDate = (anyDate) => {
  * @return {String} Длительность события
  */
 export const getDuration = (duration) => {
-  const hours = (duration / 3600 / 1000);
+  const days = (duration / 86400 / 1000);
+  const rdays = Math.floor(days);
+  const hours = ((days - rdays) * 24);
   const rhours = Math.floor(hours);
   const minutes = (hours - rhours) * 60;
   const rminutes = Math.round(minutes);
-  return `${rhours}H ${rminutes}M`;
+  return `${rdays > 0 ? rdays + `D` : ``} ${rhours > 0 ? rhours + `H` : ``} ${rminutes}M`;
 };
 
 
@@ -126,7 +131,7 @@ export const getDuration = (duration) => {
  */
 export const generateEvent = () => {
   let firstDate = getRandomDate();
-  let secondDate = firstDate + getRandomNumber(HOUR, HOUR * 24);
+  let secondDate = firstDate + getRandomNumber(HOUR, HOUR * 24 * 2);
   return {
     type: getRandomElement(EventTypes),
     city: getRandomElement(EventCities),
@@ -142,16 +147,28 @@ export const generateEvent = () => {
   };
 };
 
+/**
+ * Генерация массива точек маршрута
+ * @param {Number} count - Нужное число точек
+ * @return {Array} Массив точек маршрута
+ */
 export const generateEvents = (count) => {
   return new Array(count)
   .fill(null)
   .map(generateEvent);
 };
 
+/**
+ * @description Сортировка массива точек маршрута по дате в порядке возрастания
+ */
 const tripCards = generateEvents(CARD_COUNT);
 tripCards.sort((a, b) => Date.parse(a.startDate) > Date.parse(b.startDate) ? 1 : -1);
 export {tripCards};
 
+/**
+ * Генерация массива дней путешествия (разделение массива точек маршрута на подмассивы)
+ * @return {Array} Массив дней путешествия
+ */
 export const generateTripDays = () => {
   let tripDays = [];
   let dayEvents = [];
@@ -174,6 +191,11 @@ export const generateTripDays = () => {
   return tripDays;
 };
 
+/**
+ * Генерация массива точек маршрута
+ * @param {Array} tripDays - Массив дней путешествия
+ * @return {Number} Итоговая цена всей поездки
+ */
 export const getTripCost = (tripDays) => {
   const tripEvents = tripDays.flat();
   let tripCost = tripEvents.reduce((sum, tripEvent) => {

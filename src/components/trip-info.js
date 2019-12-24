@@ -1,5 +1,10 @@
 import {MonthNames} from "../util.js";
 
+/**
+ * Генерация разметки информации о поездке
+ * @param {Array} tripDays - Массив дней путешествия
+ * @return {String} Разметка информации о поездке
+ */
 export const createTripInfoTemplate = (tripDays) => {
   const tripEvents = tripDays.flat();
 

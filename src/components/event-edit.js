@@ -5,6 +5,12 @@ import {
   checkDate,
 } from '../mocks/event.js';
 
+/**
+ * Генерация формы выбора активностей
+ * @param {Array} types - Массив типов активностей
+ * @param {Object} card - Объект точки маршрута (содержащий определенную ативность)
+ * @return {String} Разметка формы выбора активностей
+ */
 const createTypeTemplate = (types, card) => {
   return types
     .map((typeItem) => {
@@ -26,6 +32,11 @@ const createTypeTemplate = (types, card) => {
     .join(`\n`);
 };
 
+/**
+ * Генерация формы выбора пункта назначения
+ * @param {Array} destinations - Массив городов
+ * @return {String} Разметка формы выбора пункта назначения
+ */
 const createDestinationList = (destinations) => {
   return destinations
     .map((destination) => {
@@ -36,6 +47,12 @@ const createDestinationList = (destinations) => {
     .join(`\n`);
 };
 
+/**
+ * Генерация формы редактирования точки маршрута
+ * @param {Array} newEvent - Случайная точка маршрута
+ * @param {Array} tripDays - Массив дней путешествия
+ * @return {String} Разметка формы редактирования точки маршрута
+ */
 export const createEditEventTemplate = (newEvent, tripDays) => {
   const {description, isFavorite} = newEvent;
   const transferType = createTypeTemplate(Transfers, tripDays[0][0]);
