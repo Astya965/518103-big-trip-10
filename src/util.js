@@ -1,3 +1,18 @@
+export const MonthNames = [
+  `JAN`,
+  `FEB`,
+  `MAR`,
+  `APR`,
+  `MAY`,
+  `JUN`,
+  `JUL`,
+  `AUG`,
+  `SEP`,
+  `OCT`,
+  `NOV`,
+  `DES`
+];
+
 /**
  * Выбор случайного числа в заданном промежутке
  * @param {Number} min - Минимальное допустимое значение (включительно)

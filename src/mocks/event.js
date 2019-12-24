@@ -18,7 +18,7 @@ const MIN_DATA = Date.now();
 const MAX_DATA = 1671062399 * 1000;
 const HOUR = 3600 * 1000;
 
-const Transfers = [
+export const Transfers = [
   `Taxi`,
   `Bus`,
   `Train`,
@@ -28,7 +28,7 @@ const Transfers = [
   `Flight`,
 ];
 
-const Activitys = [
+export const Activitys = [
   `Check-in`,
   `Sightseeing`,
   `Restaurant`,
@@ -36,9 +36,9 @@ const Activitys = [
 
 const EventTypes = Transfers.concat(Activitys);
 
-const EventCities = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
+export const EventCities = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
 
-const Offers = [
+export const Offers = [
   {
     name: `Add luggage`,
     type: `luggage`,
@@ -159,7 +159,7 @@ export const generateTripDays = () => {
   tripEvents.forEach((tripEvent, i) => {
     let prevCard = i > 0 ? tripEvents[i - 1] : null;
 
-    if (tripEvent.startDate.getDate() && prevCard !== prevCard.startDate.getDate()) {
+    if ((prevCard !== null) && (tripEvent.startDate.getDate() !== prevCard.startDate.getDate())) {
       tripDays.push(dayEvents);
       dayEvents = [];
     }

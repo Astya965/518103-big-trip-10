@@ -1,6 +1,47 @@
-import {checkDate} from '../mocks/event.js';
+import {
+  EventCities,
+  Transfers,
+  Activitys,
+  Offers,
+  checkDate,
+} from '../mocks/event.js';
+
+const createTypeTemplate = (types, card) => {
+  return types
+    .map((typeItem) => {
+      return (
+        `<div class="event__type-item">
+          <input
+          id="event-type-${typeItem.toLowerCase()}-1"
+          class="event__type-input"
+          visually-hidden"
+          type="radio"
+          name="event-type"
+          value="${typeItem.toLowerCase()}"
+          ${card.type === typeItem && `checked`}
+          >
+          <label class="event__type-label  event__type-label--${typeItem.toLowerCase()}" for="event-type-${typeItem.toLowerCase()}-1">${typeItem}</label>
+        </div>`
+      );
+    })
+    .join(`\n`);
+};
+
+const createDestinationList = (destinations) => {
+  return destinations
+    .map((destination) => {
+      return (
+        `<option value="${destination}"></option>`
+      );
+    })
+    .join(`\n`);
+};
 
 export const createEditEventTemplate = (newEvent) => {
+  const transferType = createTypeTemplate(Transfers, newEvent);
+  const activityType = createTypeTemplate(Activitys, newEvent);
+  const destinationList = createDestinationList(EventCities);
+
   return (
     `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -18,129 +59,12 @@ export const createEditEventTemplate = (newEvent) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Transfer</legend>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-taxi-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="taxi"
-                  ${newEvent.type === `taxi` && `checked`}>
-                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-bus-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="bus"
-                  ${newEvent.type === `bus` && `checked`}>
-                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-train-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="train"
-                  ${newEvent.type === `train` && `checked`}>
-                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-ship-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="ship"
-                  ${newEvent.type === `ship` && `checked`}>
-                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-transport-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="transport"
-                  ${newEvent.type === `transport` && `checked`}>
-                <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-drive-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="drive"
-                  ${newEvent.type === `drive` && `checked`}>
-                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-flight-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="flight"
-                  ${newEvent.type === `flight` && `checked`}>
-                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-              </div>
+              ${transferType}
             </fieldset>
 
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Activity</legend>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-check-in-1"
-                  class="event__type-input
-                  visually-hidden" type="radio"
-                  name="event-type"
-                  value="check-in"
-                  ${newEvent.type === `check-in` && `checked`}>
-                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-sightseeing-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="sightseeing"
-                  ${newEvent.type === `sightseeing` && `checked`}>
-                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input
-                  id="event-type-restaurant-1"
-                  class="event__type-input
-                  visually-hidden"
-                  type="radio"
-                  name="event-type"
-                  value="restaurant"
-                  ${newEvent.type === `restaurant` && `checked`}>
-                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-              </div>
+              ${activityType}
             </fieldset>
           </div>
         </div>
@@ -158,9 +82,7 @@ export const createEditEventTemplate = (newEvent) => {
             value="${newEvent.city}"
             list="destination-list-1">
             <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${destinationList}
           </datalist>
         </div>
 
