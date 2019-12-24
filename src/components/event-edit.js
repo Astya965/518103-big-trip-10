@@ -2,7 +2,6 @@ import {
   EventCities,
   Transfers,
   Activitys,
-  Offers,
   checkDate,
 } from '../mocks/event.js';
 
@@ -37,9 +36,10 @@ const createDestinationList = (destinations) => {
     .join(`\n`);
 };
 
-export const createEditEventTemplate = (newEvent) => {
-  const transferType = createTypeTemplate(Transfers, newEvent);
-  const activityType = createTypeTemplate(Activitys, newEvent);
+export const createEditEventTemplate = (newEvent, tripDays) => {
+  const {description, isFavorite} = newEvent;
+  const transferType = createTypeTemplate(Transfers, tripDays[0][0]);
+  const activityType = createTypeTemplate(Activitys, tripDays[0][0]);
   const destinationList = createDestinationList(EventCities);
 
   return (
@@ -51,7 +51,7 @@ export const createEditEventTemplate = (newEvent) => {
             <img
               class="event__type-icon"
               width="17" height="17"
-              src="img/icons/${newEvent.type.toLowerCase()}.png"
+              src="img/icons/${tripDays[0][0].type.toLowerCase()}.png"
               alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
@@ -71,7 +71,7 @@ export const createEditEventTemplate = (newEvent) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-          ${newEvent.type} at
+          ${tripDays[0][0].type} at
           </label>
           <input
             class="event__input
@@ -79,7 +79,7 @@ export const createEditEventTemplate = (newEvent) => {
             id="event-destination-1"
             type="text"
             name="event-destination"
-            value="${newEvent.city}"
+            value="${tripDays[0][0].city}"
             list="destination-list-1">
             <datalist id="destination-list-1">
             ${destinationList}
@@ -96,7 +96,7 @@ export const createEditEventTemplate = (newEvent) => {
             id="event-start-time-1"
             type="text"
             name="event-start-time"
-            value="${checkDate(newEvent.startDate.getHours())}:${checkDate(newEvent.startDate.getMinutes())}">
+            value="${checkDate(tripDays[0][0].startDate.getHours())}:${checkDate(tripDays[0][0].startDate.getMinutes())}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
@@ -107,7 +107,7 @@ export const createEditEventTemplate = (newEvent) => {
             id="event-end-time-1"
             type="text"
             name="event-end-time"
-            value="${checkDate(newEvent.endDate.getHours())}:${checkDate(newEvent.endDate.getMinutes())}">
+            value="${checkDate(tripDays[0][0].endDate.getHours())}:${checkDate(tripDays[0][0].endDate.getMinutes())}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -121,13 +121,13 @@ export const createEditEventTemplate = (newEvent) => {
             id="event-price-1"
             type="text"
             name="event-price"
-            value="${newEvent.price}">
+            value="${tripDays[0][0].price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Delete</button>
 
-        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : null}>
         <label class="event__favorite-btn" for="event-favorite-1">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -146,7 +146,7 @@ export const createEditEventTemplate = (newEvent) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${newEvent.offers
+            ${tripDays[0][0].offers
               .map((offer) => {
                 return `
                   <div class="event__offer-selector">
@@ -173,11 +173,11 @@ export const createEditEventTemplate = (newEvent) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${newEvent.discription}</p>
+          <p class="event__destination-description">${description}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${newEvent.photos
+              ${tripDays[0][0].photos
                 .map((photo) => {
                   return `<img class="event__photo" src="${photo}" alt="Event photo">`;
                 })

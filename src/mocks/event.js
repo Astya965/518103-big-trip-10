@@ -1,6 +1,6 @@
 import {getRandomNumber, getRandomElement, getRandomBoolean, mixArray} from '../util.js';
 
-const CARD_COUNT = 3;
+const CARD_COUNT = 4;
 const OFFERS_AMOUNT = 2;
 
 const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -138,7 +138,7 @@ export const generateEvent = () => {
     photos: Array(getRandomNumber(1, 4))
             .fill(``)
             .map(getRandomPhoto),
-    discription: getRandomDescription(TEXT)
+    description: getRandomDescription(TEXT)
   };
 };
 
@@ -148,16 +148,16 @@ export const generateEvents = (count) => {
   .map(generateEvent);
 };
 
-const tripEvents = generateEvents(CARD_COUNT);
-tripEvents.sort((a, b) => Date.parse(a.startDate) > Date.parse(b.startDate) ? 1 : -1);
-export {tripEvents};
+const tripCards = generateEvents(CARD_COUNT);
+tripCards.sort((a, b) => Date.parse(a.startDate) > Date.parse(b.startDate) ? 1 : -1);
+export {tripCards};
 
 export const generateTripDays = () => {
   let tripDays = [];
   let dayEvents = [];
 
-  tripEvents.forEach((tripEvent, i) => {
-    let prevCard = i > 0 ? tripEvents[i - 1] : null;
+  tripCards.forEach((tripEvent, i) => {
+    let prevCard = i > 0 ? tripCards[i - 1] : null;
 
     if ((prevCard !== null) && (tripEvent.startDate.getDate() !== prevCard.startDate.getDate())) {
       tripDays.push(dayEvents);
@@ -172,5 +172,13 @@ export const generateTripDays = () => {
   });
 
   return tripDays;
+};
+
+export const getTripCost = (tripDays) => {
+  const tripEvents = tripDays.flat();
+  let tripCost = tripEvents.reduce((sum, tripEvent) => {
+    return sum + tripEvent.price;
+  }, 0);
+  return tripCost;
 };
 

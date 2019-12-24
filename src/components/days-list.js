@@ -7,7 +7,7 @@ export const createDaysListTemplate = (tripDays) => {
         ${tripDays.map((day, i) => {
       const getTripDay = () => {
         const dayDate = day[0].startDate;
-        return `${MonthNames[dayDate.getMonth()]} ${dayDate.getDay()}`;
+        return `${MonthNames[dayDate.getMonth()]} ${dayDate.getDate()}`;
       };
 
       return (
