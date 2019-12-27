@@ -218,6 +218,10 @@ export default class EventEdit {
     );
   }
 
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
@@ -225,6 +229,9 @@ export default class EventEdit {
     return this._element;
   }
 
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
   removeElement() {
     this._element = null;
   }

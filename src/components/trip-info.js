@@ -10,6 +10,10 @@ export default class TripInfo {
     this._element = null;
   }
 
+  /**
+  * Генерация разметки списка городов
+  * @return {HTMLElement} Разметка списка городов
+  */
   getTripInfoTitle() {
     let citiesList = [];
     this._tripEvents.forEach((tripEvent) => {
@@ -18,6 +22,10 @@ export default class TripInfo {
     return citiesList.join(` &mdash; `);
   }
 
+  /**
+  * Генерация разметки периода путешествия
+  * @return {HTMLElement} Разметка периода путешествия
+  */
   getTripInfoDates() {
     const startDate = this._tripEvents[0].startDate;
     const endDate = this._tripEvents[this._tripEvents.length - 1].endDate;
@@ -43,6 +51,10 @@ export default class TripInfo {
     );
   }
 
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
@@ -50,6 +62,9 @@ export default class TripInfo {
     return this._element;
   }
 
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
   removeElement() {
     this._element = null;
   }

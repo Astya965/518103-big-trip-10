@@ -35,6 +35,10 @@ export default class Filter {
     );
   }
 
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
@@ -42,6 +46,9 @@ export default class Filter {
     return this._element;
   }
 
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
   removeElement() {
     this._element = null;
   }

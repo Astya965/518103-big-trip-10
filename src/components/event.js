@@ -10,6 +10,11 @@ export default class Event {
     this._element = null;
   }
 
+  /**
+  * Генерация разметки дополнительных предложений
+  * @param {Array} offers - Массив дополнительных предложений
+  * @return {String} Разметка дополнительных предложений
+  */
   createEventOfferMarkup(offers) {
     return offers.map((offer) => {
       return (

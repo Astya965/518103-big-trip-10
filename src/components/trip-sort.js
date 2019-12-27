@@ -9,7 +9,7 @@ export default class FormTripSort {
   }
 
   /**
-   * Генерация разметки сортировки точек маршрута
+  * Генерация разметки сортировки точек маршрута
   * @return {String} Разметка сортировки точек маршрута
   */
   getTemplate() {
@@ -43,6 +43,10 @@ export default class FormTripSort {
     );
   }
 
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
@@ -50,6 +54,9 @@ export default class FormTripSort {
     return this._element;
   }
 
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
   removeElement() {
     this._element = null;
   }
