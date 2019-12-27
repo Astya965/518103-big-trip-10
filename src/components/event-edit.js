@@ -5,6 +5,8 @@ import {
   checkDate,
 } from '../mocks/event.js';
 
+import {createElement} from "../util.js";
+
 /**
  * Генерация формы выбора активностей
  * @param {Array} types - Массив типов активностей
@@ -53,7 +55,7 @@ const createDestinationList = (destinations) => {
  * @param {Array} tripDays - Массив дней путешествия
  * @return {String} Разметка формы редактирования точки маршрута
  */
-export const createEditEventTemplate = (newEvent, tripDays) => {
+const createEditEventTemplate = (newEvent, tripDays) => {
   const {description, isFavorite} = newEvent;
   const transferType = createTypeTemplate(Transfers, tripDays[0][0]);
   const activityType = createTypeTemplate(Activitys, tripDays[0][0]);
@@ -206,3 +208,29 @@ export const createEditEventTemplate = (newEvent, tripDays) => {
     </form>`
   );
 };
+
+/**
+ * Класс формы редактирования точки маршрута
+ */
+export default class EventEdit {
+  constructor(newEvent, tripDays) {
+    this._newEvent = newEvent;
+    this._tripDays = tripDays;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditEventTemplate(this._newEvent, this._tripDays);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

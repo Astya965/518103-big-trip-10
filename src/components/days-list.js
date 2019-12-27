@@ -1,12 +1,12 @@
 import {createEventTemplate} from "../components/event";
-import {MonthNames} from "../util.js";
+import {MonthNames, createElement} from "../util.js";
 
 /**
  * Генерация разметки дней и точек маршрута
  * @param {Array} tripDays - Массив дней путешествия
  * @return {String} Разметка дней и точек маршрута
  */
-export const createDaysListTemplate = (tripDays) => {
+const createDaysListTemplate = (tripDays) => {
   return (
     `<ul class="trip-days">
         ${tripDays.map((day, i) => {
@@ -30,3 +30,28 @@ export const createDaysListTemplate = (tripDays) => {
     </ul>`
   );
 };
+
+/**
+ * Класс списка дней маршрута
+ */
+export default class tripDays {
+  constructor() {
+    this._tripDays = tripDays;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createDaysListTemplate(this._tripDays);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

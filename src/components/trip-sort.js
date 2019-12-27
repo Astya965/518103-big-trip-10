@@ -1,9 +1,10 @@
+import {createElement} from '../utils.js';
+
 /**
  * Генерация разметки сортировки точек маршрута
  * @return {String} Разметка сортировки точек маршрута
  */
-
-export const createTripSortTemplate = () => {
+const createTripSortTemplate = () => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
@@ -33,3 +34,27 @@ export const createTripSortTemplate = () => {
     </form>`
   );
 };
+
+/**
+ * Класс формы сортировки точек маршрута
+ */
+export default class FormTripSort {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripSortTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

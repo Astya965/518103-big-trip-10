@@ -1,11 +1,11 @@
-import {MonthNames} from "../util.js";
+import {MonthNames, createElement} from "../util.js";
 
 /**
  * Генерация разметки информации о поездке
  * @param {Array} tripDays - Массив дней путешествия
  * @return {String} Разметка информации о поездке
  */
-export const createTripInfoTemplate = (tripDays) => {
+const createTripInfoTemplate = (tripDays) => {
   const tripEvents = tripDays.flat();
 
   const getTripInfoTitle = () => {
@@ -34,3 +34,28 @@ export const createTripInfoTemplate = (tripDays) => {
     </div>`
   );
 };
+
+/**
+ * Класс информации о поездке
+ */
+export default class TripInfo {
+  constructor(tripDays) {
+    this._tripDays = tripDays;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._tripDays);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

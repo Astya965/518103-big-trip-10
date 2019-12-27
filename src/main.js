@@ -1,11 +1,12 @@
-import {createMenuTemplate} from './components/site-menu.js';
-import {createFilterTemplate} from './components/filter.js';
-import {createTripSortTemplate} from './components/trip-sort.js';
-import {createDaysListTemplate} from './components/days-list.js';
-import {createAddEventTemplate} from './components/event-add.js';
-import {createEditEventTemplate} from './components/event-edit.js';
-import {createTripInfoTemplate} from './components/trip-info.js';
+import SiteMenuComponent from './components/site-menu.js';
+import FilterComponent from './components/filter.js';
+import TripSortComponent from './components/trip-sort.js';
+import TripDaysListComponent from './components/days-list.js';
+import EventAddComponent from './components/event-add.js';
+import EventEditComponent from './components/event-edit.js';
+import TripInfoComponent from './components/trip-info.js';
 
+import {render, RenderPosition} from './utils.js';
 
 import {generateEvent, generateTripDays, tripCards, getTripCost} from './mocks/event.js';
 
@@ -17,24 +18,20 @@ const siteControlsElement = document.querySelector(`.trip-controls`);
 const siteTripEventsElement = document.querySelector(`.trip-events`);
 const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
-const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-render(siteTripInfoElement, createTripInfoTemplate(tripDays), `afterbegin`);
+render(siteTripInfoElement, new TripInfoComponent(tripDays).getElement(), RenderPosition.AFTERBEGIN);
 
 const siteTripInfoCostElement = document.querySelector(`.trip-info__cost-value`);
 siteTripInfoCostElement.textContent = getTripCost(tripDays);
 
-render(siteControlsElement, createMenuTemplate());
-render(siteControlsElement, createFilterTemplate());
+render(siteControlsElement, new SiteMenuComponent().getElement(), RenderPosition.BEFOREEND);
+render(siteControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
 
 
-render(siteTripEventsElement, createTripSortTemplate());
-render(siteTripEventsElement, createDaysListTemplate(tripDays));
+render(siteTripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
+render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
 
 const siteTripEventsItemElement = document.querySelector(`.trip-events__item`);
-render(siteTripEventsItemElement, createEditEventTemplate(cardEdit, tripDays), `afterbegin`);
+render(siteTripEventsItemElement, new EventEditComponent(cardEdit, tripDays).getElement(), RenderPosition.AFTERBEGIN);
 
 /**
  * @description Событие открытия формы добавления Эвента
@@ -42,7 +39,7 @@ render(siteTripEventsItemElement, createEditEventTemplate(cardEdit, tripDays), `
 newEventButton.addEventListener(`click`, () => {
   let newEventForm = document.querySelector(`form.trip-events__item`);
   if (!siteTripEventsElement.contains(newEventForm)) {
-    render(siteTripEventsElement, createAddEventTemplate(), `afterbegin`);
+    render(siteTripEventsElement, new EventAddComponent().getElement, RenderPosition.AFTERBEGIN);
   }
 });
 

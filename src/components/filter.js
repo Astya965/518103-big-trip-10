@@ -1,8 +1,10 @@
+import {createElement} from '../utils.js';
+
 /**
  * Генерация разметки фильтра точек маршрута
  * @return {String} Разметка фильтра точек маршрута
  */
-export const createFilterTemplate = () => {
+const createFilterTemplate = () => {
   return (
     `<form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
@@ -24,3 +26,27 @@ export const createFilterTemplate = () => {
     </form>`
   );
 };
+
+/**
+ * Класс фильтра точек маршрута
+ */
+export default class Filter {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilterTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

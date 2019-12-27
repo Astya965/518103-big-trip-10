@@ -1,8 +1,10 @@
+import {сreateElement} from "../util.js";
+
 /**
  * Генерация разметки формы добавления новой точки маршрута
  * @return {String} Разметка формы добавления новой точки маршрута
  */
-export const createAddEventTemplate = () => {
+const createAddEventTemplate = () => {
   return (
     `<form class="trip-events__item event event--edit" action="#" method="post">
       <header class="event__header">
@@ -113,3 +115,27 @@ export const createAddEventTemplate = () => {
     </form>`
   );
 };
+
+/**
+ * Класс формы добавления новой точки маршрута
+ */
+export default class EventAdd {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createAddEventTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = сreateElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
