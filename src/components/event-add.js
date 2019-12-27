@@ -1,4 +1,4 @@
-import {сreateElement} from "../util.js";
+import {createElement} from "../util.js";
 
 /**
  * Генерация разметки формы добавления новой точки маршрута
@@ -130,7 +130,7 @@ export default class EventAdd {
 
   getElement() {
     if (!this._element) {
-      this._element = сreateElement(this.getTemplate());
+      this._element = createElement(this.getTemplate());
     }
     return this._element;
   }

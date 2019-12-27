@@ -6,7 +6,7 @@ import EventAddComponent from './components/event-add.js';
 import EventEditComponent from './components/event-edit.js';
 import TripInfoComponent from './components/trip-info.js';
 
-import {render, RenderPosition} from './utils.js';
+import {render, RenderPosition} from './util.js';
 
 import {generateEvent, generateTripDays, tripCards, getTripCost} from './mocks/event.js';
 
@@ -39,7 +39,7 @@ render(siteTripEventsItemElement, new EventEditComponent(cardEdit, tripDays).get
 newEventButton.addEventListener(`click`, () => {
   let newEventForm = document.querySelector(`form.trip-events__item`);
   if (!siteTripEventsElement.contains(newEventForm)) {
-    render(siteTripEventsElement, new EventAddComponent().getElement, RenderPosition.AFTERBEGIN);
+    render(siteTripEventsElement, new EventAddComponent().getElement(), RenderPosition.AFTERBEGIN);
   }
 });
 

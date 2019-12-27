@@ -20,7 +20,7 @@ const createTypeTemplate = (types, card) => {
         `<div class="event__type-item">
           <input
           id="event-type-${typeItem.toLowerCase()}-1"
-          class="event__type-input"
+          class="event__type-input
           visually-hidden"
           type="radio"
           name="event-type"

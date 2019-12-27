@@ -34,8 +34,8 @@ const createDaysListTemplate = (tripDays) => {
 /**
  * Класс списка дней маршрута
  */
-export default class tripDays {
-  constructor() {
+export default class TripDays {
+  constructor(tripDays) {
     this._tripDays = tripDays;
     this._element = null;
   }

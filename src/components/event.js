@@ -1,12 +1,12 @@
 import {checkDate} from '../mocks/event.js';
-import {сreateElement} from "../util.js";
+import {createElement} from "../util.js";
 
 /**
  * Генерация разметки точки маршрута
  * @param {Array} tripDays - Массив дней путешествия
  * @return {String} Разметка точки маршрута
  */
-const createEventTemplate = (tripDays) => {
+export const createEventTemplate = (tripDays) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -75,7 +75,7 @@ export default class Event {
 
   getElement() {
     if (!this._element) {
-      this._element = сreateElement(this.getTemplate());
+      this._element = createElement(this.getTemplate());
     }
     return this._element;
   }
