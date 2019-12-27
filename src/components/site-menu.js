@@ -1,19 +1,6 @@
 import {createElement} from '../util.js';
 
 /**
- * Генерация разметки меню
- * @return {String} Разметка меню
- */
-const createMenuTemplate = () => {
-  return (
-    `<nav class="trip-controls__trip-tabs  trip-tabs">
-      <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-      <a class="trip-tabs__btn" href="#">Stats</a>
-    </nav>`
-  );
-};
-
-/**
  * Класс меню
  */
 export default class Menu {
@@ -21,8 +8,17 @@ export default class Menu {
     this._element = null;
   }
 
+  /**
+  * Генерация разметки меню
+  * @return {String} Разметка меню
+  */
   getTemplate() {
-    return createMenuTemplate();
+    return (
+      `<nav class="trip-controls__trip-tabs  trip-tabs">
+        <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
+        <a class="trip-tabs__btn" href="#">Stats</a>
+      </nav>`
+    );
   }
 
   getElement() {
