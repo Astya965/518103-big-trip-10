@@ -77,6 +77,10 @@ export default class Event {
     );
   }
 
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate(this._tripDays));
@@ -84,7 +88,19 @@ export default class Event {
     return this._element;
   }
 
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
   removeElement() {
     this._element = null;
+  }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку
+  */
+  setArrowButtonOpenHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }

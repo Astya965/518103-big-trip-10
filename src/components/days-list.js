@@ -1,4 +1,3 @@
-import EventComponent from "../components/event";
 import {MonthNames, createElement} from "../util.js";
 
 /**
@@ -31,11 +30,10 @@ export default class TripDays {
               <time class="day__date" datetime="${day[0].startDate}">${getTripDay()}</time>
             </div>
             <ul class="trip-events__list data-date="${day[0].startDate.getDate()}/${day[0].startDate.getMonth()}">
-            ${day.map((tripCard) => new EventComponent(tripCard).getTemplate(tripCard)).join(`\n`)}
             </ul>
           </li>`
         );
-      })}
+      }).join(`\n`)}
       </ul>`
     );
   }

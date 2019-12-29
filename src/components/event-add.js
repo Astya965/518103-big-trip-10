@@ -141,4 +141,13 @@ export default class EventAdd {
   removeElement() {
     this._element = null;
   }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку
+  */
+  setEventResetButtonHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+  }
 }
