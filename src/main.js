@@ -3,14 +3,14 @@ import FilterComponent from './components/filter.js';
 import TripSortComponent from './components/trip-sort.js';
 import TripDaysListComponent from './components/days-list.js';
 import EventAddComponent from './components/event-add.js';
-import EventEditComponent from './components/event-edit.js';
 import TripInfoComponent from './components/trip-info.js';
+import EventComponent from './components/event.js';
+import EventEditComponent from './components/event-edit.js';
 
-import {render, RenderPosition} from './util.js';
+import {replace, render, RenderPosition} from './util.js';
 
-import {generateEvent, generateTripDays, tripCards, getTripCost} from './mocks/event.js';
+import {generateTripDays, tripCards, getTripCost} from './mocks/event.js';
 
-const cardEdit = generateEvent();
 const tripDays = generateTripDays(tripCards);
 
 const siteTripInfoElement = document.querySelector(`.trip-info`);
@@ -29,9 +29,6 @@ render(siteControlsElement, new FilterComponent().getElement(), RenderPosition.B
 
 render(siteTripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
 render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
-
-const siteTripEventsItemElement = document.querySelector(`.trip-events__item`);
-render(siteTripEventsItemElement, new EventEditComponent(cardEdit, tripDays).getElement(), RenderPosition.AFTERBEGIN);
 
 /**
  * @description Событие открытия формы добавления Эвента
@@ -61,4 +58,3 @@ document.addEventListener(`click`, function (evt) {
     closeForm();
   }
 });
-

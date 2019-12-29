@@ -77,19 +77,37 @@ export const createElement = (template) => {
 /**
  * Рендеринг элемента разментки
  * @param {HTMLElement} container - Элемент разметки, куда добавляется новый элемент
- * @param {HTMLElement} element - Новый элемент, добавляемый в DOM-дерево
+ * @param {HTMLElement} component - Новый элемент, добавляемый в DOM-дерево
  * @param {DOMString} place - Определяет позицию добавляемого элемента относительно элемента, вызвавшего метод
  */
-export const render = (container, element, place) => {
+export const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
+      container.prepend(component);
       break;
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      container.append(component);
       break;
     case RenderPosition.AFTEREND:
-      container.after(element);
+      container.after(component);
       break;
   }
+};
+
+/**
+ * Удаление элемента разментки
+ * @param {HTMLElement} component - Новый элемент, добавляемый в DOM-дерево
+ */
+export const remove = (component) => {
+  component.getElement().remove();
+  component.removeElement();
+};
+
+/**
+ * Замена старого элемента разментки новый
+ * @param {HTMLElement} newComponent - Новый элемент на который будет заменен oldComponent
+ * @param {HTMLElement} oldComponent - Элемент который будет заменен.
+ */
+export const replace = (newComponent, oldComponent) => {
+  newComponent.getElement().replaceWith(oldComponent.getElement());
 };
