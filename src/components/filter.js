@@ -1,26 +1,55 @@
+import {createElement} from '../util.js';
+
 /**
- * Генерация разметки фильтра точек маршрута
- * @return {String} Разметка фильтра точек маршрута
+ * Класс фильтра точек маршрута
  */
-export const createFilterTemplate = () => {
-  return (
-    `<form class="trip-filters" action="#" method="get">
-      <div class="trip-filters__filter">
-        <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
-        <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-      </div>
+export default class Filter {
+  constructor() {
+    this._element = null;
+  }
 
-      <div class="trip-filters__filter">
-        <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-        <label class="trip-filters__filter-label" for="filter-future">Future</label>
-      </div>
+  /**
+  * Генерация разметки фильтра точек маршрута
+  * @return {String} Разметка фильтра точек маршрута
+  */
+  getTemplate() {
+    return (
+      `<form class="trip-filters" action="#" method="get">
+        <div class="trip-filters__filter">
+          <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
+          <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
+        </div>
 
-      <div class="trip-filters__filter">
-        <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
-        <label class="trip-filters__filter-label" for="filter-past">Past</label>
-      </div>
+        <div class="trip-filters__filter">
+          <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
+          <label class="trip-filters__filter-label" for="filter-future">Future</label>
+        </div>
 
-      <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>`
-  );
-};
+        <div class="trip-filters__filter">
+          <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
+          <label class="trip-filters__filter-label" for="filter-past">Past</label>
+        </div>
+
+        <button class="visually-hidden" type="submit">Accept filter</button>
+      </form>`
+    );
+  }
+
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
+  removeElement() {
+    this._element = null;
+  }
+}

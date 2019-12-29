@@ -1,36 +1,71 @@
-import {MonthNames} from "../util.js";
+import {MonthNames, createElement} from "../util.js";
 
 /**
- * Генерация разметки информации о поездке
- * @param {Array} tripDays - Массив дней путешествия
- * @return {String} Разметка информации о поездке
+ * Класс информации о поездке
  */
-export const createTripInfoTemplate = (tripDays) => {
-  const tripEvents = tripDays.flat();
+export default class TripInfo {
+  constructor(tripDays) {
+    this._tripDays = tripDays;
+    this._tripEvents = this._tripDays.flat();
+    this._element = null;
+  }
 
-  const getTripInfoTitle = () => {
+  /**
+  * Генерация разметки списка городов
+  * @return {HTMLElement} Разметка списка городов
+  */
+  getTripInfoTitle() {
     let citiesList = [];
-    tripEvents.forEach((tripEvent) => {
+    this._tripEvents.forEach((tripEvent) => {
       citiesList.push(tripEvent.city);
     });
     return citiesList.join(` &mdash; `);
-  };
+  }
 
-  const getTripInfoDates = () => {
-    const startDate = tripEvents[0].startDate;
-    const endDate = tripEvents[tripEvents.length - 1].endDate;
+  /**
+  * Генерация разметки периода путешествия
+  * @return {HTMLElement} Разметка периода путешествия
+  */
+  getTripInfoDates() {
+    const startDate = this._tripEvents[0].startDate;
+    const endDate = this._tripEvents[this._tripEvents.length - 1].endDate;
     const startMonth = MonthNames[startDate.getMonth()];
     const startDay = startDate.getDate();
     const endMonth = MonthNames[endDate.getMonth()];
     const endDay = endDate.getDate();
     return `${startMonth} ${startDay}&nbsp;&mdash;&nbsp;${startMonth === endMonth ? `` : endMonth} ${endDay}`;
-  };
+  }
 
-  return (
-    `<div class="trip-info__main">
-      <h1 class="trip-info__title">${getTripInfoTitle()}</h1>
+  /**
+  * Генерация разметки информации о поездке
+  * @param {Array} tripDays - Массив дней путешествия
+  * @return {String} Разметка информации о поездке
+  */
+  getTemplate() {
+    return (
+      `<div class="trip-info__main">
+        <h1 class="trip-info__title">${this.getTripInfoTitle()}</h1>
 
-      <p class="trip-info__dates">${getTripInfoDates()}</p>
-    </div>`
-  );
-};
+        <p class="trip-info__dates">${this.getTripInfoDates()}</p>
+      </div>`
+    );
+  }
+
+  /**
+  * Создание DOM-элемента
+  * @return {HTMLElement} Возвращать созданный DOM-элемент
+  */
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  /**
+  * Удаление ссылки на DOM-элемент
+  */
+  removeElement() {
+    this._element = null;
+  }
+}
