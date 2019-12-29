@@ -33,7 +33,8 @@ export default class Event {
   * @param {Array} tripCard - Массив дней путешествия
   * @return {String} Разметка точки маршрута
   */
-  getTemplate(tripCard) {
+  getTemplate() {
+    const {type, duration, price, offers, startDate, endDate} = this._tripCard;
     return (
       `<li class="trip-events__item">
         <div class="event">
@@ -42,31 +43,31 @@ export default class Event {
               class="event__type-icon"
               width="42"
               height="42"
-              src="img/icons/${tripCard.type.toLowerCase()}.png"
+              src="img/icons/${type.toLowerCase()}.png"
               alt="Event type icon">
           </div>
-          <h3 class="event__title">${tripCard.type} to airport</h3>
+          <h3 class="event__title">${type} to airport</h3>
 
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="${tripCard.startDate}">
-                ${checkDate(tripCard.startDate.getHours())}:${checkDate(tripCard.startDate.getMinutes())}
+              <time class="event__start-time" datetime="${startDate}">
+                ${checkDate(startDate.getHours())}:${checkDate(startDate.getMinutes())}
               </time>
               &mdash;
-              <time class="event__end-time" datetime="${tripCard.endDate}">
-                ${checkDate(tripCard.endDate.getHours())}:${checkDate(tripCard.endDate.getMinutes())}
+              <time class="event__end-time" datetime="${endDate}">
+                ${checkDate(endDate.getHours())}:${checkDate(endDate.getMinutes())}
               </time>
             </p>
-            <p class="event__duration">${tripCard.duration}</p>
+            <p class="event__duration">${duration}</p>
           </div>
 
           <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${tripCard.price}</span>
+            &euro;&nbsp;<span class="event__price-value">${price}</span>
           </p>
 
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-            ${this.createEventOfferMarkup(tripCard.offers)}
+            ${this.createEventOfferMarkup(offers)}
           </ul>
 
           <button class="event__rollup-btn" type="button">
@@ -99,7 +100,7 @@ export default class Event {
   * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на кнопку
   */
-  setArrowButtonOpenHandler(handler) {
+  setArrowBtnOpenHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
   }

@@ -11,19 +11,18 @@ import {createElement} from "../util.js";
  * Класс формы редактирования точки маршрута
  */
 export default class EventEdit {
-  constructor(newEvent, tripDays) {
-    this._newEvent = newEvent;
-    this._tripDays = tripDays;
+  constructor(tripCard) {
+    this._tripCard = tripCard;
     this._element = null;
   }
 
   /**
    * Генерация формы выбора активностей
    * @param {Array} types - Массив типов активностей
-   * @param {Object} card - Объект точки маршрута (содержащий определенную ативность)
+   * @param {Object} tripCard - Объект точки маршрута (содержащий определенную ативность)
    * @return {String} Разметка формы выбора активностей
    */
-  createTypeTemplate(types, card) {
+  createTypeTemplate(types, tripCard) {
     return types
       .map((typeItem) => {
         return (
@@ -35,7 +34,7 @@ export default class EventEdit {
             type="radio"
             name="event-type"
             value="${typeItem.toLowerCase()}"
-            ${card.type === typeItem && `checked`}
+            ${tripCard.type === typeItem && `checked`}
             >
             <label class="event__type-label  event__type-label--${typeItem.toLowerCase()}" for="event-type-${typeItem.toLowerCase()}-1">${typeItem}</label>
           </div>`
@@ -66,9 +65,9 @@ export default class EventEdit {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {description, isFavorite} = this._newEvent;
-    const transferType = this.createTypeTemplate(Transfers, this._tripDays[0][0]);
-    const activityType = this.createTypeTemplate(Activitys, this._tripDays[0][0]);
+    const {type, description, city, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
+    const transferType = this.createTypeTemplate(Transfers, this._tripCard);
+    const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(EventCities);
     return (
       `<form class="event  event--edit" action="#" method="post">
@@ -79,7 +78,7 @@ export default class EventEdit {
               <img
                 class="event__type-icon"
                 width="17" height="17"
-                src="img/icons/${this._tripDays[0][0].type.toLowerCase()}.png"
+                src="img/icons/${type.toLowerCase()}.png"
                 alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
@@ -99,7 +98,7 @@ export default class EventEdit {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${this._tripDays[0][0].type} at
+            ${type} at
             </label>
             <input
               class="event__input
@@ -107,7 +106,7 @@ export default class EventEdit {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${this._tripDays[0][0].city}"
+              value="${city}"
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -124,7 +123,7 @@ export default class EventEdit {
               id="event-start-time-1"
               type="text"
               name="event-start-time"
-              value="${checkDate(this._tripDays[0][0].startDate.getHours())}:${checkDate(this._tripDays[0][0].startDate.getMinutes())}">
+              value="${checkDate(startDate.getHours())}:${checkDate(startDate.getMinutes())}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
@@ -135,7 +134,7 @@ export default class EventEdit {
               id="event-end-time-1"
               type="text"
               name="event-end-time"
-              value="${checkDate(this._tripDays[0][0].endDate.getHours())}:${checkDate(this._tripDays[0][0].endDate.getMinutes())}">
+              value="${checkDate(endDate.getHours())}:${checkDate(endDate.getMinutes())}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -149,7 +148,7 @@ export default class EventEdit {
               id="event-price-1"
               type="text"
               name="event-price"
-              value="${this._tripDays[0][0].price}">
+              value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -174,7 +173,7 @@ export default class EventEdit {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${this._tripDays[0][0].offers
+              ${offers
                 .map((offer) => {
                   return `
                     <div class="event__offer-selector">
@@ -205,7 +204,7 @@ export default class EventEdit {
 
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                ${this._tripDays[0][0].photos
+                ${photos
                   .map((photo) => {
                     return `<img class="event__photo" src="${photo}" alt="Event photo">`;
                   })
@@ -234,5 +233,14 @@ export default class EventEdit {
   */
   removeElement() {
     this._element = null;
+  }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку
+  */
+  setArrowBtnCloseHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
   }
 }

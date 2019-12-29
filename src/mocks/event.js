@@ -167,23 +167,24 @@ export {tripCards};
 
 /**
  * Генерация массива дней путешествия (разделение массива точек маршрута на подмассивы)
+ * @param {Array} array - Массив точек маршрута
  * @return {Array} Массив дней путешествия
  */
-export const generateTripDays = () => {
+export const generateTripDays = (array) => {
   let tripDays = [];
   let dayEvents = [];
 
-  tripCards.forEach((tripEvent, i) => {
-    let prevCard = i > 0 ? tripCards[i - 1] : null;
+  array.forEach((elem, i) => {
+    let prevCard = i > 0 ? array[i - 1] : null;
 
-    if ((prevCard !== null) && (tripEvent.startDate.getDate() !== prevCard.startDate.getDate())) {
+    if ((prevCard !== null) && (elem.startDate.getDate() !== prevCard.startDate.getDate())) {
       tripDays.push(dayEvents);
       dayEvents = [];
     }
 
-    dayEvents.push(tripEvent);
+    dayEvents.push(elem);
 
-    if (i === tripEvent.length - 1) {
+    if (i === elem.length - 1) {
       tripDays.push(dayEvents);
     }
   });

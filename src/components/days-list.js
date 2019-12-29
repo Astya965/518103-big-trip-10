@@ -29,7 +29,7 @@ export default class TripDays {
               <span class="day__counter">${i + 1}</span>
               <time class="day__date" datetime="${day[0].startDate}">${getTripDay()}</time>
             </div>
-            <ul class="trip-events__list data-date="${day[0].startDate.getDate()}/${day[0].startDate.getMonth()}">
+            <ul class="trip-events__list" data-date="${day[0].startDate.getDate()}/${day[0].startDate.getMonth()}">
             </ul>
           </li>`
         );
