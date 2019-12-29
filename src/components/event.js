@@ -34,7 +34,7 @@ export default class Event {
   * @return {String} Разметка точки маршрута
   */
   getTemplate() {
-    const {type, duration, price, offers, startDate, endDate} = this._tripCard;
+    const {type, duration, city, price, offers, startDate, endDate} = this._tripCard;
     return (
       `<li class="trip-events__item">
         <div class="event">
@@ -46,7 +46,7 @@ export default class Event {
               src="img/icons/${type.toLowerCase()}.png"
               alt="Event type icon">
           </div>
-          <h3 class="event__title">${type} to airport</h3>
+          <h3 class="event__title">${type} to ${city}</h3>
 
           <div class="event__schedule">
             <p class="event__time">
