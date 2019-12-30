@@ -1,13 +1,9 @@
-import {createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
 /**
  * Класс меню
  */
-export default class Menu {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Menu extends AbstractComponent {
   /**
   * Генерация разметки меню
   * @return {String} Разметка меню
@@ -19,23 +15,5 @@ export default class Menu {
         <a class="trip-tabs__btn" href="#">Stats</a>
       </nav>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 }

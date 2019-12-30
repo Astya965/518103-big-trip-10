@@ -1,12 +1,9 @@
-import {createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
 /**
  * Класс кнопки добавления новых элементов
  */
-export default class EventAddBtn {
-  constructor() {
-    this._element = null;
-  }
+export default class EventAddBtn extends AbstractComponent {
 
   /**
   * Генерация разметки фильтра точек маршрута
@@ -16,24 +13,6 @@ export default class EventAddBtn {
     return (
       `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 
   /**

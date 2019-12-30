@@ -1,13 +1,9 @@
-import {createElement} from "../util.js";
+import AbstractComponent from './abstract-component.js';
 
 /**
  * Класс формы добавления новой точки маршрута
  */
-export default class EventAdd {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EventAdd extends AbstractComponent {
   /**
   * Генерация разметки формы добавления новой точки маршрута
   * @return {String} Разметка формы добавления новой точки маршрута
@@ -125,29 +121,20 @@ export default class EventAdd {
   }
 
   /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
-  }
-
-  /**
-  * Обраточик события клика на кнопку
+  * Обраточик события клика на кнопку сброса
   * @param {Function} handler - События при клике на кнопку
   */
   setEventResetButtonHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  /**
+  * Обраточик события клика на кнопку отправки
+  * @param {Function} handler - События при клике на кнопку
+  */
+  setEventSubmitButtonHandler(handler) {
+    this.getElement().querySelector(`.event__save-btn`)
       .addEventListener(`click`, handler);
   }
 }

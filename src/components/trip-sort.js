@@ -1,13 +1,9 @@
-import {createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
 /**
  * Класс формы сортировки точек маршрута
  */
-export default class FormTripSort {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FormTripSort extends AbstractComponent {
   /**
   * Генерация разметки сортировки точек маршрута
   * @return {String} Разметка сортировки точек маршрута
@@ -41,23 +37,5 @@ export default class FormTripSort {
         <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
       </form>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 }
