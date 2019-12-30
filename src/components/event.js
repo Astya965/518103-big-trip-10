@@ -1,5 +1,5 @@
 import {checkDate} from '../mocks/event.js';
-import {createElement} from "../util.js";
+import {createElement} from "../utils/render.js";
 
 /**
  * Класс формы точки маршрута

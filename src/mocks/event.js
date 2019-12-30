@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomElement, getRandomBoolean, mixArray} from '../util.js';
+import {getRandomNumber, getRandomElement, getRandomBoolean, mixArray} from '../utils/util.js';
 
 const CARD_COUNT = 4;
 const OFFERS_AMOUNT = 2;

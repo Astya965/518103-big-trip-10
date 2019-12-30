@@ -5,7 +5,7 @@ import EventAddComponent from './components/event-add.js';
 import BoardController from './controllers/board.js';
 
 import {tripCards} from './mocks/event.js';
-import {render, remove, RenderPosition} from './util.js';
+import {render, remove, RenderPosition} from './utils/render.js';
 
 const siteControlsElement = document.querySelector(`.trip-controls`);
 const tripMain = document.querySelector(`.trip-main`);
@@ -22,14 +22,23 @@ const boardController = new BoardController(tripMain);
 boardController.render(tripCards);
 
 const newEventAdd = new EventAddComponent();
+/**
+* События клика на кнопку добавление новой точки маршрута
+*/
 addNewEventButton.setClickHandler(() => {
   newEventButton.setAttribute(`disabled`, ``);
   render(siteTripEventsElement, newEventAdd.getElement(), RenderPosition.AFTERBEGIN);
 });
+/**
+* События клика на кнопку сброса в форме добавления новой точки маршрута
+*/
 newEventAdd.setEventResetButtonHandler(() => {
   remove(newEventAdd);
   newEventButton.removeAttribute(`disabled`, ``);
 });
+/**
+* События клика на кнопку отправки в форме добавления новой точки маршрута
+*/
 newEventAdd.setEventSubmitButtonHandler((evt) => {
   evt.preventDefault();
   remove(newEventAdd);

@@ -5,7 +5,7 @@ import {
   checkDate,
 } from '../mocks/event.js';
 
-import {createElement} from "../util.js";
+import {createElement} from "../utils/render.js";
 
 /**
  * Класс формы редактирования точки маршрута
@@ -237,13 +237,17 @@ export default class EventEdit {
 
   /**
   * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на кнопку
+  * @param {Function} handler - События при клике на кнопку сброса
   */
   setBtnResetHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
       .addEventListener(`click`, handler);
   }
 
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку отправки
+  */
   setBtnSubmitHandler(handler) {
     this.getElement().querySelector(`.event__save-btn`)
     .addEventListener(`click`, handler);
