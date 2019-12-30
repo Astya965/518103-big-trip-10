@@ -1,6 +1,6 @@
 import {getRandomNumber, getRandomElement, getRandomBoolean, mixArray} from '../util.js';
 
-const CARD_COUNT = 5;
+const CARD_COUNT = 4;
 const OFFERS_AMOUNT = 2;
 
 const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -17,6 +17,7 @@ const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 const MIN_DATA = Date.now();
 const MAX_DATA = 1671062399 * 1000;
 const HOUR = 3600 * 1000;
+// Убери из максимальной даты магические числа
 
 export const Transfers = [
   `Taxi`,
@@ -177,14 +178,14 @@ export const generateTripDays = (array) => {
   array.forEach((elem, i) => {
     let prevCard = i > 0 ? array[i - 1] : null;
 
-    if ((prevCard !== null) && (elem.startDate.getDate() !== prevCard.startDate.getDate())) {
+    if (prevCard && elem.startDate.getDate() !== prevCard.startDate.getDate()) {
       tripDays.push(dayEvents);
       dayEvents = [];
     }
 
     dayEvents.push(elem);
 
-    if (i === elem.length - 1) {
+    if (i === array.length - 1) {
       tripDays.push(dayEvents);
     }
   });

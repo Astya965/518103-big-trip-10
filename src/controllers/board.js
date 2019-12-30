@@ -33,7 +33,14 @@ const renderTripEvent = (container, eventCard) => {
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.setArrowBtnCloseHandler(replaceEditToCard);
+  eventEditComponent.setBtnResetHandler(() => {
+    replaceEditToCard();
+  });
+
+  eventEditComponent.setBtnSubmitHandler((evt) => {
+    evt.preventDefault();
+    replaceEditToCard();
+  });
 
   render(container, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };
@@ -54,14 +61,15 @@ export default class BoardController {
 
   render() {
     const siteTripEventsElement = document.querySelector(`.trip-events`);
-    render(siteTripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
 
     if (tripCards.length === 0) {
       render(siteTripEventsElement, new NoEventsComponent().getElement(), RenderPosition.BEFOREEND);
     } else {
       const tripDays = generateTripDays(tripCards);
+      console.log(tripDays);
       const siteTripInfoElement = document.querySelector(`.trip-info`);
 
+      render(siteTripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
       render(siteTripInfoElement, new TripInfoComponent(tripDays).getElement(), RenderPosition.AFTERBEGIN);
       const siteTripInfoCostElement = document.querySelector(`.trip-info__cost-value`);
       siteTripInfoCostElement.textContent = getTripCost(tripDays);

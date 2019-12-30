@@ -5,7 +5,7 @@ import EventAddComponent from './components/event-add.js';
 import BoardController from './controllers/board.js';
 
 import {tripCards} from './mocks/event.js';
-import {render, RenderPosition} from './util.js';
+import {render, remove, RenderPosition} from './util.js';
 
 const siteControlsElement = document.querySelector(`.trip-controls`);
 const tripMain = document.querySelector(`.trip-main`);
@@ -16,10 +16,21 @@ render(siteControlsElement, new FilterComponent().getElement(), RenderPosition.B
 
 const addNewEventButton = new EventAddBtnComponent();
 render(tripMain, addNewEventButton.getElement(), RenderPosition.BEFOREEND);
+const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
 const boardController = new BoardController(tripMain);
 boardController.render(tripCards);
 
+const newEventAdd = new EventAddComponent();
 addNewEventButton.setClickHandler(() => {
-  render(siteTripEventsElement, new EventAddComponent().getElement(), RenderPosition.AFTERBEGIN);
+  newEventButton.setAttribute(`disabled`, ``);
+  render(siteTripEventsElement, newEventAdd.getElement(), RenderPosition.AFTERBEGIN);
+});
+newEventAdd.setEventResetButtonHandler(() => {
+  remove(newEventAdd);
+  newEventButton.removeAttribute(`disabled`, ``);
+});
+newEventAdd.setEventSubmitButtonHandler((evt) => {
+  evt.preventDefault();
+  remove(newEventAdd);
 });

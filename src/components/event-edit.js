@@ -239,8 +239,13 @@ export default class EventEdit {
   * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на кнопку
   */
-  setArrowBtnCloseHandler(handler) {
+  setBtnResetHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
       .addEventListener(`click`, handler);
+  }
+
+  setBtnSubmitHandler(handler) {
+    this.getElement().querySelector(`.event__save-btn`)
+    .addEventListener(`click`, handler);
   }
 }
