@@ -1,4 +1,5 @@
-import {MonthNames, createElement} from "../util.js";
+import {MonthNames} from "../utils/util.js";
+import {createElement} from "../utils/render.js";
 
 /**
  * Класс списка дней маршрута

@@ -1,4 +1,4 @@
-import {createElement} from "../util.js";
+import {createElement} from "../utils/render.js";
 
 /**
  * Класс формы добавления новой точки маршрута
@@ -143,11 +143,20 @@ export default class EventAdd {
   }
 
   /**
-  * Обраточик события клика на кнопку
+  * Обраточик события клика на кнопку сброса
   * @param {Function} handler - События при клике на кнопку
   */
   setEventResetButtonHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  /**
+  * Обраточик события клика на кнопку отправки
+  * @param {Function} handler - События при клике на кнопку
+  */
+  setEventSubmitButtonHandler(handler) {
+    this.getElement().querySelector(`.event__save-btn`)
       .addEventListener(`click`, handler);
   }
 }
