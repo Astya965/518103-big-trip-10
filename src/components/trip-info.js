@@ -1,14 +1,14 @@
+import AbstractComponent from './abstract-component.js';
 import {MonthNames} from "../utils/util.js";
-import {createElement} from "../utils/render.js";
 
 /**
  * Класс информации о поездке
  */
-export default class TripInfo {
+export default class TripInfo extends AbstractComponent {
   constructor(tripDays) {
+    super();
     this._tripDays = tripDays;
     this._tripEvents = this._tripDays.flat();
-    this._element = null;
   }
 
   /**
@@ -50,23 +50,5 @@ export default class TripInfo {
         <p class="trip-info__dates">${this.getTripInfoDates()}</p>
       </div>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,13 +1,9 @@
-import {createElement} from '../utils/render.js';
+import AbstractComponent from './abstract-component.js';
 
 /**
  * Класс фильтра точек маршрута
  */
-export default class Filter {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Filter extends AbstractComponent {
   /**
   * Генерация разметки фильтра точек маршрута
   * @return {String} Разметка фильтра точек маршрута
@@ -33,23 +29,5 @@ export default class Filter {
         <button class="visually-hidden" type="submit">Accept filter</button>
       </form>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 }

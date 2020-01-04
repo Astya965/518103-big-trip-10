@@ -2,7 +2,7 @@ import SiteMenuComponent from './components/site-menu.js';
 import FilterComponent from './components/filter.js';
 import EventAddBtnComponent from './components/event-add-button.js';
 import EventAddComponent from './components/event-add.js';
-import BoardController from './controllers/board.js';
+import TripController from './controllers/board.js';
 
 import {tripCards} from './mocks/event.js';
 import {render, remove, RenderPosition} from './utils/render.js';
@@ -18,8 +18,8 @@ const addNewEventButton = new EventAddBtnComponent();
 render(tripMain, addNewEventButton.getElement(), RenderPosition.BEFOREEND);
 const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
-const boardController = new BoardController(tripMain);
-boardController.render(tripCards);
+const tripController = new TripController(tripMain);
+tripController.render(tripCards);
 
 const newEventAdd = new EventAddComponent();
 /**

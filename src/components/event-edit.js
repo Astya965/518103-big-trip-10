@@ -1,3 +1,4 @@
+import AbstractComponent from './abstract-component.js';
 import {
   EventCities,
   Transfers,
@@ -5,15 +6,13 @@ import {
   checkDate,
 } from '../mocks/event.js';
 
-import {createElement} from "../utils/render.js";
-
 /**
  * Класс формы редактирования точки маршрута
  */
-export default class EventEdit {
+export default class EventEdit extends AbstractComponent {
   constructor(tripCard) {
+    super();
     this._tripCard = tripCard;
-    this._element = null;
   }
 
   /**
@@ -215,24 +214,6 @@ export default class EventEdit {
         </section>
       </form>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 
   /**

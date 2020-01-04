@@ -1,13 +1,13 @@
+import AbstractComponent from './abstract-component.js';
 import {checkDate} from '../mocks/event.js';
-import {createElement} from "../utils/render.js";
 
 /**
  * Класс формы точки маршрута
  */
-export default class Event {
+export default class Event extends AbstractComponent {
   constructor(tripCard) {
+    super();
     this._tripCard = tripCard;
-    this._element = null;
   }
 
   /**
@@ -76,24 +76,6 @@ export default class Event {
         </div>
       </li>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._tripDays));
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 
   /**

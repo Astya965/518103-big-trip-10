@@ -1,13 +1,9 @@
-import {createElement} from "../utils/render.js";
+import AbstractComponent from './abstract-component.js';
 
 /**
  * Класс формы добавления новой точки маршрута
  */
-export default class EventAdd {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EventAdd extends AbstractComponent {
   /**
   * Генерация разметки формы добавления новой точки маршрута
   * @return {String} Разметка формы добавления новой точки маршрута
@@ -122,24 +118,6 @@ export default class EventAdd {
         </header>
       </form>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 
   /**

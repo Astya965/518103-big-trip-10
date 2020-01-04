@@ -1,13 +1,13 @@
+import AbstractComponent from './abstract-component.js';
 import {MonthNames} from "../utils/util.js";
-import {createElement} from "../utils/render.js";
 
 /**
  * Класс списка дней маршрута
  */
-export default class TripDays {
+export default class TripDays extends AbstractComponent {
   constructor(tripDays) {
+    super();
     this._tripDays = tripDays;
-    this._element = null;
   }
 
   /**
@@ -37,23 +37,5 @@ export default class TripDays {
       }).join(`\n`)}
       </ul>`
     );
-  }
-
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
-  removeElement() {
-    this._element = null;
   }
 }
