@@ -138,7 +138,7 @@ export const generateEvent = () => {
     city: getRandomElement(EventCities),
     startDate: new Date(Math.min(firstDate, secondDate)),
     endDate: new Date(Math.max(firstDate, secondDate)),
-    duration: getDuration(Math.max(firstDate, secondDate) - Math.min(firstDate, secondDate)),
+    duration: Math.max(firstDate, secondDate) - Math.min(firstDate, secondDate),
     offers: mixArray(Offers).slice(0, OFFERS_AMOUNT),
     price: Math.round(getRandomNumber(10, 100)),
     photos: Array(getRandomNumber(1, 4))

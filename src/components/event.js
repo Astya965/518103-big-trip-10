@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {checkDate} from '../mocks/event.js';
+import {checkDate, getDuration} from '../mocks/event.js';
 
 /**
  * Класс формы точки маршрута
@@ -58,7 +58,7 @@ export default class Event extends AbstractComponent {
                 ${checkDate(endDate.getHours())}:${checkDate(endDate.getMinutes())}
               </time>
             </p>
-            <p class="event__duration">${duration}</p>
+            <p class="event__duration">${getDuration(duration)}</p>
           </div>
 
           <p class="event__price">
