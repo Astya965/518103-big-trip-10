@@ -1,74 +1,13 @@
-import EventComponent from '../components/event.js';
-import EventEditComponent from '../components/event-edit.js';
 import NoEventsComponent from '../components/no-events.js';
-import TripSortComponent, {SortTypes} from '../components/trip-sort.js';
+import TripSortComponent, {SortTypes} from '../components/sort.js';
 import TripInfoComponent from '../components/trip-info.js';
 import TripDaysListComponent from '../components/days-list.js';
 import SortedEventsContainer from '../components/sorted-events-container.js';
 
+import PointController from './point.js';
+
 import {generateTripDays, getTripCost, tripCards} from '../mocks/event.js';
-import {render, replace, RenderPosition} from '../utils/render.js';
-
-/**
-* Рендеринг точки маршрута
-* @param {HTMLElement} container - Место вставки элемнета точки маршрута
-* @param {Object} eventCard - Данные для точки маршрута
-*/
-const renderTripEvent = (container, eventCard) => {
-  const eventComponent = new EventComponent(eventCard);
-  const eventEditComponent = new EventEditComponent(eventCard);
-
-  /**
-  * Замена карточку маршрута на форму редактирования точки марщрута
-  */
-  const replaceCardToEdit = () => {
-    replace(eventComponent, eventEditComponent);
-  };
-
-  /**
-  * Замена формы редактирования точки марщрута на карточку маршрута
-  */
-  const replaceEditToCard = () => {
-    replace(eventEditComponent, eventComponent);
-  };
-
-  /**
-  * Событие нажатия на Esc
-  * @param {evt} evt
-  */
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      replaceEditToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  /**
-  * Событие открытия формы редактирования при клике на стрелку
-  */
-  eventComponent.setArrowBtnOpenHandler(() => {
-    replaceCardToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  /**
-  * Событие закрытия формы редактирования при клике на кнопку сброса
-  */
-  eventEditComponent.setBtnResetHandler(() => {
-    replaceEditToCard();
-  });
-
-  /**
-  * Событие закрытия формы редактирования при клике на кнопку отправки
-  */
-  eventEditComponent.setBtnSubmitHandler((evt) => {
-    evt.preventDefault();
-    replaceEditToCard();
-  });
-
-  render(container, eventComponent.getElement(), RenderPosition.BEFOREEND);
-};
+import {render, RenderPosition} from '../utils/render.js';
 
 /**
 * Рендеринг точек маршрута
@@ -77,19 +16,11 @@ const renderTripEvent = (container, eventCard) => {
 const renderTripEvents = (tripCard) => {
   const tripEventsList = document.querySelectorAll(`.trip-events__list`);
   tripEventsList.forEach((tripDay) => {
+    const pointController = new PointController(tripDay);
     if (tripDay.dataset.date === `${tripCard.startDate.getDate()}/${tripCard.startDate.getMonth()}`) {
-      renderTripEvent(tripDay, tripCard);
+      pointController.render(tripCard);
     }
   });
-};
-
-/**
-* Рендеринг сортированных точек маршрута
-* @param {HTMLElement} container - Место вставки элемнета точки маршрута
-* @param {Object} sortedCard - Данные для точки маршрута
-*/
-const renderSortedTripEvents = (container, sortedCard) => {
-  renderTripEvent(container, sortedCard);
 };
 
 /**
@@ -146,7 +77,8 @@ export default class BoardController {
           render(siteTripEventsElement, new SortedEventsContainer().getElement(), RenderPosition.BEFOREEND);
           const tripEventsList = document.querySelector(`.trip-events__list`);
           sortedEvents.forEach((sortedEvent) => {
-            renderSortedTripEvents(tripEventsList, sortedEvent);
+            const pointController = new PointController(tripEventsList);
+            pointController.render(sortedEvent);
           });
           return;
         } else if (sortType === SortTypes.DEFAULT) {
