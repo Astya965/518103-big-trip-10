@@ -4,6 +4,7 @@ import NoEventsComponent from '../components/no-events.js';
 import TripSortComponent, {SortTypes} from '../components/trip-sort.js';
 import TripInfoComponent from '../components/trip-info.js';
 import TripDaysListComponent from '../components/days-list.js';
+import SortedEventsContainer from '../components/sorted-events-container.js';
 
 import {generateTripDays, getTripCost, tripCards} from '../mocks/event.js';
 import {render, replace, RenderPosition} from '../utils/render.js';
@@ -140,20 +141,15 @@ export default class BoardController {
             break;
         }
 
+        document.querySelector(`.trip-days`).remove();
         if (sortType === SortTypes.TIME || sortType === SortTypes.PRICE) {
-          const tripDaysList = document.querySelectorAll(`.day`);
-          tripDaysList.forEach((day) => {
-            day.querySelector(`.day__info`).innerHTML = ``;
-            day.querySelector(`.trip-events__list`).innerHTML = ``;
-          });
+          render(siteTripEventsElement, new SortedEventsContainer().getElement(), RenderPosition.BEFOREEND);
           const tripEventsList = document.querySelector(`.trip-events__list`);
           sortedEvents.forEach((sortedEvent) => {
-            console.log(sortedEvent.duration);
             renderSortedTripEvents(tripEventsList, sortedEvent);
           });
           return;
         } else if (sortType === SortTypes.DEFAULT) {
-          document.querySelector(`.trip-days`).remove();
           render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
           sortedEvents.forEach((tripCard) => {
             renderTripEvents(tripCard);
