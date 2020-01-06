@@ -218,6 +218,15 @@ export default class EventEdit extends AbstractComponent {
 
   /**
   * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на стрелку
+  */
+  setArrowBtnCloseHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+    .addEventListener(`click`, handler);
+  }
+
+  /**
+  * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на кнопку сброса
   */
   setBtnResetHandler(handler) {

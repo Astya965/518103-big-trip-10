@@ -27,6 +27,14 @@ export default class PointContoller {
     });
 
     /**
+    * Событие закрытия формы редактирования при клике на стрелку
+    */
+    this._eventEditComponent.setArrowBtnCloseHandler(() => {
+      this._replaceEditToCard();
+      document.addEventListener(`keydown`, this._onEscKeyDown);
+    });
+
+    /**
     * Событие закрытия формы редактирования при клике на кнопку сброса
     */
     this._eventEditComponent.setBtnResetHandler(() => {
