@@ -1,7 +1,7 @@
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import NoEventsComponent from '../components/no-events.js';
-import TripSortComponent from '../components/trip-sort.js';
+import TripSortComponent, {SortTypes} from '../components/trip-sort.js';
 import TripInfoComponent from '../components/trip-info.js';
 import TripDaysListComponent from '../components/days-list.js';
 
@@ -70,7 +70,7 @@ const renderTripEvent = (container, eventCard) => {
 };
 
 /**
-* Рендеринг точки маршрута
+* Рендеринг точек маршрута
 * @param {Object} tripCard - Данные для точки маршрута
 */
 const renderTripEvents = (tripCard) => {
@@ -83,12 +83,22 @@ const renderTripEvents = (tripCard) => {
 };
 
 /**
+* Рендеринг сортированных точек маршрута
+* @param {HTMLElement} container - Место вставки элемнета точки маршрута
+* @param {Object} sortedCard - Данные для точки маршрута
+*/
+const renderSortedTripEvents = (container, sortedCard) => {
+  renderTripEvent(container, sortedCard);
+};
+
+/**
  * Класс основной панели взаимодействия (инфрмация, сортировка, карточки
  * либо приветственное собщение при остутствии карточек)
  */
 export default class BoardController {
   constructor(container) {
     this._container = container;
+    this._sortComponent = new TripSortComponent();
   }
 
   /**
@@ -103,15 +113,52 @@ export default class BoardController {
       const tripDays = generateTripDays(tripCards);
       const siteTripInfoElement = document.querySelector(`.trip-info`);
 
-      render(siteTripEventsElement, new TripSortComponent().getElement(), RenderPosition.BEFOREEND);
+      render(siteTripEventsElement, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
       render(siteTripInfoElement, new TripInfoComponent(tripDays).getElement(), RenderPosition.AFTERBEGIN);
       const siteTripInfoCostElement = document.querySelector(`.trip-info__cost-value`);
       siteTripInfoCostElement.textContent = getTripCost(tripDays);
 
       render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
 
+
       tripCards.forEach((tripCard) => {
         renderTripEvents(tripCard);
+      });
+
+      this._sortComponent.setSortTypeChangeHandler((sortType) => {
+        let sortedEvents = [];
+
+        switch (sortType) {
+          case SortTypes.DEFAULT:
+            sortedEvents = tripCards;
+            break;
+          case SortTypes.TIME:
+            sortedEvents = tripCards.slice().sort((a, b) => b.duration - a.duration);
+            break;
+          case SortTypes.PRICE:
+            sortedEvents = tripCards.slice().sort((a, b) => b.price - a.price);
+            break;
+        }
+
+        if (sortType === SortTypes.TIME || sortType === SortTypes.PRICE) {
+          const tripDaysList = document.querySelectorAll(`.day`);
+          tripDaysList.forEach((day) => {
+            day.querySelector(`.day__info`).innerHTML = ``;
+            day.querySelector(`.trip-events__list`).innerHTML = ``;
+          });
+          const tripEventsList = document.querySelector(`.trip-events__list`);
+          sortedEvents.forEach((sortedEvent) => {
+            console.log(sortedEvent.duration);
+            renderSortedTripEvents(tripEventsList, sortedEvent);
+          });
+          return;
+        } else if (sortType === SortTypes.DEFAULT) {
+          document.querySelector(`.trip-days`).remove();
+          render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
+          sortedEvents.forEach((tripCard) => {
+            renderTripEvents(tripCard);
+          });
+        }
       });
     }
   }
