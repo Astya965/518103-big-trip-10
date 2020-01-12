@@ -42,20 +42,20 @@ export default class BoardController {
 
       render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
 
-      this._tripEvents = this.renderTripEvents();
+      this._tripEvents = this.renderTripEvents(this._onDataChange);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         let sortedEvents = [];
 
         switch (sortType) {
           case SortTypes.DEFAULT:
-            sortedEvents = this._cards;
+            sortedEvents = this._tripCards;
             break;
           case SortTypes.TIME:
-            sortedEvents = this._cards.slice().sort((a, b) => b.duration - a.duration);
+            sortedEvents = this._tripCards.slice().sort((a, b) => b.duration - a.duration);
             break;
           case SortTypes.PRICE:
-            sortedEvents = this._cards.slice().sort((a, b) => b.price - a.price);
+            sortedEvents = this._tripCards.slice().sort((a, b) => b.price - a.price);
             break;
         }
 
@@ -70,9 +70,7 @@ export default class BoardController {
           return;
         } else if (sortType === SortTypes.DEFAULT) {
           render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
-          sortedEvents.forEach((tripCard) => {
-            this.renderTripEvents(tripCard);
-          });
+          this.renderTripEvents(this._onDataChange);
         }
       });
     }
@@ -80,16 +78,18 @@ export default class BoardController {
 
   /**
   * Изменение точки маршрута на основе новых данных
-  * @param {Function} oldEvent - Старая точка маршрута
-  * @param {Function} newEvent - Новая точка маршрута
+  * @param {Class} pointController
+  * @param {Function} oldData - Старая точка маршрута
+  * @param {Function} newData - Новая точка маршрута
   */
-  _onDataChange(oldEvent, newEvent) {
-    const eventIndex = this._tripEvents.findIndex((tripEvent) => tripEvent === oldEvent);
-    if (eventIndex !== -1) {
-      this._tripEvents[eventIndex] = newEvent;
+  _onDataChange(pointController, oldData, newData) {
+    const eventIndex = this._tripDays.flat().findIndex((it) => it === oldData);
+    if (eventIndex === -1) {
+      return;
     }
-
-    PointController.render(newEvent);
+    console.log(newData);
+    this._tripEvents = [].concat(this._tripDays.flat().slice(0, eventIndex), newData, this._tripDays.flat().slice(eventIndex + 1));
+    pointController.render(this._tripEvents[eventIndex]);
   }
 
   /**

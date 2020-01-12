@@ -21,7 +21,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._city = this._tripCard.city;
     this._offers = this._tripCard.offers;
 
-    this._submitHandler = null;
     this._resetHandler = null;
 
     this._subscribeOnEvents();
@@ -235,6 +234,8 @@ export default class EventEdit extends AbstractSmartComponent {
   setArrowBtnCloseHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, handler);
+
+    this._resetHandler = handler;
   }
 
   /**
@@ -244,6 +245,8 @@ export default class EventEdit extends AbstractSmartComponent {
   setBtnResetHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
       .addEventListener(`click`, handler);
+
+    this._resetHandler = handler;
   }
 
   /**
@@ -253,6 +256,8 @@ export default class EventEdit extends AbstractSmartComponent {
   setBtnSubmitHandler(handler) {
     this.getElement().querySelector(`.event__save-btn`)
     .addEventListener(`click`, handler);
+
+    this._resetHandler = handler;
   }
 
   /**
@@ -262,13 +267,19 @@ export default class EventEdit extends AbstractSmartComponent {
   setFavoriteHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
     .addEventListener(`click`, handler);
+
+    this._resetHandler = handler;
   }
 
   /**
   * Восстановление обработчиков событий
   */
   recoveryListeners() {
-    return;
+    this.setBtnSubmitHandler(this._resetHandler);
+    this.setArrowBtnCloseHandler(this._resetHandler);
+    this.setBtnResetHandler(this._resetHandler);
+    this.setFavoriteHandler(this._resetHandler);
+    this._subscribeOnEvents();
   }
 
   _subscribeOnEvents() {
@@ -281,6 +292,7 @@ export default class EventEdit extends AbstractSmartComponent {
       this._offers = getOffers();
       this._tripCard.offers = this._offers;
       this.rerender();
+      console.log(this._tripCard);
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {

@@ -24,7 +24,7 @@ export default class PointContoller {
     this._eventEditComponent = new EventEditComponent(eventCard);
 
     const oldEventComponent = this._eventComponent;
-    const oldEditEventComponent = this._editEventComponent;
+    const oldEditEventComponent = this._eventEditComponent;
 
     /**
     * Событие открытия формы редактирования при клике на стрелку
@@ -61,7 +61,9 @@ export default class PointContoller {
     * Событие добления карточки в избранное при клике на кнопку «Favorite»
     */
     this._eventEditComponent.setFavoriteHandler(() => {
-      this._onDataChange(oldEventComponent);
+      this._onDataChange(this, this._eventCard, Object.assign({}, this._eventCard, {
+        isFavorite: !oldEventComponent.isFavorite
+      }));
     });
 
     render(this._container, this._eventComponent.getElement(), RenderPosition.BEFOREEND);
