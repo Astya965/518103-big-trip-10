@@ -144,7 +144,8 @@ export const generateEvent = () => {
     photos: Array(getRandomNumber(1, 4))
             .fill(``)
             .map(getRandomPhoto),
-    description: getRandomDescription(TEXT)
+    description: getRandomDescription(TEXT),
+    isFavorite: false
   };
 };
 

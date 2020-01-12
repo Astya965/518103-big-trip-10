@@ -10,20 +10,6 @@ import {generateTripDays, getTripCost, tripCards} from '../mocks/event.js';
 import {render, RenderPosition} from '../utils/render.js';
 
 /**
-* Рендеринг точек маршрута
-* @param {Object} tripCard - Данные для точки маршрута
-*/
-const renderTripEvents = (tripCard) => {
-  const tripEventsList = document.querySelectorAll(`.trip-events__list`);
-  tripEventsList.forEach((tripDay) => {
-    const pointController = new PointController(tripDay);
-    if (tripDay.dataset.date === `${tripCard.startDate.getDate()}/${tripCard.startDate.getMonth()}`) {
-      pointController.render(tripCard);
-    }
-  });
-};
-
-/**
  * Класс основной панели взаимодействия (инфрмация, сортировка, карточки
  * либо приветственное собщение при остутствии карточек)
  */
@@ -31,6 +17,11 @@ export default class BoardController {
   constructor(container) {
     this._container = container;
     this._sortComponent = new TripSortComponent();
+    this._tripCards = tripCards;
+    this._tripDays = generateTripDays(tripCards);
+    this._tripEvents = [];
+
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   /**
@@ -42,33 +33,29 @@ export default class BoardController {
     if (tripCards.length === 0) {
       render(siteTripEventsElement, new NoEventsComponent().getElement(), RenderPosition.BEFOREEND);
     } else {
-      const tripDays = generateTripDays(tripCards);
       const siteTripInfoElement = document.querySelector(`.trip-info`);
 
       render(siteTripEventsElement, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
-      render(siteTripInfoElement, new TripInfoComponent(tripDays).getElement(), RenderPosition.AFTERBEGIN);
+      render(siteTripInfoElement, new TripInfoComponent(this._tripDays).getElement(), RenderPosition.AFTERBEGIN);
       const siteTripInfoCostElement = document.querySelector(`.trip-info__cost-value`);
-      siteTripInfoCostElement.textContent = getTripCost(tripDays);
+      siteTripInfoCostElement.textContent = getTripCost(this._tripDays);
 
-      render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
+      render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
 
-
-      tripCards.forEach((tripCard) => {
-        renderTripEvents(tripCard);
-      });
+      this._tripEvents = this.renderTripEvents();
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         let sortedEvents = [];
 
         switch (sortType) {
           case SortTypes.DEFAULT:
-            sortedEvents = tripCards;
+            sortedEvents = this._cards;
             break;
           case SortTypes.TIME:
-            sortedEvents = tripCards.slice().sort((a, b) => b.duration - a.duration);
+            sortedEvents = this._cards.slice().sort((a, b) => b.duration - a.duration);
             break;
           case SortTypes.PRICE:
-            sortedEvents = tripCards.slice().sort((a, b) => b.price - a.price);
+            sortedEvents = this._cards.slice().sort((a, b) => b.price - a.price);
             break;
         }
 
@@ -77,17 +64,46 @@ export default class BoardController {
           render(siteTripEventsElement, new SortedEventsContainer().getElement(), RenderPosition.BEFOREEND);
           const tripEventsList = document.querySelector(`.trip-events__list`);
           sortedEvents.forEach((sortedEvent) => {
-            const pointController = new PointController(tripEventsList);
+            const pointController = new PointController(tripEventsList, this._onDataChange);
             pointController.render(sortedEvent);
           });
           return;
         } else if (sortType === SortTypes.DEFAULT) {
-          render(siteTripEventsElement, new TripDaysListComponent(tripDays).getElement(), RenderPosition.BEFOREEND);
+          render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
           sortedEvents.forEach((tripCard) => {
-            renderTripEvents(tripCard);
+            this.renderTripEvents(tripCard);
           });
         }
       });
     }
+  }
+
+  _onDataChange(oldEvent, newEvent) {
+    const eventIndex = this._tripEvents.findIndex((tripEvent) => tripEvent === oldEvent);
+    if (eventIndex !== -1) {
+      this._tripEvents[eventIndex] = newEvent;
+    }
+
+    PointController.render(newEvent);
+  }
+
+  /**
+  * Рендеринг точек маршрута
+  * @param {Function} onDataChange - Что-то делает
+  * @return {Array} Массив элементов разметки точек маршрута
+  */
+  renderTripEvents(onDataChange) {
+    const events = [];
+    const tripEventsList = document.querySelectorAll(`.trip-events__list`);
+    this._tripCards.forEach((tripCard) => {
+      tripEventsList.forEach((tripDay) => {
+        const pointController = new PointController(tripDay, onDataChange);
+        if (tripDay.dataset.date === `${tripCard.startDate.getDate()}/${tripCard.startDate.getMonth()}`) {
+          pointController.render(tripCard);
+          events.push(pointController);
+        }
+      });
+    });
+    return events;
   }
 }
