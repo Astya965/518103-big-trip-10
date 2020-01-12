@@ -20,19 +20,19 @@ const HOUR = 3600 * 1000;
 // Убери из максимальной даты магические числа
 
 export const Transfers = [
-  `Taxi`,
-  `Bus`,
-  `Train`,
-  `Ship`,
-  `Transport`,
-  `Drive`,
-  `Flight`,
+  `taxi`,
+  `bus`,
+  `train`,
+  `ship`,
+  `transport`,
+  `drive`,
+  `flight`,
 ];
 
 export const Activitys = [
-  `Check-in`,
-  `Sightseeing`,
-  `Restaurant`,
+  `check-in`,
+  `sightseeing`,
+  `restaurant`,
 ];
 
 /**
@@ -94,8 +94,8 @@ const getRandomPhoto = () => `http://picsum.photos/300/150?r=${Math.random()}`;
  * @param {String} text - Текст
  * @return {String} Cлучайное описание
  */
-const getRandomDescription = (text) => {
-  const textArray = text.split(`.`);
+export const getRandomDescription = () => {
+  const textArray = TEXT.split(`.`);
   return textArray.slice(0, getRandomNumber(1, 4))
                   .join(`. `);
 };
@@ -125,6 +125,14 @@ export const getDuration = (duration) => {
   return `${rdays > 0 ? rdays + `D` : ``} ${rhours > 0 ? rhours + `H` : ``} ${rminutes}M`;
 };
 
+/**
+ * Генерация случайный набор специальных предложений
+ * @return {Array} Случайный набор специальных предложений
+ */
+export const getOffers = () => {
+  return mixArray(Offers).slice(0, OFFERS_AMOUNT);
+};
+
 
 /**
  * Генерация мокков для точки маршрута
@@ -139,12 +147,12 @@ export const generateEvent = () => {
     startDate: new Date(Math.min(firstDate, secondDate)),
     endDate: new Date(Math.max(firstDate, secondDate)),
     duration: Math.max(firstDate, secondDate) - Math.min(firstDate, secondDate),
-    offers: mixArray(Offers).slice(0, OFFERS_AMOUNT),
+    offers: getOffers(),
     price: Math.round(getRandomNumber(10, 100)),
     photos: Array(getRandomNumber(1, 4))
             .fill(``)
             .map(getRandomPhoto),
-    description: getRandomDescription(TEXT),
+    description: getRandomDescription(),
     isFavorite: false
   };
 };

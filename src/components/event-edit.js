@@ -1,18 +1,30 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {
   EventCities,
   Transfers,
   Activitys,
   checkDate,
+  getOffers,
+  getRandomDescription
 } from '../mocks/event.js';
+import {capitalizeFirstLetter} from '../utils/util.js';
 
 /**
  * Класс формы редактирования точки маршрута
  */
-export default class EventEdit extends AbstractComponent {
+export default class EventEdit extends AbstractSmartComponent {
   constructor(tripCard) {
     super();
     this._tripCard = tripCard;
+    this._type = this._tripCard.type;
+    this._description = this._tripCard.description;
+    this._city = this._tripCard.city;
+    this._offers = this._tripCard.offers;
+
+    this._submitHandler = null;
+    this._resetHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   /**
@@ -27,15 +39,15 @@ export default class EventEdit extends AbstractComponent {
         return (
           `<div class="event__type-item">
             <input
-            id="event-type-${typeItem.toLowerCase()}-1"
+            id="event-type-${typeItem}-1"
             class="event__type-input
             visually-hidden"
             type="radio"
             name="event-type"
-            value="${typeItem.toLowerCase()}"
+            value="${typeItem}"
             ${tripCard.type === typeItem && `checked`}
             >
-            <label class="event__type-label  event__type-label--${typeItem.toLowerCase()}" for="event-type-${typeItem.toLowerCase()}-1">${typeItem}</label>
+            <label class="event__type-label  event__type-label--${typeItem}" for="event-type-${typeItem}-1">${capitalizeFirstLetter(typeItem)}</label>
           </div>`
         );
       })
@@ -64,7 +76,7 @@ export default class EventEdit extends AbstractComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, city, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
+    const {description, city, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(EventCities);
@@ -77,7 +89,7 @@ export default class EventEdit extends AbstractComponent {
               <img
                 class="event__type-icon"
                 width="17" height="17"
-                src="img/icons/${type.toLowerCase()}.png"
+                src="img/icons/${this._type}.png"
                 alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
@@ -97,7 +109,7 @@ export default class EventEdit extends AbstractComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} to
+            ${capitalizeFirstLetter(this._type)} to
             </label>
             <input
               class="event__input
@@ -250,5 +262,35 @@ export default class EventEdit extends AbstractComponent {
   setFavoriteHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
     .addEventListener(`click`, handler);
+  }
+
+  /**
+  * Восстановление обработчиков событий
+  */
+  recoveryListeners() {
+    return;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+    const EventType = Transfers.concat(Activitys);
+
+    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
+      this._type = EventType.find((eventType) => eventType === evt.target.value);
+      this._tripCard.type = this._type;
+      this._offers = getOffers();
+      this._tripCard.offers = this._offers;
+      this.rerender();
+    });
+
+    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+      if (EventCities.includes(evt.target.value)) {
+        this._city = evt.target.value;
+        this._tripCard.city = this._city;
+        this._description = getRandomDescription();
+        this._tripCard.description = this._description;
+      }
+      this.rerender();
+    });
   }
 }

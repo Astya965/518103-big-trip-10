@@ -78,6 +78,11 @@ export default class BoardController {
     }
   }
 
+  /**
+  * Изменение точки маршрута на основе новых данных
+  * @param {Function} oldEvent - Старая точка маршрута
+  * @param {Function} newEvent - Новая точка маршрута
+  */
   _onDataChange(oldEvent, newEvent) {
     const eventIndex = this._tripEvents.findIndex((tripEvent) => tripEvent === oldEvent);
     if (eventIndex !== -1) {
