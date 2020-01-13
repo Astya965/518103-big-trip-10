@@ -22,6 +22,7 @@ export default class BoardController {
     this._tripEvents = [];
 
     this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
   /**
@@ -42,7 +43,7 @@ export default class BoardController {
 
       render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
 
-      this._tripEvents = this.renderTripEvents(this._onDataChange);
+      this._tripEvents = this.renderTripEvents(this._onDataChange, this._onViewChange);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         let sortedEvents = [];
@@ -64,13 +65,13 @@ export default class BoardController {
           render(siteTripEventsElement, new SortedEventsContainer().getElement(), RenderPosition.BEFOREEND);
           const tripEventsList = document.querySelector(`.trip-events__list`);
           sortedEvents.forEach((sortedEvent) => {
-            const pointController = new PointController(tripEventsList, this._onDataChange);
+            const pointController = new PointController(tripEventsList, this._onDataChange, this._onViewChange);
             pointController.render(sortedEvent);
           });
           return;
         } else if (sortType === SortTypes.DEFAULT) {
           render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
-          this.renderTripEvents(this._onDataChange);
+          this.renderTripEvents(this._onDataChange, this._onViewChange);
         }
       });
     }
@@ -87,22 +88,26 @@ export default class BoardController {
     if (eventIndex === -1) {
       return;
     }
-    console.log(newData);
     this._tripEvents = [].concat(this._tripDays.flat().slice(0, eventIndex), newData, this._tripDays.flat().slice(eventIndex + 1));
     pointController.render(this._tripEvents[eventIndex]);
   }
 
+  _onViewChange() {
+    this._tripEvents.forEach((it) => it.setDefaultView());
+  }
+
   /**
   * Рендеринг точек маршрута
-  * @param {Function} onDataChange - Что-то делает
+  * @param {Function} onDataChange
+  * @param {Function} onViewChange
   * @return {Array} Массив элементов разметки точек маршрута
   */
-  renderTripEvents(onDataChange) {
+  renderTripEvents(onDataChange, onViewChange) {
     const events = [];
     const tripEventsList = document.querySelectorAll(`.trip-events__list`);
     this._tripCards.forEach((tripCard) => {
       tripEventsList.forEach((tripDay) => {
-        const pointController = new PointController(tripDay, onDataChange);
+        const pointController = new PointController(tripDay, onDataChange, onViewChange);
         if (tripDay.dataset.date === `${tripCard.startDate.getDate()}/${tripCard.startDate.getMonth()}`) {
           pointController.render(tripCard);
           events.push(pointController);

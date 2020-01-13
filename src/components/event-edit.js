@@ -227,6 +227,14 @@ export default class EventEdit extends AbstractSmartComponent {
     );
   }
 
+  reset() {
+    const editCard = this._tripCard;
+    this._eventType = editCard.type;
+    this._destination = editCard.destination;
+    this._description = editCard.description;
+    this.rerender();
+  }
+
   /**
   * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на стрелку
@@ -267,8 +275,6 @@ export default class EventEdit extends AbstractSmartComponent {
   setFavoriteHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`)
     .addEventListener(`click`, handler);
-
-    this._resetHandler = handler;
   }
 
   /**
@@ -278,7 +284,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setBtnSubmitHandler(this._resetHandler);
     this.setArrowBtnCloseHandler(this._resetHandler);
     this.setBtnResetHandler(this._resetHandler);
-    this.setFavoriteHandler(this._resetHandler);
     this._subscribeOnEvents();
   }
 
@@ -288,19 +293,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = EventType.find((eventType) => eventType === evt.target.value);
-      this._tripCard.type = this._type;
       this._offers = getOffers();
-      this._tripCard.offers = this._offers;
       this.rerender();
-      console.log(this._tripCard);
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       if (EventCities.includes(evt.target.value)) {
         this._city = evt.target.value;
-        this._tripCard.city = this._city;
         this._description = getRandomDescription();
-        this._tripCard.description = this._description;
       }
       this.rerender();
     });

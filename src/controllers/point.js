@@ -3,14 +3,26 @@ import EventEditComponent from '../components/event-edit.js';
 
 import {render, replace, RenderPosition} from '../utils/render.js';
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class PointContoller {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
 
     this._eventComponent = null;
     this._editEventComponent = null;
 
+    this._mode = Mode.DEFAULT;
+
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
+
+    this._replaceEditToCard = this._replaceEditToCard.bind(this);
+    this._replaceCardToEdit = this._replaceCardToEdit.bind(this);
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   /**
@@ -66,7 +78,17 @@ export default class PointContoller {
       }));
     });
 
+    if (oldEventComponent && oldEditEventComponent) {
+      replace(this._eventComponent, oldEventComponent);
+      replace(this._eventEditComponent, oldEditEventComponent);
+    }
     render(this._container, this._eventComponent.getElement(), RenderPosition.BEFOREEND);
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceCardToEdit();
+    }
   }
 
   /**
@@ -94,4 +116,5 @@ export default class PointContoller {
   _replaceEditToCard() {
     replace(this._eventEditComponent, this._eventComponent);
   }
+
 }
