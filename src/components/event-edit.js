@@ -270,15 +270,6 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   /**
-  * Обраточик события клика на кнопку «Favorite»
-  * @param {Function} handler - События при клике на кнопку «Favorite»
-  */
-  setFavoriteHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`)
-    .addEventListener(`click`, handler);
-  }
-
-  /**
   * Восстановление обработчиков событий
   */
   recoveryListeners() {
@@ -291,6 +282,10 @@ export default class EventEdit extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
     const EventType = Transfers.concat(Activitys);
+
+    element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
+      this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
+    });
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = EventType.find((eventType) => eventType === evt.target.value);

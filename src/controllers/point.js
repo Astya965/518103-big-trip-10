@@ -67,17 +67,8 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
-      this._onDataChange(this, this._tripCard, this._eventCard);
+      this._onDataChange(this, this._eventCard, this._eventEditComponent._tripCard);
       this.setDefaultView();
-    });
-
-    /**
-    * Событие добления карточки в избранное при клике на кнопку «Favorite»
-    */
-    this._eventEditComponent.setFavoriteHandler(() => {
-      this._onDataChange(this, this._eventCard, Object.assign({}, this._eventCard, {
-        isFavorite: !this._eventCard.isFavorite
-      }));
     });
 
     if (oldEventComponent && oldEditEventComponent) {
@@ -85,6 +76,7 @@ export default class PointContoller {
       replace(this._eventEditComponent, oldEditEventComponent);
     }
     render(this._container, this._eventComponent.getElement(), RenderPosition.BEFOREEND);
+
   }
 
   /**
