@@ -229,9 +229,10 @@ export default class EventEdit extends AbstractSmartComponent {
 
   reset() {
     const editCard = this._tripCard;
-    this._eventType = editCard.type;
-    this._destination = editCard.destination;
+    this._type = editCard.type;
+    this._city = editCard.city;
     this._description = editCard.description;
+    this._offers = editCard.offers;
     this.rerender();
   }
 

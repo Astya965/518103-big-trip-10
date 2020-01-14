@@ -88,8 +88,10 @@ export default class BoardController {
     if (eventIndex === -1) {
       return;
     }
+    console.log(newData);
     this._tripEvents = [].concat(this._tripDays.flat().slice(0, eventIndex), newData, this._tripDays.flat().slice(eventIndex + 1));
     pointController.render(this._tripEvents[eventIndex]);
+    console.log(this._tripEvents[eventIndex].isFavorite);
   }
 
   _onViewChange() {

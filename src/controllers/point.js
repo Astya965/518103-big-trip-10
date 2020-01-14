@@ -10,6 +10,7 @@ const Mode = {
 
 export default class PointContoller {
   constructor(container, onDataChange, onViewChange) {
+    this._tripCard = null;
     this._container = container;
 
     this._eventComponent = null;
@@ -42,23 +43,23 @@ export default class PointContoller {
     * Событие открытия формы редактирования при клике на стрелку
     */
     this._eventComponent.setArrowBtnOpenHandler(() => {
-      this._replaceCardToEdit();
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+      this._showEdit();
     });
 
     /**
     * Событие закрытия формы редактирования при клике на стрелку
     */
     this._eventEditComponent.setArrowBtnCloseHandler(() => {
-      this._replaceEditToCard();
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+      this._eventEditComponent.reset();
+      this._showСard();
     });
 
     /**
     * Событие закрытия формы редактирования при клике на кнопку сброса
     */
     this._eventEditComponent.setBtnResetHandler(() => {
-      this._replaceEditToCard();
+      this._eventEditComponent.reset();
+      this._showСard();
     });
 
     /**
@@ -66,7 +67,8 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
-      this._replaceEditToCard();
+      this._onDataChange(this, this._tripCard, this._eventCard);
+      this.setDefaultView();
     });
 
     /**
@@ -74,7 +76,7 @@ export default class PointContoller {
     */
     this._eventEditComponent.setFavoriteHandler(() => {
       this._onDataChange(this, this._eventCard, Object.assign({}, this._eventCard, {
-        isFavorite: !oldEventComponent.isFavorite
+        isFavorite: !this._eventCard.isFavorite
       }));
     });
 
@@ -85,9 +87,12 @@ export default class PointContoller {
     render(this._container, this._eventComponent.getElement(), RenderPosition.BEFOREEND);
   }
 
+  /**
+  * Возвращение карточек в обычное состояние
+  */
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceCardToEdit();
+      this._showСard();
     }
   }
 
@@ -98,9 +103,22 @@ export default class PointContoller {
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
-      this._replaceEditToCard();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      this._showEvent();
     }
+  }
+
+  _showСard() {
+    this._eventEditComponent.reset();
+    this._replaceEditToCard();
+    document.removeEventListener(`keydown`, this._onEscKeyPress);
+    this._mode = Mode.DEFAULT;
+  }
+
+  _showEdit() {
+    this._onViewChange();
+    this._replaceCardToEdit();
+    document.addEventListener(`keydown`, this._onEscKeyPress);
+    this._mode = Mode.EDIT;
   }
 
   /**
