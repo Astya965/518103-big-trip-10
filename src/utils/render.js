@@ -50,5 +50,19 @@ export const remove = (component) => {
  * @param {HTMLElement} oldComponent - Элемент который будет заменен.
  */
 export const replace = (newComponent, oldComponent) => {
-  newComponent.getElement().replaceWith(oldComponent.getElement());
+  if (!newComponent) {
+    throw new Error(`Please, send new component as argument`);
+
+  } else if (!oldComponent) {
+    throw new Error(`Please, send old component as argument`);
+
+  } else {
+    const newElement = newComponent.getElement();
+    const oldElement = oldComponent.getElement();
+    const parentElement = oldElement.parentElement;
+
+    if (parentElement) {
+      parentElement.replaceChild(newElement, oldElement);
+    }
+  }
 };

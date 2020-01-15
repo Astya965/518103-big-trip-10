@@ -21,8 +21,6 @@ export default class PointContoller {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
 
-    this._replaceEditToCard = this._replaceEditToCard.bind(this);
-    this._replaceCardToEdit = this._replaceCardToEdit.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
@@ -117,14 +115,14 @@ export default class PointContoller {
   * Замена карточку маршрута на форму редактирования точки марщрута
   */
   _replaceCardToEdit() {
-    replace(this._eventComponent, this._eventEditComponent);
+    replace(this._eventEditComponent, this._eventComponent);
   }
 
   /**
   * Замена формы редактирования точки марщрута на карточку маршрута
   */
   _replaceEditToCard() {
-    replace(this._eventEditComponent, this._eventComponent);
+    replace(this._eventComponent, this._eventEditComponent);
   }
 
 }
