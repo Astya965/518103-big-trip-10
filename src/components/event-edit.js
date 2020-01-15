@@ -284,7 +284,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
       this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
-      console.log(this._tripCard);
     });
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
