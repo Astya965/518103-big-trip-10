@@ -9,6 +9,9 @@ import {
 } from '../mocks/event.js';
 import {capitalizeFirstLetter} from '../utils/util.js';
 
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
 /**
  * Класс формы редактирования точки маршрута
  */
@@ -20,7 +23,10 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._resetHandler = null;
     this._submitHandler = null;
+    this._flatpickr = null;
 
+    this._removeFlatpickr = this.removeFlatpickr.bind(this);
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -225,6 +231,11 @@ export default class EventEdit extends AbstractSmartComponent {
     );
   }
 
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
+  }
+
   reset() {
     this._tripCard = Object.assign({}, this._tripCardForReset, {isFavorite: this._tripCard.isFavorite});
     this.rerender();
@@ -304,4 +315,31 @@ export default class EventEdit extends AbstractSmartComponent {
       this.rerender();
     });
   }
+
+  _removeFlatpickr() {
+    if (this._flatpickr.START && this._flatpickr.END) {
+      this._flatpickr.START.destroy();
+      this._flatpickr.END.destroy();
+      this._flatpickr.START = null;
+      this._flatpickr.END = null;
+    }
+  }
+
+  _applyFlatpickr() {
+    this._removeFlatpickr();
+
+    const [startDateInput, endDateInput] = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
+    this._flatpickr.START = this._createFlatpickrInput(startDateInput, this._event.startDate);
+    this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._event.endDate);
+  }
+
+  _createFlatpickrInput(node, date) {
+    return flatpickr(node, {
+      allowInput: true,
+      enableTime: true,
+      defaultDate: new Date(date),
+      dateFormat: `d/m/Y H:i`
+    });
+  }
+
 }
