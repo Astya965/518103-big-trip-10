@@ -16,12 +16,10 @@ export default class EventEdit extends AbstractSmartComponent {
   constructor(tripCard) {
     super();
     this._tripCard = tripCard;
-    this._type = this._tripCard.type;
-    this._description = this._tripCard.description;
-    this._city = this._tripCard.city;
-    this._offers = this._tripCard.offers;
+    this._tripCardForReset = Object.assign({}, tripCard);
 
     this._resetHandler = null;
+    this._submitHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -75,7 +73,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {description, city, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
+    const {type, description, city, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(EventCities);
@@ -88,7 +86,7 @@ export default class EventEdit extends AbstractSmartComponent {
               <img
                 class="event__type-icon"
                 width="17" height="17"
-                src="img/icons/${this._type}.png"
+                src="img/icons/${type}.png"
                 alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
@@ -108,7 +106,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${capitalizeFirstLetter(this._type)} to
+            ${capitalizeFirstLetter(type)} to
             </label>
             <input
               class="event__input
@@ -228,11 +226,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   reset() {
-    const editCard = this._tripCard;
-    this._type = editCard.type;
-    this._city = editCard.city;
-    this._description = editCard.description;
-    this._offers = editCard.offers;
+    this._tripCard = Object.assign({}, this._tripCardForReset, {isFavorite: this._tripCard.isFavorite});
     this.rerender();
   }
 
@@ -241,10 +235,12 @@ export default class EventEdit extends AbstractSmartComponent {
   * @param {Function} handler - События при клике на стрелку
   */
   setArrowBtnCloseHandler(handler) {
+    if (!this._resetHandler) {
+      this._resetHandler = handler;
+    }
+
     this.getElement().querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, handler);
-
-    this._resetHandler = handler;
   }
 
   /**
@@ -252,10 +248,12 @@ export default class EventEdit extends AbstractSmartComponent {
   * @param {Function} handler - События при клике на кнопку сброса
   */
   setBtnResetHandler(handler) {
+    if (!this._resetHandler) {
+      this._resetHandler = handler;
+    }
+
     this.getElement().querySelector(`.event__reset-btn`)
       .addEventListener(`click`, handler);
-
-    this._resetHandler = handler;
   }
 
   /**
@@ -263,17 +261,19 @@ export default class EventEdit extends AbstractSmartComponent {
   * @param {Function} handler - События при клике на кнопку отправки
   */
   setBtnSubmitHandler(handler) {
+    if (!this._submitHandler) {
+      this._submitHandler = handler;
+    }
+
     this.getElement().querySelector(`.event__save-btn`)
     .addEventListener(`click`, handler);
-
-    this._resetHandler = handler;
   }
 
   /**
   * Восстановление обработчиков событий
   */
   recoveryListeners() {
-    this.setBtnSubmitHandler(this._resetHandler);
+    this.setBtnSubmitHandler(this._submitHandler);
     this.setArrowBtnCloseHandler(this._resetHandler);
     this.setBtnResetHandler(this._resetHandler);
     this._subscribeOnEvents();
@@ -281,22 +281,26 @@ export default class EventEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-    const EventType = Transfers.concat(Activitys);
 
     element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
       this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
+      console.log(this._tripCard);
     });
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
-      this._type = EventType.find((eventType) => eventType === evt.target.value);
-      this._offers = getOffers();
+      this._tripCard = Object.assign({}, this._tripCard,
+          {offers: getOffers()},
+          {type: evt.target.value}
+      );
       this.rerender();
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       if (EventCities.includes(evt.target.value)) {
-        this._city = evt.target.value;
-        this._description = getRandomDescription();
+        this._tripCard = Object.assign({}, this._tripCard,
+            {description: getRandomDescription()},
+            {city: evt.target.value}
+        );
       }
       this.rerender();
     });

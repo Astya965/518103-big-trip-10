@@ -18,7 +18,7 @@ export default class BoardController {
     this._container = container;
     this._sortComponent = new TripSortComponent();
     this._tripCards = tripCards;
-    this._tripDays = generateTripDays(tripCards);
+    this._tripDays = generateTripDays(this._tripCards);
     this._tripEvents = [];
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -84,14 +84,12 @@ export default class BoardController {
   * @param {Function} newData - Новая точка маршрута
   */
   _onDataChange(pointController, oldData, newData) {
-    const eventIndex = this._tripDays.flat().findIndex((it) => it === oldData);
-    if (eventIndex === -1) {
+    const i = this._tripDays.flat().findIndex((it) => it === oldData);
+    if (i === -1) {
       return;
     }
-    console.log(newData);
-    this._tripEvents = [].concat(this._tripDays.flat().slice(0, eventIndex), newData, this._tripDays.flat().slice(eventIndex + 1));
-    pointController.render(this._tripEvents[eventIndex]);
-    console.log(this._tripEvents[eventIndex].isFavorite);
+    this._tripCards[i] = newData;
+    pointController.render(newData);
   }
 
   _onViewChange() {
