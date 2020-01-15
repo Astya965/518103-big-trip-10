@@ -56,3 +56,12 @@ export const mixArray = function (array) {
 export const getRandomBoolean = () => {
   return Math.floor(Math.random() < 0.5);
 };
+
+/**
+ * Заменяет первую букву строки на заглавную
+ * @param {String} str - Строка
+ * @return {String} - Строка с первой заглавной буквой
+ */
+export const capitalizeFirstLetter = (str) => {
+  return `${str.slice(0, 1).toUpperCase()}${str.slice(1)}`;
+};

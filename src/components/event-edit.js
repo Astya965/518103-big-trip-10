@@ -1,18 +1,27 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {
   EventCities,
   Transfers,
   Activitys,
   checkDate,
+  getOffers,
+  getRandomDescription
 } from '../mocks/event.js';
+import {capitalizeFirstLetter} from '../utils/util.js';
 
 /**
  * Класс формы редактирования точки маршрута
  */
-export default class EventEdit extends AbstractComponent {
+export default class EventEdit extends AbstractSmartComponent {
   constructor(tripCard) {
     super();
     this._tripCard = tripCard;
+    this._tripCardForReset = Object.assign({}, tripCard);
+
+    this._resetHandler = null;
+    this._submitHandler = null;
+
+    this._subscribeOnEvents();
   }
 
   /**
@@ -27,15 +36,15 @@ export default class EventEdit extends AbstractComponent {
         return (
           `<div class="event__type-item">
             <input
-            id="event-type-${typeItem.toLowerCase()}-1"
+            id="event-type-${typeItem}-1"
             class="event__type-input
             visually-hidden"
             type="radio"
             name="event-type"
-            value="${typeItem.toLowerCase()}"
+            value="${typeItem}"
             ${tripCard.type === typeItem && `checked`}
             >
-            <label class="event__type-label  event__type-label--${typeItem.toLowerCase()}" for="event-type-${typeItem.toLowerCase()}-1">${typeItem}</label>
+            <label class="event__type-label  event__type-label--${typeItem}" for="event-type-${typeItem}-1">${capitalizeFirstLetter(typeItem)}</label>
           </div>`
         );
       })
@@ -77,7 +86,7 @@ export default class EventEdit extends AbstractComponent {
               <img
                 class="event__type-icon"
                 width="17" height="17"
-                src="img/icons/${type.toLowerCase()}.png"
+                src="img/icons/${type}.png"
                 alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
@@ -97,7 +106,7 @@ export default class EventEdit extends AbstractComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} to
+            ${capitalizeFirstLetter(type)} to
             </label>
             <input
               class="event__input
@@ -153,7 +162,7 @@ export default class EventEdit extends AbstractComponent {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : null}>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -216,11 +225,33 @@ export default class EventEdit extends AbstractComponent {
     );
   }
 
+  reset() {
+    this._tripCard = Object.assign({}, this._tripCardForReset, {isFavorite: this._tripCard.isFavorite});
+    this.rerender();
+  }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на стрелку
+  */
+  setArrowBtnCloseHandler(handler) {
+    if (!this._resetHandler) {
+      this._resetHandler = handler;
+    }
+
+    this.getElement().querySelector(`.event__rollup-btn`)
+    .addEventListener(`click`, handler);
+  }
+
   /**
   * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на кнопку сброса
   */
   setBtnResetHandler(handler) {
+    if (!this._resetHandler) {
+      this._resetHandler = handler;
+    }
+
     this.getElement().querySelector(`.event__reset-btn`)
       .addEventListener(`click`, handler);
   }
@@ -230,7 +261,47 @@ export default class EventEdit extends AbstractComponent {
   * @param {Function} handler - События при клике на кнопку отправки
   */
   setBtnSubmitHandler(handler) {
+    if (!this._submitHandler) {
+      this._submitHandler = handler;
+    }
+
     this.getElement().querySelector(`.event__save-btn`)
     .addEventListener(`click`, handler);
+  }
+
+  /**
+  * Восстановление обработчиков событий
+  */
+  recoveryListeners() {
+    this.setBtnSubmitHandler(this._submitHandler);
+    this.setArrowBtnCloseHandler(this._resetHandler);
+    this.setBtnResetHandler(this._resetHandler);
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
+      this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
+    });
+
+    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
+      this._tripCard = Object.assign({}, this._tripCard,
+          {offers: getOffers()},
+          {type: evt.target.value}
+      );
+      this.rerender();
+    });
+
+    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+      if (EventCities.includes(evt.target.value)) {
+        this._tripCard = Object.assign({}, this._tripCard,
+            {description: getRandomDescription()},
+            {city: evt.target.value}
+        );
+      }
+      this.rerender();
+    });
   }
 }
