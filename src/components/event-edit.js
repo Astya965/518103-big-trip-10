@@ -23,11 +23,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._resetHandler = null;
     this._submitHandler = null;
-    this._flatpickr = null;
+    this._flatpickr = {
+      START: null,
+      END: null
+    };
 
-    this._removeFlatpickr = this.removeFlatpickr.bind(this);
     this._applyFlatpickr();
     this._subscribeOnEvents();
+    this._removeFlatpickr = this._removeFlatpickr.bind(this);
   }
 
   /**
@@ -329,8 +332,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._removeFlatpickr();
 
     const [startDateInput, endDateInput] = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
-    this._flatpickr.START = this._createFlatpickrInput(startDateInput, this._event.startDate);
-    this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._event.endDate);
+    this._flatpickr.START = this._createFlatpickrInput(startDateInput, this._tripCard.startDate);
+    this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._tripCard.endDate);
   }
 
   _createFlatpickrInput(node, date) {
