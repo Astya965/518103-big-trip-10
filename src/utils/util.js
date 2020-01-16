@@ -118,10 +118,9 @@ export const isSameMonth = (firstDate, secondDate) => {
  * Разность дат
  * @param {Number} firstDate - Первая дата
  * @param {Number} secondDate - Вторая дата
- * @return {Boolean} Являются ли месяцы одинаковым (в формате true\false)
+ * @return {Number} Разница между первой и второй датой в формате Unix
  */
 export const getDatesDiff = (firstDate, secondDate) => {
-  console.log(moment(firstDate) - moment(secondDate));
   return moment(firstDate) - moment(secondDate);
 };
 
