@@ -114,7 +114,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `at` : `to`}
+            ${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`}
             </label>
             <input
               class="event__input

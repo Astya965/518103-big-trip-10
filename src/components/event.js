@@ -47,7 +47,7 @@ export default class Event extends AbstractComponent {
               src="img/icons/${type}.png"
               alt="Event type icon">
           </div>
-          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `at` : `to`} ${city}</h3>
+          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`} ${city}</h3>
 
           <div class="event__schedule">
             <p class="event__time">
