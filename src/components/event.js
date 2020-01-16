@@ -35,7 +35,7 @@ export default class Event extends AbstractComponent {
   * @return {String} Разметка точки маршрута
   */
   getTemplate() {
-    const {type, city, price, offers, startDate, endDate} = this._tripCard;
+    const {type, destination, price, offers, startDate, endDate} = this._tripCard;
     return (
       `<li class="trip-events__item">
         <div class="event">
@@ -47,7 +47,7 @@ export default class Event extends AbstractComponent {
               src="img/icons/${type}.png"
               alt="Event type icon">
           </div>
-          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`} ${city}</h3>
+          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`} ${destination}</h3>
 
           <div class="event__schedule">
             <p class="event__time">

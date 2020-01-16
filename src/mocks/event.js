@@ -40,7 +40,7 @@ export const Activitys = [
  */
 const EventTypes = Transfers.concat(Activitys);
 
-export const EventCities = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
+export const Destinations = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
 
 export const Offers = [
   {
@@ -118,7 +118,7 @@ export const generateEvent = () => {
   let secondDate = firstDate + getRandomNumber(HOUR, HOUR * 24 * 2);
   return {
     type: getRandomElement(EventTypes),
-    city: getRandomElement(EventCities),
+    destination: getRandomElement(Destinations),
     startDate: new Date(Math.min(firstDate, secondDate)),
     endDate: new Date(Math.max(firstDate, secondDate)),
     offers: getOffers(),
