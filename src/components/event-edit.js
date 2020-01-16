@@ -1,6 +1,6 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {
-  EventCities,
+  Destinations,
   Transfers,
   Activitys,
   getOffers,
@@ -84,7 +84,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
-    const destinationList = this.createDestinationList(EventCities);
+    const destinationList = this.createDestinationList(Destinations);
     return (
       `<form class="event  event--edit" action="#" method="post">
         <header class="event__header">
@@ -308,7 +308,7 @@ export default class EventEdit extends AbstractSmartComponent {
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (EventCities.includes(evt.target.value)) {
+      if (Destinations.includes(evt.target.value)) {
         this._tripCard = Object.assign({}, this._tripCard,
             {description: getRandomDescription()},
             {destination: evt.target.value}

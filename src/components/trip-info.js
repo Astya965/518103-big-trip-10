@@ -16,11 +16,11 @@ export default class TripInfo extends AbstractComponent {
   * @return {HTMLElement} Разметка списка городов
   */
   getTripInfoTitle() {
-    let citiesList = [];
+    let destinationsList = [];
     this._tripEvents.forEach((tripEvent) => {
-      citiesList.push(tripEvent.city);
+      destinationsList.push(tripEvent.destination);
     });
-    return citiesList.join(` &mdash; `);
+    return destinationsList.join(` &mdash; `);
   }
 
   /**

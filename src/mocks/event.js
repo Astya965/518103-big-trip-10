@@ -111,12 +111,14 @@ export const getOffers = () => {
 
 /**
  * Генерация мокков для точки маршрута
+ * @param {Number} EventID - ID точки маршрута
  * @return {Number} Данные для точки маршрута
  */
-export const generateEvent = () => {
+export const generateEvent = (EventID) => {
   let firstDate = getRandomDate();
   let secondDate = firstDate + getRandomNumber(HOUR, HOUR * 24 * 2);
   return {
+    id: EventID,
     type: getRandomElement(EventTypes),
     destination: getRandomElement(Destinations),
     startDate: new Date(Math.min(firstDate, secondDate)),
@@ -139,7 +141,7 @@ export const generateEvent = () => {
 export const generateEvents = (count) => {
   return new Array(count)
   .fill(null)
-  .map(generateEvent);
+  .map((tripEvent, id) => generateEvent(id));
 };
 
 /**
