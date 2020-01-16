@@ -115,6 +115,17 @@ export const isSameMonth = (firstDate, secondDate) => {
 };
 
 /**
+ * Разность дат
+ * @param {Number} firstDate - Первая дата
+ * @param {Number} secondDate - Вторая дата
+ * @return {Boolean} Являются ли месяцы одинаковым (в формате true\false)
+ */
+export const getDatesDiff = (firstDate, secondDate) => {
+  console.log(moment(firstDate) - moment(secondDate));
+  return moment(firstDate) - moment(secondDate);
+};
+
+/**
  * Получение дистанции на основе даты начала и конца
  * @param {Number} startDate - Дата начала
  * @param {Number} endDate - Дата конца

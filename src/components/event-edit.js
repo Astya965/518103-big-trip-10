@@ -6,7 +6,7 @@ import {
   getOffers,
   getRandomDescription
 } from '../mocks/event.js';
-import {formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
+import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -341,12 +341,30 @@ export default class EventEdit extends AbstractSmartComponent {
     this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._tripCard.endDate);
   }
 
+  _setTimeValidation() {
+    const startDateInput = this._element.querySelector(`input[name=event-start-time]`);
+    if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
+      startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
+    } else {
+      startDateInput.setCustomValidity(``);
+    }
+  }
+
+
   _createFlatpickrInput(node, date) {
     return flatpickr(node, {
       allowInput: true,
       enableTime: true,
       defaultDate: new Date(date),
-      dateFormat: `d/m/Y H:i`
+      dateFormat: `d/m/Y H:i`,
+      onValueUpdate: (pickerDate) => {
+        if (node.name === `event-start-time`) {
+          this._tripCard.startDate = pickerDate[0];
+        } else {
+          this._tripCard.endDate = pickerDate[0];
+        }
+        this._setTimeValidation();
+      }
     });
   }
 
