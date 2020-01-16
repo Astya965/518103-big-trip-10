@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
-import {checkDate, getDuration, Activitys} from '../mocks/event.js';
-import {capitalizeFirstLetter} from '../utils/util.js';
+import {Activitys} from '../mocks/event.js';
+import {checkDate, getDuration, formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
 
 /**
  * Класс формы точки маршрута
@@ -35,7 +35,7 @@ export default class Event extends AbstractComponent {
   * @return {String} Разметка точки маршрута
   */
   getTemplate() {
-    const {type, duration, city, price, offers, startDate, endDate} = this._tripCard;
+    const {type, city, price, offers, startDate, endDate} = this._tripCard;
     return (
       `<li class="trip-events__item">
         <div class="event">
@@ -52,14 +52,14 @@ export default class Event extends AbstractComponent {
           <div class="event__schedule">
             <p class="event__time">
               <time class="event__start-time" datetime="${startDate}">
-                ${checkDate(startDate.getHours())}:${checkDate(startDate.getMinutes())}
+                ${formatDateTime(startDate)}
               </time>
               &mdash;
               <time class="event__end-time" datetime="${endDate}">
-                ${checkDate(endDate.getHours())}:${checkDate(endDate.getMinutes())}
+                ${formatDateTime(endDate)}
               </time>
             </p>
-            <p class="event__duration">${getDuration(duration)}</p>
+            <p class="event__duration">${checkDate(getDuration(startDate, endDate))}</p>
           </div>
 
           <p class="event__price">

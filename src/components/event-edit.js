@@ -3,11 +3,10 @@ import {
   EventCities,
   Transfers,
   Activitys,
-  checkDate,
   getOffers,
   getRandomDescription
 } from '../mocks/event.js';
-import {capitalizeFirstLetter} from '../utils/util.js';
+import {formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -140,7 +139,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-start-time-1"
               type="text"
               name="event-start-time"
-              value="${checkDate(startDate.getHours())}:${checkDate(startDate.getMinutes())}">
+              value="${formatDateTime(startDate)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
@@ -151,7 +150,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-end-time-1"
               type="text"
               name="event-end-time"
-              value="${checkDate(endDate.getHours())}:${checkDate(endDate.getMinutes())}">
+              value="${formatDateTime(endDate)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
