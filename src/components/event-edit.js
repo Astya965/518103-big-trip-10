@@ -159,12 +159,12 @@ export default class EventEdit extends AbstractSmartComponent {
               &euro;
             </label>
             <input
-              class="event__input
-              event__input--price"
+              class="event__input event__input--price"
               id="event-price-1"
-              type="text"
+              type="number"
               name="event-price"
-              value="${price}">
+              value="${price}"
+              required">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -315,6 +315,12 @@ export default class EventEdit extends AbstractSmartComponent {
         );
       }
       this.rerender();
+    });
+
+    element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
+      if (evt.valid) {
+        this._tripCard.price = +evt.target.value;
+      }
     });
   }
 
