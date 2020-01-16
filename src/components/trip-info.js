@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {MonthNames} from "../utils/util.js";
+import {formatMonthDay, formatDay, isSameMonth} from "../utils/util.js";
 
 /**
  * Класс информации о поездке
@@ -16,11 +16,11 @@ export default class TripInfo extends AbstractComponent {
   * @return {HTMLElement} Разметка списка городов
   */
   getTripInfoTitle() {
-    let citiesList = [];
+    let destinationsList = [];
     this._tripEvents.forEach((tripEvent) => {
-      citiesList.push(tripEvent.city);
+      destinationsList.push(tripEvent.destination);
     });
-    return citiesList.join(` &mdash; `);
+    return destinationsList.join(` &mdash; `);
   }
 
   /**
@@ -30,11 +30,8 @@ export default class TripInfo extends AbstractComponent {
   getTripInfoDates() {
     const startDate = this._tripEvents[0].startDate;
     const endDate = this._tripEvents[this._tripEvents.length - 1].endDate;
-    const startMonth = MonthNames[startDate.getMonth()];
-    const startDay = startDate.getDate();
-    const endMonth = MonthNames[endDate.getMonth()];
-    const endDay = endDate.getDate();
-    return `${startMonth} ${startDay}&nbsp;&mdash;&nbsp;${startMonth === endMonth ? `` : endMonth} ${endDay}`;
+
+    return `${formatMonthDay(startDate)}&nbsp;&mdash;&nbsp;${isSameMonth(startDate, endDate) ? formatDay(endDate) : formatMonthDay(endDate)}`;
   }
 
   /**

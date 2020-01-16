@@ -1,13 +1,15 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {
-  EventCities,
+  Destinations,
   Transfers,
   Activitys,
-  checkDate,
   getOffers,
   getRandomDescription
 } from '../mocks/event.js';
-import {capitalizeFirstLetter} from '../utils/util.js';
+import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
+
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 /**
  * Класс формы редактирования точки маршрута
@@ -20,8 +22,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._resetHandler = null;
     this._submitHandler = null;
+    this._flatpickr = {
+      START: null,
+      END: null
+    };
 
+    this._applyFlatpickr();
     this._subscribeOnEvents();
+    this._removeFlatpickr = this._removeFlatpickr.bind(this);
   }
 
   /**
@@ -73,10 +81,10 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, city, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
+    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
-    const destinationList = this.createDestinationList(EventCities);
+    const destinationList = this.createDestinationList(Destinations);
     return (
       `<form class="event  event--edit" action="#" method="post">
         <header class="event__header">
@@ -106,7 +114,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${capitalizeFirstLetter(type)} to
+            ${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`}
             </label>
             <input
               class="event__input
@@ -114,7 +122,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${city}"
+              value="${destination}"
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -131,7 +139,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-start-time-1"
               type="text"
               name="event-start-time"
-              value="${checkDate(startDate.getHours())}:${checkDate(startDate.getMinutes())}">
+              value="${formatDateTime(startDate)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
@@ -142,7 +150,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-end-time-1"
               type="text"
               name="event-end-time"
-              value="${checkDate(endDate.getHours())}:${checkDate(endDate.getMinutes())}">
+              value="${formatDateTime(endDate)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -151,12 +159,12 @@ export default class EventEdit extends AbstractSmartComponent {
               &euro;
             </label>
             <input
-              class="event__input
-              event__input--price"
+              class="event__input event__input--price"
               id="event-price-1"
-              type="text"
+              type="number"
               name="event-price"
-              value="${price}">
+              value="${price}"
+              required">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -223,6 +231,11 @@ export default class EventEdit extends AbstractSmartComponent {
         </section>
       </form>`
     );
+  }
+
+  rerender() {
+    super.rerender();
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -295,13 +308,64 @@ export default class EventEdit extends AbstractSmartComponent {
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (EventCities.includes(evt.target.value)) {
+      if (Destinations.includes(evt.target.value)) {
         this._tripCard = Object.assign({}, this._tripCard,
             {description: getRandomDescription()},
-            {city: evt.target.value}
+            {destination: evt.target.value}
         );
       }
       this.rerender();
     });
+
+    element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
+      if (evt.valid) {
+        this._tripCard.price = +evt.target.value;
+      }
+    });
   }
+
+  _removeFlatpickr() {
+    if (this._flatpickr.START && this._flatpickr.END) {
+      this._flatpickr.START.destroy();
+      this._flatpickr.END.destroy();
+      this._flatpickr.START = null;
+      this._flatpickr.END = null;
+    }
+  }
+
+  _applyFlatpickr() {
+    this._removeFlatpickr();
+
+    const [startDateInput, endDateInput] = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
+    this._flatpickr.START = this._createFlatpickrInput(startDateInput, this._tripCard.startDate);
+    this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._tripCard.endDate);
+  }
+
+  _setTimeValidation() {
+    const startDateInput = this._element.querySelector(`input[name=event-start-time]`);
+    if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
+      startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
+    } else {
+      startDateInput.setCustomValidity(``);
+    }
+  }
+
+
+  _createFlatpickrInput(node, date) {
+    return flatpickr(node, {
+      allowInput: true,
+      enableTime: true,
+      defaultDate: new Date(date),
+      dateFormat: `d/m/Y H:i`,
+      onValueUpdate: (pickerDate) => {
+        if (node.name === `event-start-time`) {
+          this._tripCard.startDate = pickerDate[0];
+        } else {
+          this._tripCard.endDate = pickerDate[0];
+        }
+        this._setTimeValidation();
+      }
+    });
+  }
+
 }

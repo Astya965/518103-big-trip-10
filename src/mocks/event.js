@@ -40,7 +40,7 @@ export const Activitys = [
  */
 const EventTypes = Transfers.concat(Activitys);
 
-export const EventCities = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
+export const Destinations = [`Copenhagen`, `Oslo`, `Bergen`, `Moscow`];
 
 export const Offers = [
   {
@@ -101,31 +101,6 @@ export const getRandomDescription = () => {
 };
 
 /**
- * Исправляет формат времени и даты
- * @param {Number} anyDate - Изначальная дата в человекочитаемом формате
- * @return {String} Исправленная версия DD/MM/YYYY HH:mm (на основе изначальной)
- */
-export const checkDate = (anyDate) => {
-  const regExp = /\b([1-9])(?!\d)/g;
-  return `${anyDate.toString().replace(regExp, `0$1`)}`;
-};
-
-/**
- * Перевод дистанции в человекочитаемый формат
- * @param {Number} duration - Изначальная дата в формате Unix
- * @return {String} Длительность события
- */
-export const getDuration = (duration) => {
-  const days = (duration / 86400 / 1000);
-  const rdays = Math.floor(days);
-  const hours = ((days - rdays) * 24);
-  const rhours = Math.floor(hours);
-  const minutes = (hours - rhours) * 60;
-  const rminutes = Math.round(minutes);
-  return `${rdays > 0 ? rdays + `D` : ``} ${rhours > 0 ? rhours + `H` : ``} ${rminutes}M`;
-};
-
-/**
  * Генерация случайный набор специальных предложений
  * @return {Array} Случайный набор специальных предложений
  */
@@ -143,10 +118,9 @@ export const generateEvent = () => {
   let secondDate = firstDate + getRandomNumber(HOUR, HOUR * 24 * 2);
   return {
     type: getRandomElement(EventTypes),
-    city: getRandomElement(EventCities),
+    destination: getRandomElement(Destinations),
     startDate: new Date(Math.min(firstDate, secondDate)),
     endDate: new Date(Math.max(firstDate, secondDate)),
-    duration: Math.max(firstDate, secondDate) - Math.min(firstDate, secondDate),
     offers: getOffers(),
     price: Math.round(getRandomNumber(10, 100)),
     photos: Array(getRandomNumber(1, 4))

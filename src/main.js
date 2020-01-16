@@ -2,7 +2,7 @@ import SiteMenuComponent from './components/site-menu.js';
 import FilterComponent from './components/filter.js';
 import EventAddBtnComponent from './components/event-add-button.js';
 import EventAddComponent from './components/event-add.js';
-import TripController from './controllers/board.js';
+import TripController from './controllers/trip.js';
 
 import {tripCards} from './mocks/event.js';
 import {render, remove, RenderPosition} from './utils/render.js';
