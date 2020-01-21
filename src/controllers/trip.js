@@ -38,7 +38,7 @@ export default class TripController {
     }
 
     this._creatingPoint = new PointController(
-        this._container,
+        this._container.getElement(),
         this._onDataChange,
         this._onViewChange
     );
@@ -55,7 +55,7 @@ export default class TripController {
       render(tripEvents, this._sortComponent.getElement(), RenderPosition.AFTERBEGIN);
       this._getFullPrice();
 
-      this._showedPointControllers = this.renderTripEvents(this._tripCards, this._container, this._onDataChange, this._onViewChange);
+      this._showedPointControllers = this.renderTripEvents(this._tripCards, this._container.getElement(), this._onDataChange, this._onViewChange);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         let sortedEvents = [];
@@ -75,7 +75,7 @@ export default class TripController {
         }
 
         this._removePoints();
-        this._showedPointControllers = this.renderTripEvents(sortedEvents, this._container, this._onDataChange, this._onViewChange, this._isDefaultSorting);
+        this._showedPointControllers = this.renderTripEvents(sortedEvents, this._container.getElement(), this._onDataChange, this._onViewChange, this._isDefaultSorting);
       });
     }
   }
@@ -119,7 +119,7 @@ export default class TripController {
 
         this._showedPointControllers = this.renderTripEvents(
             this._pointsModel.getPoints(),
-            this._container,
+            this._container.getElement(),
             this._onDataChange,
             this._onViewChange,
             this._isDefaultSorting
@@ -136,6 +136,14 @@ export default class TripController {
     }
   }
 
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
+
   _onViewChange() {
     this._showedPointControllers.forEach((it) => it.setDefaultView());
   }
@@ -145,7 +153,7 @@ export default class TripController {
   }
 
   _removePoints() {
-    this._container.innerHTML = ``;
+    this._container.getElement().innerHTML = ``;
     this._showedPointControllers.forEach((pointController) =>
       pointController.destroy()
     );
@@ -157,7 +165,7 @@ export default class TripController {
 
     this._showedPointControllers = this.renderTripEvents(
         this._pointsModel.getPoints(),
-        this._container,
+        this._container.getElement(),
         this._onDataChange,
         this._onViewChange
     );
