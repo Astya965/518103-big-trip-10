@@ -1,4 +1,4 @@
-import {FilterTypes} from './constants.js';
+import {FilterType} from './constants.js';
 
 export const getFuturePoints = (points) => {
   return points.filter((point) => point.startDate > Date.now());
@@ -10,11 +10,11 @@ export const getPastPoints = (points) => {
 
 export const getPointsByFilter = (points, filterType) => {
   switch (filterType) {
-    case FilterTypes.EVERYTHING:
+    case FilterType.EVERYTHING:
       return points;
-    case FilterTypes.FUTURE:
+    case FilterType.FUTURE:
       return getFuturePoints(points);
-    case FilterTypes.PAST:
+    case FilterType.PAST:
       return getPastPoints(points);
   }
 
