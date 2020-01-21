@@ -1,80 +1,98 @@
 import NoEventsComponent from '../components/no-events.js';
-import TripSortComponent, {SortTypes} from '../components/sort.js';
+import TripSortComponent from '../components/sort.js';
 import TripInfoComponent from '../components/trip-info.js';
-import TripDaysListComponent from '../components/days-list.js';
-import SortedEventsContainer from '../components/sorted-events-container.js';
+import TripDayItemComponent from '../components/day.js';
 
 import PointController from './point.js';
-
-import {generateTripDays, getTripCost, tripCards} from '../mocks/event.js';
+import {Modes, SortTypes} from '../utils/constants.js';
+import {getDurationSeconds} from '../utils/util.js';
 import {render, RenderPosition} from '../utils/render.js';
+import {EmptyPoint} from '../mocks/event.js';
+
+const tripEvents = document.querySelector(`.trip-events`);
+const tripInfo = document.querySelector(`.trip-main__trip-info`);
 
 /**
  * Класс основной панели взаимодействия (инфрмация, сортировка, карточки
  * либо приветственное собщение при остутствии карточек)
  */
-export default class BoardController {
-  constructor(container) {
+export default class TripController {
+  constructor(container, pointsModel) {
     this._container = container;
     this._sortComponent = new TripSortComponent();
-    this._tripCards = tripCards;
-    this._tripDays = generateTripDays(this._tripCards);
-    this._tripEvents = [];
+    this._pointsModel = pointsModel;
+    this._tripCards = this._pointsModel.getPoints();
+    this._showedPointControllers = [];
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
+    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
+    this._creatingPoint = null;
+    this._isDefaultSorting = true;
   }
 
-  /**
-  * Рендеринг основной панели взаимодействия
-  */
+  createPoint() {
+    if (this._creatingPoint) {
+      return;
+    }
+
+    this._creatingPoint = new PointController(
+        this._container,
+        this._onDataChange,
+        this._onViewChange
+    );
+
+    this._creatingPoint.render(EmptyPoint, Modes.ADD);
+    this._onViewChange();
+  }
+
   render() {
-    const siteTripEventsElement = document.querySelector(`.trip-events`);
-
-    if (tripCards.length === 0) {
-      render(siteTripEventsElement, new NoEventsComponent().getElement(), RenderPosition.BEFOREEND);
+    if (this._pointsModel.getPoints().length === 0) {
+      render(tripEvents, new NoEventsComponent().getElement(), RenderPosition.BEFOREEND);
     } else {
-      const siteTripInfoElement = document.querySelector(`.trip-info`);
+      render(tripInfo, new TripInfoComponent(this._pointsModel.getPoints()).getElement(), RenderPosition.AFTERBEGIN);
+      render(tripEvents, this._sortComponent.getElement(), RenderPosition.AFTERBEGIN);
+      this._getFullPrice();
 
-      render(siteTripEventsElement, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
-      render(siteTripInfoElement, new TripInfoComponent(this._tripDays).getElement(), RenderPosition.AFTERBEGIN);
-      const siteTripInfoCostElement = document.querySelector(`.trip-info__cost-value`);
-      siteTripInfoCostElement.textContent = getTripCost(this._tripDays);
-
-      render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
-
-      this._tripEvents = this.renderTripEvents(this._onDataChange, this._onViewChange);
+      this._showedPointControllers = this.renderTripEvents(this._tripCards, this._container, this._onDataChange, this._onViewChange);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         let sortedEvents = [];
+        this._isDefaultSorting = false;
 
         switch (sortType) {
           case SortTypes.DEFAULT:
-            sortedEvents = this._tripCards;
+            sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate);
+            this._isDefaultSorting = true;
             break;
           case SortTypes.TIME:
-            sortedEvents = this._tripCards.slice().sort((a, b) => b.duration - a.duration);
+            sortedEvents = this._tripCards.slice().sort((a, b) => getDurationSeconds(b.startDate, b.endDate) - getDurationSeconds(a.startDate, a.endDate));
             break;
           case SortTypes.PRICE:
             sortedEvents = this._tripCards.slice().sort((a, b) => b.price - a.price);
             break;
         }
 
-        document.querySelector(`.trip-days`).remove();
-        if (sortType === SortTypes.TIME || sortType === SortTypes.PRICE) {
-          render(siteTripEventsElement, new SortedEventsContainer().getElement(), RenderPosition.BEFOREEND);
-          const tripEventsList = document.querySelector(`.trip-events__list`);
-          sortedEvents.forEach((sortedEvent) => {
-            const pointController = new PointController(tripEventsList, this._onDataChange, this._onViewChange);
-            pointController.render(sortedEvent);
-          });
-          return;
-        } else if (sortType === SortTypes.DEFAULT) {
-          render(siteTripEventsElement, new TripDaysListComponent(this._tripDays).getElement(), RenderPosition.BEFOREEND);
-          this.renderTripEvents(this._onDataChange, this._onViewChange);
-        }
+        this._removePoints();
+        this._showedPointControllers = this.renderTripEvents(sortedEvents, this._container, this._onDataChange, this._onViewChange, this._isDefaultSorting);
       });
     }
+  }
+
+  /**
+  * Получение полной стоимости маршрута, включая offersЫ
+  */
+  _getFullPrice() {
+    const fullPrice = this._tripCards.reduce((acc, item) => {
+      return (
+        acc +
+        Number(item.price) +
+        item.offers.reduce((_acc, _item) => _acc + Number(_item.price), 0)
+      );
+    }, 0);
+
+    document.querySelector(`.trip-info__cost-value`).textContent = fullPrice;
   }
 
   /**
@@ -84,36 +102,98 @@ export default class BoardController {
   * @param {Function} newData - Новая точка маршрута
   */
   _onDataChange(pointController, oldData, newData) {
-    const i = this._tripDays.flat().findIndex((it) => it === oldData);
-    if (i === -1) {
-      return;
+    if (oldData === EmptyPoint) {
+      this._creatingPoint = null;
+      if (newData === null) {
+        pointController.destroy();
+        this._updatePoints();
+      } else {
+        this._pointsModel.addPoint(newData);
+
+        this._showedPointControllers = [
+          pointController,
+          ...this._showedPointControllers
+        ];
+
+        this._removePoints();
+
+        this._showedPointControllers = this.renderTripEvents(
+            this._pointsModel.getPoints(),
+            this._container,
+            this._onDataChange,
+            this._onViewChange,
+            this._isDefaultSorting
+        );
+      }
+    } else if (newData === null) {
+      this._pointsModel.removePoint(oldData.id);
+      this._updatePoints();
+    } else {
+      const isUpdate = this._pointsModel.updatePoint(oldData.id, newData);
+      if (isUpdate) {
+        pointController.render(newData, Modes.DEFAULT);
+      }
     }
-    this._tripCards[i] = newData;
-    pointController.render(newData);
   }
 
   _onViewChange() {
-    this._tripEvents.forEach((it) => it.setDefaultView());
+    this._showedPointControllers.forEach((it) => it.setDefaultView());
   }
 
-  /**
-  * Рендеринг точек маршрута
-  * @param {Function} onDataChange
-  * @param {Function} onViewChange
-  * @return {Array} Массив элементов разметки точек маршрута
-  */
-  renderTripEvents(onDataChange, onViewChange) {
-    const events = [];
-    const tripEventsList = document.querySelectorAll(`.trip-events__list`);
-    this._tripCards.forEach((tripCard) => {
-      tripEventsList.forEach((tripDay) => {
-        const pointController = new PointController(tripDay, onDataChange, onViewChange);
-        if (tripDay.dataset.date === `${tripCard.startDate.getDate()}/${tripCard.startDate.getMonth()}`) {
-          pointController.render(tripCard);
-          events.push(pointController);
-        }
+  _onFilterChange() {
+    this._updatePoints();
+  }
+
+  _removePoints() {
+    this._container.innerHTML = ``;
+    this._showedPointControllers.forEach((pointController) =>
+      pointController.destroy()
+    );
+    this._showedPointControllers = [];
+  }
+
+  _updatePoints() {
+    this._removePoints();
+
+    this._showedPointControllers = this.renderTripEvents(
+        this._pointsModel.getPoints(),
+        this._container,
+        this._onDataChange,
+        this._onViewChange
+    );
+  }
+
+  renderTripEvents(cards, container, onDataChange, onViewChange, isDefaultSorting = true) {
+    const pointControllers = [];
+    const dates = isDefaultSorting
+      ? [...new Set(cards.map((item) => new Date(item.startDate).toDateString()))]
+      : [true];
+
+    // Сортировка по дням
+    dates.forEach((date, dateIndex) => {
+      const day = isDefaultSorting
+        ? new TripDayItemComponent(new Date(date), dateIndex + 1)
+        : new TripDayItemComponent();
+
+      // Отбор карточек для каждого дня, если это дефолтная сортировка, а далее генарация самих карточек
+      cards.filter((_card) => {
+        return isDefaultSorting
+          ? new Date(_card.startDate).toDateString() === date
+          : _card;
+      })
+      .forEach((_card) => {
+        const pointController = new PointController(
+            day.getElement().querySelector(`.trip-events__list`),
+            onDataChange,
+            onViewChange
+        );
+        pointController.render(_card, Modes.DEFAULT);
+        pointControllers.push(pointController);
       });
+
+      render(container, day.getElement(), RenderPosition.BEFOREEND);
     });
-    return events;
+
+    return pointControllers;
   }
 }

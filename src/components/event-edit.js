@@ -10,6 +10,7 @@ import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import moment from "moment";
 
 /**
  * Класс формы редактирования точки маршрута
@@ -22,6 +23,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._resetHandler = null;
     this._submitHandler = null;
+    this._deleteHandler = null;
     this._flatpickr = {
       START: null,
       END: null
@@ -86,7 +88,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(Destinations);
     return (
-      `<form class="event  event--edit" action="#" method="post">
+      `<form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -122,7 +124,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${destination}"
+              value="${destination || ``}"
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -168,7 +170,7 @@ export default class EventEdit extends AbstractSmartComponent {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__reset-btn" type="reset">${offers.length > 0 ? `Delete` : `Cancel`}</button>
 
           <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
@@ -183,7 +185,8 @@ export default class EventEdit extends AbstractSmartComponent {
           </button>
         </header>
 
-        <section class="event__details">
+        ${offers.length ?
+        `<section class="event__details">
 
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -198,7 +201,7 @@ export default class EventEdit extends AbstractSmartComponent {
                         id="event-offer-${offer.type}-1"
                         type="checkbox"
                         name="event-offer-${offer.type}"
-                        ${offer.checked && `checked`}
+                        ${offer.checked ? `checked` : ``}
                       />
                       <label class="event__offer-label" for="event-offer-
                       ${offer.type}-1">
@@ -228,7 +231,8 @@ export default class EventEdit extends AbstractSmartComponent {
               </div>
             </div>
           </section>
-        </section>
+        </section>`
+        : ``}
       </form>`
     );
   }
@@ -260,9 +264,9 @@ export default class EventEdit extends AbstractSmartComponent {
   * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на кнопку сброса
   */
-  setBtnResetHandler(handler) {
-    if (!this._resetHandler) {
-      this._resetHandler = handler;
+  setBtnDeleteHandler(handler) {
+    if (!this._deleteHandler) {
+      this._deleteHandler = handler;
     }
 
     this.getElement().querySelector(`.event__reset-btn`)
@@ -288,8 +292,20 @@ export default class EventEdit extends AbstractSmartComponent {
   recoveryListeners() {
     this.setBtnSubmitHandler(this._submitHandler);
     this.setArrowBtnCloseHandler(this._resetHandler);
-    this.setBtnResetHandler(this._resetHandler);
+    this.setBtnDeleteHandler(this._deleteHandler);
     this._subscribeOnEvents();
+  }
+
+  getData() {
+    const form = this.getElement();
+    const formData = new FormData(form);
+
+    return this._parseFormData(formData,
+        this._tripCard.offers,
+        this._tripCard.photos,
+        this._tripCard.description,
+        this._tripCard.id
+    );
   }
 
   _subscribeOnEvents() {
@@ -366,6 +382,31 @@ export default class EventEdit extends AbstractSmartComponent {
         this._setTimeValidation();
       }
     });
+  }
+
+  _parseFormData(formData, offers, photos, description, id) {
+
+    return {
+      type: formData.get(`event-type`),
+      destination: formData.get(`event-destination`),
+      startDate: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`
+      ).valueOf(),
+      endDate: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
+      offers: offers.map((offer) => {
+        return {
+          name: offer.name,
+          price: offer.price,
+          type: offer.type,
+          checked:
+            formData.get(`event-offer-${offer.type}`) === `on` ? true : false
+        };
+      }),
+      photos,
+      description,
+      price: formData.get(`event-price`),
+      id,
+      isFavorite: formData.get(`event-favorite`) === `on`
+    };
   }
 
 }

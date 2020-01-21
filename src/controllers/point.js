@@ -1,12 +1,9 @@
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
-import {render, replace, RenderPosition} from '../utils/render.js';
-
-const Mode = {
-  DEFAULT: `default`,
-  EDIT: `edit`,
-};
+import {render, replace, remove, RenderPosition} from '../utils/render.js';
+import {Modes} from '../utils/constants.js';
+import {EmptyPoint} from '../mocks/event.js';
 
 export default class PointContoller {
   constructor(container, onDataChange, onViewChange) {
@@ -16,7 +13,7 @@ export default class PointContoller {
     this._eventComponent = null;
     this._eventEditComponent = null;
 
-    this._mode = Mode.DEFAULT;
+    this._mode = Modes.DEFAULT;
 
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
@@ -27,9 +24,11 @@ export default class PointContoller {
   /**
   * Рендеринг точки маршрута
   * @param {Object} eventCard - Данные для точки маршрута
+  * @param {String} mode - Режим карточки
   */
-  render(eventCard) {
+  render(eventCard, mode) {
     this._eventCard = eventCard;
+    this._mode = mode;
 
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
@@ -55,8 +54,8 @@ export default class PointContoller {
     /**
     * Событие закрытия формы редактирования при клике на кнопку сброса
     */
-    this._eventEditComponent.setBtnResetHandler(() => {
-      this._eventEditComponent.reset();
+    this._eventEditComponent.setBtnDeleteHandler(() => {
+      this._onDataChange(this, this._eventCard, null);
       this._showСard();
     });
 
@@ -65,15 +64,30 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
-      this._onDataChange(this, this._eventCard, this._eventEditComponent._tripCard);
-      this.setDefaultView();
+      const data = this._eventEditComponent.getData();
+      this._onDataChange(this, this._eventCard, data);
+      this._showСard();
     });
 
-    if (oldEventComponent && oldEventEditComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._eventEditComponent, oldEventEditComponent);
-    } else {
-      render(this._container, this._eventComponent.getElement(), RenderPosition.BEFOREEND);
+    switch (mode) {
+      case Modes.DEFAULT:
+        if (oldEventComponent && oldEventEditComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+        } else {
+          render(this._container, this._eventComponent.getElement(), RenderPosition.BEFOREEND);
+        }
+        break;
+      case Modes.ADD:
+        this.setDefaultView();
+        if (oldEventComponent && oldEventEditComponent) {
+          remove(oldEventComponent);
+          remove(oldEventEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        this.setDefaultView();
+        render(this._container, this._eventEditComponent.getElement(), RenderPosition.AFTERBEGIN);
+        break;
     }
   }
 
@@ -81,9 +95,15 @@ export default class PointContoller {
   * Возвращение карточек в обычное состояние
   */
   setDefaultView() {
-    if (this._mode === Mode.EDIT) {
+    if (this._mode === Modes.EDIT) {
       this._showСard();
     }
+  }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   /**
@@ -93,7 +113,11 @@ export default class PointContoller {
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
+      if (this._mode === Modes.ADD) {
+        this._onDataChange(this, EmptyPoint, null);
+      }
       this._showСard();
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
 
@@ -101,14 +125,14 @@ export default class PointContoller {
     this._eventEditComponent.reset();
     this._replaceEditToCard();
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-    this._mode = Mode.DEFAULT;
+    this._mode = Modes.DEFAULT;
   }
 
   _showEdit() {
     this._onViewChange();
     this._replaceCardToEdit();
     document.addEventListener(`keydown`, this._onEscKeyDown);
-    this._mode = Mode.EDIT;
+    this._mode = Modes.EDIT;
   }
 
   /**
