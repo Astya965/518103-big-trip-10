@@ -4,7 +4,7 @@ import TripInfoComponent from '../components/trip-info.js';
 import TripDayItemComponent from '../components/day.js';
 
 import PointController from './point.js';
-import {Mode, SortTypes} from '../utils/constants.js';
+import {Mode, SortType} from '../utils/constants.js';
 import {getDurationSeconds} from '../utils/util.js';
 import {render, RenderPosition} from '../utils/render.js';
 import {EmptyPoint} from '../mocks/event.js';
@@ -62,14 +62,14 @@ export default class TripController {
         this._isDefaultSorting = false;
 
         switch (sortType) {
-          case SortTypes.DEFAULT:
+          case SortType.DEFAULT:
             sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate);
             this._isDefaultSorting = true;
             break;
-          case SortTypes.TIME:
+          case SortType.TIME:
             sortedEvents = this._tripCards.slice().sort((a, b) => getDurationSeconds(b.startDate, b.endDate) - getDurationSeconds(a.startDate, a.endDate));
             break;
-          case SortTypes.PRICE:
+          case SortType.PRICE:
             sortedEvents = this._tripCards.slice().sort((a, b) => b.price - a.price);
             break;
         }

@@ -1,8 +1,10 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
-import Chart from "chart.js";
-import chartjsPluginDatalabes from "chartjs-plugin-datalabels";
-import moment from "moment";
+import {Transfers} from '../mocks/event.js';
+
+// import Chart from "chart.js";
+// import chartjsPluginDatalabes from "chartjs-plugin-datalabels";
+// import moment from "moment";
 
 export default class Statistics extends AbstractSmartComponent {
   getTemplate() {
@@ -23,6 +25,32 @@ export default class Statistics extends AbstractSmartComponent {
         </div>
       </section>`
     );
+  }
+
+  generateChartsData(points) {
+    const timeStatictics = {};
+    const transportStatistics = {};
+    const moneyStatistics = {};
+
+    points.forEach((point) => {
+      if (point.type in moneyStatistics) {
+        moneyStatistics[point.type] += point.price;
+      } else {
+        moneyStatistics[point.type] = point.price;
+      }
+
+      if (point.type in transportStatistics) {
+        transportStatistics[point.type] += 1;
+      } else if (Transfers.includes(point.type)) {
+        transportStatistics[point.type] = 1;
+      }
+
+      if (point.type in timeStatictics) {
+        timeStatictics[point.type] += point.endDate - point.startDate;
+      } else {
+        timeStatictics[point.type] = point.endDate - point.startDate;
+      }
+    });
   }
 
 }

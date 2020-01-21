@@ -37,6 +37,7 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, ()
 });
 
 render(siteMainElement, statisticsComponent.getElement(), RenderPosition.BEFOREEND);
+statisticsComponent.generateChartsData(pointsModel.getPoints());
 statisticsComponent.hide();
 
 menuComponent.setChangeHandler((menuItem) => {
