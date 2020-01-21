@@ -1,10 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 
-export const SortTypes = {
-  DEFAULT: `event`,
-  TIME: `time`,
-  PRICE: `price`,
-};
+import {SortTypes} from '../utils/constants.js';
 
 /**
  * Класс формы сортировки точек маршрута

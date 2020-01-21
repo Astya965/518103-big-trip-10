@@ -1,45 +1,33 @@
 import SiteMenuComponent from './components/site-menu.js';
-import FilterComponent from './components/filter.js';
 import EventAddBtnComponent from './components/event-add-button.js';
-import EventAddComponent from './components/event-add.js';
+import TripDaysListComponent from './components/days-list.js';
 import TripController from './controllers/trip.js';
+import FilterController from './controllers/filter.js';
 
 import {tripCards} from './mocks/event.js';
-import {render, remove, RenderPosition} from './utils/render.js';
+import PointsModel from './models/points.js';
+import {render, RenderPosition} from './utils/render.js';
+import {menuItems} from './utils/constants.js';
 
 const siteControlsElement = document.querySelector(`.trip-controls`);
 const tripMain = document.querySelector(`.trip-main`);
 const siteTripEventsElement = document.querySelector(`.trip-events`);
+const tripDaysComponent = new TripDaysListComponent().getElement();
 
-render(siteControlsElement, new SiteMenuComponent().getElement(), RenderPosition.BEFOREEND);
-render(siteControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
+const pointsModel = new PointsModel();
+pointsModel.setPoints(tripCards);
+
+const filterController = new FilterController(siteControlsElement, pointsModel);
+render(siteControlsElement, new SiteMenuComponent(menuItems).getElement(), RenderPosition.BEFOREEND);
+filterController.render();
 
 const addNewEventButton = new EventAddBtnComponent();
 render(tripMain, addNewEventButton.getElement(), RenderPosition.BEFOREEND);
-const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
 
-const tripController = new TripController(tripMain);
-tripController.render(tripCards);
+render(siteTripEventsElement, tripDaysComponent, RenderPosition.BEFOREEND);
 
-const newEventAdd = new EventAddComponent();
-/**
-* События клика на кнопку добавление новой точки маршрута
-*/
-addNewEventButton.setClickHandler(() => {
-  newEventButton.setAttribute(`disabled`, ``);
-  render(siteTripEventsElement, newEventAdd.getElement(), RenderPosition.AFTERBEGIN);
-});
-/**
-* События клика на кнопку сброса в форме добавления новой точки маршрута
-*/
-newEventAdd.setEventResetButtonHandler(() => {
-  remove(newEventAdd);
-  newEventButton.removeAttribute(`disabled`, ``);
-});
-/**
-* События клика на кнопку отправки в форме добавления новой точки маршрута
-*/
-newEventAdd.setEventSubmitButtonHandler((evt) => {
-  evt.preventDefault();
-  remove(newEventAdd);
+const tripController = new TripController(tripDaysComponent, pointsModel);
+tripController.render();
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+  tripController.createPoint();
 });

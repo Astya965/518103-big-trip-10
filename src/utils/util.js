@@ -1,20 +1,5 @@
 import moment from 'moment';
 
-export const MonthNames = [
-  `JAN`,
-  `FEB`,
-  `MAR`,
-  `APR`,
-  `MAY`,
-  `JUN`,
-  `JUL`,
-  `AUG`,
-  `SEP`,
-  `OCT`,
-  `NOV`,
-  `DEС`
-];
-
 /**
  * Выбор случайного числа в заданном промежутке
  * @param {Number} min - Минимальное допустимое значение (включительно)
@@ -133,11 +118,23 @@ export const getDatesDiff = (firstDate, secondDate) => {
 export const getDuration = (startDate, endDate) => {
   const duration = moment.duration(moment(endDate).diff(moment(startDate)));
 
-  const durationDays = duration.days();
-  const durationHours = duration.get(`hours`);
-  const durationMinutes = duration.get(`minutes`);
+  const durationDays = Math.floor(duration.asDays());
+  const durationHours = duration.hours();
+  const durationMinutes = duration.minutes();
 
   return `${durationDays > 0 ? (durationDays) + `D` : ``} ${durationHours > 0 ? durationHours + `H` : ``} ${durationMinutes}M`;
+};
+
+/**
+ * Получение дистанции на основе даты начала и конца в секундах
+ * @param {Number} startDate - Дата начала
+ * @param {Number} endDate - Дата конца
+ * @return {String} Длительность события в секундах
+ */
+export const getDurationSeconds = (startDate, endDate) => {
+  const duration = moment.duration(moment(endDate).diff(moment(startDate))).asSeconds();
+
+  return duration;
 };
 
 /**
@@ -146,6 +143,6 @@ export const getDuration = (startDate, endDate) => {
  * @return {String} Исправленная версия DD/MM/YYYY HH:mm (на основе изначальной)
  */
 export const checkDate = (anyDate) => {
-  const regExp = /\b([1-9])(?!\d)/g;
+  const regExp = /\b([0-9])(?!\d)/g;
   return `${anyDate.toString().replace(regExp, `0$1`)}`;
 };

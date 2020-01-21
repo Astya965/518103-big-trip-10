@@ -5,10 +5,9 @@ import {formatMonthDay, formatDay, isSameMonth} from "../utils/util.js";
  * Класс информации о поездке
  */
 export default class TripInfo extends AbstractComponent {
-  constructor(tripDays) {
+  constructor(tripEvents) {
     super();
-    this._tripDays = tripDays;
-    this._tripEvents = this._tripDays.flat();
+    this._tripEvents = tripEvents;
   }
 
   /**
@@ -36,7 +35,6 @@ export default class TripInfo extends AbstractComponent {
 
   /**
   * Генерация разметки информации о поездке
-  * @param {Array} tripDays - Массив дней путешествия
   * @return {String} Разметка информации о поездке
   */
   getTemplate() {

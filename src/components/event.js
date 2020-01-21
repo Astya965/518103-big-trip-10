@@ -17,7 +17,7 @@ export default class Event extends AbstractComponent {
   * @return {String} Разметка дополнительных предложений
   */
   createEventOfferMarkup(offers) {
-    return offers.map((offer) => {
+    return offers.filter((offer) => offer.checked).map((offer) => {
       return (
         `<li class="event__offer">
           <span class="event__offer-title">${offer.name}</span>
