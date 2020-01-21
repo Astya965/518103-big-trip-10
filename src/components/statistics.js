@@ -4,7 +4,7 @@ import {Transfers} from '../mocks/event.js';
 
 // import Chart from "chart.js";
 // import chartjsPluginDatalabes from "chartjs-plugin-datalabels";
-// import moment from "moment";
+import moment from "moment";
 
 export default class Statistics extends AbstractSmartComponent {
   getTemplate() {
@@ -51,6 +51,27 @@ export default class Statistics extends AbstractSmartComponent {
         timeStatictics[point.type] = point.endDate - point.startDate;
       }
     });
+
+    const moneyData = Object.entries(moneyStatistics).sort((a, b) => b[1] - a[1]);
+
+    const transportData = Object.entries(transportStatistics)
+    .sort((a, b) => b[1] - a[1]);
+
+    const timeData = Object.entries(timeStatictics)
+    .sort((a, b) => b[1] - a[1])
+    .map((item) => {
+      return [
+        item[0],
+        Math.round(moment.duration(item[1], `milliseconds`).asHours())
+      ];
+    })
+    .filter((item) => item[1] !== 0);
+
+    return {
+      moneyData,
+      transportData,
+      timeData
+    };
   }
 
 }
