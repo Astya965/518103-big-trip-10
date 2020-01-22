@@ -84,7 +84,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
+    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(Destinations);
@@ -171,22 +171,24 @@ export default class EventEdit extends AbstractSmartComponent {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${destination > 0 ? `Delete` : `Cancel`}</button>
+          <button class="event__reset-btn" type="reset">${destination ? `Delete` : `Cancel`}</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
-          <label class="event__favorite-btn" for="event-favorite-1">
-            <span class="visually-hidden">Add to favorite</span>
-            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-              <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-            </svg>
-          </label>
+        ${!isNew ?
+        `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+        <label class="event__favorite-btn" for="event-favorite-1">
+          <span class="visually-hidden">Add to favorite</span>
+          <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+          </svg>
+        </label>
 
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>`
+        : ``}
         </header>
 
-        ${destination ?
+        ${destination || offers.length > 0 ?
         `<section class="event__details">
 
           <section class="event__section  event__section--offers">
@@ -257,8 +259,11 @@ export default class EventEdit extends AbstractSmartComponent {
       this._resetHandler = handler;
     }
 
-    this.getElement().querySelector(`.event__rollup-btn`)
-    .addEventListener(`click`, handler);
+    if (!this._tripCard.isNew) {
+      this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    }
+
   }
 
   /**
@@ -312,9 +317,11 @@ export default class EventEdit extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
-      this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
-    });
+    if (!this._tripCard.isNew) {
+      element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
+        this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
+      });
+    }
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._tripCard = Object.assign({}, this._tripCard,

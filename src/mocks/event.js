@@ -85,7 +85,8 @@ export const EmptyPoint = {
   description: ``,
   price: 0,
   isFavorite: false,
-  id: `card-${Date.now() + Math.random()}`
+  id: `card-${Date.now() + Math.random()}`,
+  isNew: true
 };
 
 /**
