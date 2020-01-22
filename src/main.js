@@ -13,7 +13,7 @@ import {MenuItem, menuItems} from './utils/constants.js';
 const siteControlsElement = document.querySelector(`.trip-controls`);
 const tripMainElement = document.querySelector(`.trip-main`);
 const siteTripEventsElement = document.querySelector(`.trip-events`);
-const siteMainElement = document.querySelector(`.page-main`);
+const siteMainElement = document.querySelector(`.page-body__page-main`);
 const menuComponent = new SiteMenuComponent(menuItems);
 const tripDaysComponent = new TripDaysListComponent();
 
