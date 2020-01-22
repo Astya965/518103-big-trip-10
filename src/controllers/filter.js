@@ -1,4 +1,4 @@
-import {FilterTypes} from '../utils/constants.js';
+import {FilterType} from '../utils/constants.js';
 import {render, replace, RenderPosition} from '../utils/render.js';
 
 import FilterComponent from '../components/filter.js';
@@ -8,7 +8,7 @@ export default class PointsFilterController {
     this._container = container;
     this._pointsModel = pointsModel;
 
-    this._activeFilterType = FilterTypes.EVERYTHING;
+    this._activeFilterType = FilterType.EVERYTHING;
     this._filtersComponent = null;
 
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -17,7 +17,7 @@ export default class PointsFilterController {
   render() {
     const container = this._container;
 
-    const filters = Object.values(FilterTypes).map((filterType) => {
+    const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
         checked: filterType === this._activeFilterType,

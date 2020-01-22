@@ -4,7 +4,8 @@ import {
   Transfers,
   Activitys,
   getOffers,
-  getRandomDescription
+  getRandomDescription,
+  getPhotos
 } from '../mocks/event.js';
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
@@ -83,7 +84,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite} = this._tripCard;
+    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(Destinations);
@@ -170,22 +171,24 @@ export default class EventEdit extends AbstractSmartComponent {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${offers.length > 0 ? `Delete` : `Cancel`}</button>
+          <button class="event__reset-btn" type="reset">${destination ? `Delete` : `Cancel`}</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
-          <label class="event__favorite-btn" for="event-favorite-1">
-            <span class="visually-hidden">Add to favorite</span>
-            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-              <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-            </svg>
-          </label>
+        ${!isNew ?
+        `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+        <label class="event__favorite-btn" for="event-favorite-1">
+          <span class="visually-hidden">Add to favorite</span>
+          <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+          </svg>
+        </label>
 
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>`
+        : ``}
         </header>
 
-        ${offers.length ?
+        ${destination || offers.length > 0 ?
         `<section class="event__details">
 
           <section class="event__section  event__section--offers">
@@ -203,8 +206,7 @@ export default class EventEdit extends AbstractSmartComponent {
                         name="event-offer-${offer.type}"
                         ${offer.checked ? `checked` : ``}
                       />
-                      <label class="event__offer-label" for="event-offer-
-                      ${offer.type}-1">
+                      <label class="event__offer-label" for="event-offer-${offer.type}-1">
                         <span class="event__offer-title">${offer.name}</span>
                         &plus; &euro;&nbsp;<span class="event__offer-price">
                         ${offer.price}
@@ -256,8 +258,11 @@ export default class EventEdit extends AbstractSmartComponent {
       this._resetHandler = handler;
     }
 
-    this.getElement().querySelector(`.event__rollup-btn`)
-    .addEventListener(`click`, handler);
+    if (!this._tripCard.isNew) {
+      this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    }
+
   }
 
   /**
@@ -311,9 +316,11 @@ export default class EventEdit extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
-      this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
-    });
+    if (!this._tripCard.isNew) {
+      element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
+        this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
+      });
+    }
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._tripCard = Object.assign({}, this._tripCard,
@@ -327,8 +334,11 @@ export default class EventEdit extends AbstractSmartComponent {
       if (Destinations.includes(evt.target.value)) {
         this._tripCard = Object.assign({}, this._tripCard,
             {description: getRandomDescription()},
+            {photos: getPhotos()},
             {destination: evt.target.value}
         );
+      } else {
+        element.querySelector(`.event__input--destination`).setCustomValidity(`Выберите город из списка`);
       }
       this.rerender();
     });
@@ -338,6 +348,18 @@ export default class EventEdit extends AbstractSmartComponent {
         this._tripCard.price = +evt.target.value;
       }
     });
+
+    // if (this._tripCard.offers.length) {
+    //   element.querySelector(`.event__section--offers`).addEventListener(`change`, () => {
+    //     this._tripCard.offers = [].map.call(element.querySelectorAll(`.event__offer-checkbox:checked`), (offerCheckbox) => {
+    //       const prefix = `event-offer-`;
+    //       const postfix = `-1`;
+    //       const type = offerCheckbox.id.slice(prefix.length, -postfix.length);
+    //       const currentOffer = this._tripCard.offers.find((offer) => offer.type === type);
+    //       return Object.assign({}, currentOffer, {checked: 1});
+    //     });
+    //   });
+    // }
   }
 
   _removeFlatpickr() {
@@ -358,7 +380,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   _setTimeValidation() {
-    const startDateInput = this._element.querySelector(`input[name=event-start-time]`);
+    const startDateInput = this.getElement().querySelector(`input[name=event-start-time]`);
     if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
       startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
     } else {

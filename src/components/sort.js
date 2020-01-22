@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 
-import {SortTypes} from '../utils/constants.js';
+import {SortType} from '../utils/constants.js';
 
 /**
  * Класс формы сортировки точек маршрута
@@ -8,7 +8,7 @@ import {SortTypes} from '../utils/constants.js';
 export default class FormTripSort extends AbstractComponent {
   constructor() {
     super();
-    this._currentSortType = SortTypes.DEFAULT;
+    this._currentSortType = SortType.DEFAULT;
   }
   /**
   * Генерация иконок для пунктов меню сортировки точек маршрута
@@ -29,7 +29,7 @@ export default class FormTripSort extends AbstractComponent {
   * @return {String} Разметка сортировки точек маршрута
   */
   createSortFitlerTemplate(sortType, isChecked) {
-    const directionIcon = (sortType === SortTypes.TIME || sortType === SortTypes.PRICE) ? this.createDirectionIcon() : ``;
+    const directionIcon = (sortType === SortType.TIME || sortType === SortType.PRICE) ? this.createDirectionIcon() : ``;
 
     return `
     <div class="trip-sort__item  trip-sort__item--${sortType}">
@@ -51,7 +51,7 @@ export default class FormTripSort extends AbstractComponent {
   * @return {String} Разметка сортировки точек маршрута
   */
   getTemplate() {
-    const sortFitlersTemplate = Object.values(SortTypes).map((sortType, i) => this.createSortFitlerTemplate(sortType, i === 0)).join(`\n`);
+    const sortFitlersTemplate = Object.values(SortType).map((sortType, i) => this.createSortFitlerTemplate(sortType, i === 0)).join(`\n`);
 
     return (
       `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">

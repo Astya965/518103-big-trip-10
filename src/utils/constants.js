@@ -1,16 +1,16 @@
-export const Modes = {
+export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
   ADD: `add`
 };
 
-export const FilterTypes = {
+export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`,
 };
 
-export const SortTypes = {
+export const SortType = {
   DEFAULT: `event`,
   TIME: `time`,
   PRICE: `price`,
@@ -31,3 +31,28 @@ export const menuItems = [
     active: false
   }
 ];
+
+export const LegendName = {
+  MONEY: `MONEY`,
+  TRANSPORT: `TRANSPORT`,
+  TIME: `TIME`
+};
+
+export const LabelPrefix = {
+  EURO: `€`,
+  TIMES: `x`,
+  HOURS: `H`
+};
+
+export const EmojiValue = {
+  TAXI: `🚕`,
+  BUS: `🚌`,
+  TRAIN: `🚂`,
+  SHIP: `🚢`,
+  TRANSPORT: `🚊`,
+  DRIVE: `🚗`,
+  FLIGHT: `✈️`,
+  CHECK: `🏨`,
+  SIGHTSEEING: `🏛`,
+  RESTAURANT: `🍴`
+};

@@ -26,4 +26,27 @@ export default class Menu extends AbstractComponent {
       </nav>`
     );
   }
+
+  setActiveItem(selectedItem) {
+    this.getElement()
+      .querySelectorAll(`.trip-tabs__btn`)
+      .forEach((_item) => {
+        if (_item.id === selectedItem) {
+          _item.classList.add(`trip-tabs__btn--active`);
+        } else {
+          _item.classList.remove(`trip-tabs__btn--active`);
+        }
+      });
+  }
+
+  setChangeHandler(handler) {
+    this.getElement().addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+      const menuItem = evt.target.id;
+
+      handler(menuItem);
+    });
+  }
 }

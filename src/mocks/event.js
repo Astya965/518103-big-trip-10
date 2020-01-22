@@ -85,7 +85,8 @@ export const EmptyPoint = {
   description: ``,
   price: 0,
   isFavorite: false,
-  id: `card-${Date.now() + Math.random()}`
+  id: `card-${Date.now() + Math.random()}`,
+  isNew: true
 };
 
 /**
@@ -101,6 +102,12 @@ const getRandomDate = () => {
  * @return {String} Путь фотографии
  */
 const getRandomPhoto = () => `http://picsum.photos/300/150?r=${Math.random()}`;
+
+export const getPhotos = () => {
+  return Array(getRandomNumber(1, 4))
+  .fill(``)
+  .map(getRandomPhoto);
+};
 
 /**
  * Получает случайное описание на основе такста
@@ -137,9 +144,7 @@ export const generateEvent = (id) => {
     endDate: new Date(Math.max(firstDate, secondDate)),
     offers: getOffers(),
     price: Math.round(getRandomNumber(10, 100)),
-    photos: Array(getRandomNumber(1, 4))
-            .fill(``)
-            .map(getRandomPhoto),
+    photos: getPhotos(),
     description: getRandomDescription(),
     isFavorite: false,
     id: `card-${id}`
