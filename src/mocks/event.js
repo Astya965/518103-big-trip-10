@@ -102,6 +102,12 @@ const getRandomDate = () => {
  */
 const getRandomPhoto = () => `http://picsum.photos/300/150?r=${Math.random()}`;
 
+export const getPhotos = () => {
+  return Array(getRandomNumber(1, 4))
+  .fill(``)
+  .map(getRandomPhoto);
+};
+
 /**
  * Получает случайное описание на основе такста
  * @param {String} text - Текст
@@ -137,9 +143,7 @@ export const generateEvent = (id) => {
     endDate: new Date(Math.max(firstDate, secondDate)),
     offers: getOffers(),
     price: Math.round(getRandomNumber(10, 100)),
-    photos: Array(getRandomNumber(1, 4))
-            .fill(``)
-            .map(getRandomPhoto),
+    photos: getPhotos(),
     description: getRandomDescription(),
     isFavorite: false,
     id: `card-${id}`

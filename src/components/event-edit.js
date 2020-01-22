@@ -4,7 +4,8 @@ import {
   Transfers,
   Activitys,
   getOffers,
-  getRandomDescription
+  getRandomDescription,
+  getPhotos
 } from '../mocks/event.js';
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
@@ -170,7 +171,7 @@ export default class EventEdit extends AbstractSmartComponent {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${offers.length > 0 ? `Delete` : `Cancel`}</button>
+          <button class="event__reset-btn" type="reset">${destination > 0 ? `Delete` : `Cancel`}</button>
 
           <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
@@ -185,7 +186,7 @@ export default class EventEdit extends AbstractSmartComponent {
           </button>
         </header>
 
-        ${offers.length ?
+        ${destination ?
         `<section class="event__details">
 
           <section class="event__section  event__section--offers">
@@ -327,6 +328,7 @@ export default class EventEdit extends AbstractSmartComponent {
       if (Destinations.includes(evt.target.value)) {
         this._tripCard = Object.assign({}, this._tripCard,
             {description: getRandomDescription()},
+            {photos: getPhotos()},
             {destination: evt.target.value}
         );
       }
