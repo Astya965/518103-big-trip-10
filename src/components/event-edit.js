@@ -411,9 +411,9 @@ export default class EventEdit extends AbstractSmartComponent {
     return {
       type: formData.get(`event-type`),
       destination: formData.get(`event-destination`),
-      startDate: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`
+      startDate: moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`
       ).valueOf(),
-      endDate: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
+      endDate: moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`).valueOf(),
       offers: offers.map((offer) => {
         return {
           name: offer.name,
