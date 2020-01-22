@@ -41,5 +41,18 @@ export const LegendName = {
 export const LabelPrefix = {
   EURO: `€`,
   TIMES: `x`,
-  HOURS: `h`
+  HOURS: `H`
+};
+
+export const EmojiValue = {
+  TAXI: `🚕`,
+  BUS: `🚌`,
+  TRAIN: `🚂`,
+  SHIP: `🚢`,
+  TRANSPORT: `🚊`,
+  DRIVE: `🚗`,
+  FLIGHT: `✈️`,
+  CHECK: `🏨`,
+  SIGHTSEEING: `🏛`,
+  RESTAURANT: `🍴`
 };

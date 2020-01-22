@@ -16,7 +16,6 @@ const siteTripEventsElement = document.querySelector(`.trip-events`);
 const siteMainElement = document.querySelector(`.page-main`);
 const menuComponent = new SiteMenuComponent(menuItems);
 const tripDaysComponent = new TripDaysListComponent();
-const statisticsComponent = new StatisticsComponent();
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(tripCards);
@@ -36,8 +35,8 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, ()
   tripController.createPoint();
 });
 
+const statisticsComponent = new StatisticsComponent(pointsModel);
 render(siteMainElement, statisticsComponent.getElement(), RenderPosition.BEFOREEND);
-statisticsComponent.generateChartsData(pointsModel.getPoints());
 statisticsComponent.hide();
 
 menuComponent.setChangeHandler((menuItem) => {
