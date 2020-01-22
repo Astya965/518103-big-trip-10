@@ -206,8 +206,7 @@ export default class EventEdit extends AbstractSmartComponent {
                         name="event-offer-${offer.type}"
                         ${offer.checked ? `checked` : ``}
                       />
-                      <label class="event__offer-label" for="event-offer-
-                      ${offer.type}-1">
+                      <label class="event__offer-label" for="event-offer-${offer.type}-1">
                         <span class="event__offer-title">${offer.name}</span>
                         &plus; &euro;&nbsp;<span class="event__offer-price">
                         ${offer.price}
@@ -338,6 +337,8 @@ export default class EventEdit extends AbstractSmartComponent {
             {photos: getPhotos()},
             {destination: evt.target.value}
         );
+      } else {
+        element.querySelector(`.event__input--destination`).setCustomValidity(`Выберите город из списка`);
       }
       this.rerender();
     });
@@ -347,6 +348,18 @@ export default class EventEdit extends AbstractSmartComponent {
         this._tripCard.price = +evt.target.value;
       }
     });
+
+    // if (this._tripCard.offers.length) {
+    //   element.querySelector(`.event__section--offers`).addEventListener(`change`, () => {
+    //     this._tripCard.offers = [].map.call(element.querySelectorAll(`.event__offer-checkbox:checked`), (offerCheckbox) => {
+    //       const prefix = `event-offer-`;
+    //       const postfix = `-1`;
+    //       const type = offerCheckbox.id.slice(prefix.length, -postfix.length);
+    //       const currentOffer = this._tripCard.offers.find((offer) => offer.type === type);
+    //       return Object.assign({}, currentOffer, {checked: 1});
+    //     });
+    //   });
+    // }
   }
 
   _removeFlatpickr() {
@@ -367,7 +380,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   _setTimeValidation() {
-    const startDateInput = this._element.querySelector(`input[name=event-start-time]`);
+    const startDateInput = this.getElement().querySelector(`input[name=event-start-time]`);
     if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
       startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
     } else {

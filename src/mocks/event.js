@@ -1,6 +1,6 @@
 import {getRandomNumber, getRandomElement, getRandomBoolean, mixArray} from '../utils/util.js';
 
-const CARD_COUNT = 2;
+const CARD_COUNT = 4;
 const OFFERS_AMOUNT = 2;
 
 const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
