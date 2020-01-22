@@ -52,51 +52,49 @@ export default class Statistics extends AbstractSmartComponent {
 
   recoveryListeners() {}
 
-  _generateChartsData(points) {
-    const timeStatictics = {};
-    const transportStatistics = {};
-    const moneyStatistics = {};
+  _generateChartsData(legendName, points) {
+    const labels = [...new Set(points.map((point) => point.type))];
+    switch (legendName) {
+      case LegendName.MONEY:
+        return labels
+          .map((label) => ({
+            label,
+            value: points
+              .filter((point) => point.type === label)
+              .reduce((acc, curr) => acc + Number(curr.price), 0)
+          }))
+          .sort((a, b) => b.value - a.value);
 
-    points.forEach((point) => {
-      if (point.type in moneyStatistics) {
-        moneyStatistics[point.type] += point.price;
-      } else {
-        moneyStatistics[point.type] = point.price;
-      }
+      case LegendName.TRANSPORT:
+        return labels
+        .filter((label) => Transfers.includes(label))
+        .map((label) => ({
+          label,
+          value: points.filter((point) => point.type === label).length
+        }))
+        .sort((a, b) => b.value - a.value);
 
-      if (point.type in transportStatistics) {
-        transportStatistics[point.type] += 1;
-      } else if (Transfers.includes(point.type)) {
-        transportStatistics[point.type] = 1;
-      }
-
-      if (point.type in timeStatictics) {
-        timeStatictics[point.type] += point.endDate - point.startDate;
-      } else {
-        timeStatictics[point.type] = point.endDate - point.startDate;
-      }
-    });
-
-    const moneyData = Object.entries(moneyStatistics).sort((a, b) => b[1] - a[1]);
-
-    const transportData = Object.entries(transportStatistics)
-    .sort((a, b) => b[1] - a[1]);
-
-    const timeData = Object.entries(timeStatictics)
-    .sort((a, b) => b[1] - a[1])
-    .map((item) => {
-      return [
-        item[0],
-        Math.round(moment.duration(item[1], `milliseconds`).asHours())
-      ];
-    })
-    .filter((item) => item[1] !== 0);
-
-    return {
-      moneyData,
-      transportData,
-      timeData
-    };
+      case LegendName.TIME:
+        return labels
+          .map((label) => ({
+            label,
+            value: points
+              .filter((point) => point.type === label)
+              .reduce(
+                  (acc, curr) =>
+                    acc +
+                  Math.round(
+                      moment
+                      .duration(curr.endDate - curr.startDate, `milliseconds`)
+                      .asHours()
+                  ),
+                  0
+              )
+          }))
+        .sort((a, b) => b.value - a.value);
+      default:
+        return [];
+    }
   }
 
   _createChart(ctx, data, label, legend, isLabelPositonLeft = false) {
@@ -104,12 +102,12 @@ export default class Statistics extends AbstractSmartComponent {
       type: `horizontalBar`,
       plugins: [chartjsPluginDatalabes],
       data: {
-        labels: data.map((item) => getLegendWithEmoji(item[0])),
+        labels: data.map((item) => getLegendWithEmoji(item.label)),
         padding: 110,
         datasets: [
           {
             label: legend.toUpperCase(),
-            data: data.map((item) => item[1]),
+            data: data.map((item) => item.value),
             backgroundColor: `white`,
             minBarLength: 40,
             barThickness: 32
@@ -182,11 +180,11 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    const {moneyData, transportData, timeData} = this._generateChartsData(this._pointsModel.getPoints());
+    const points = this._pointsModel.getPoints();
 
-    this._moneyChart = this._createChart(moneyCtx, moneyData, LabelPrefix.EURO, LegendName.MONEY, true);
-    this._transportChart = this._createChart(transportCtx, transportData, LabelPrefix.TIMES, LegendName.TRANSPORT);
-    this._timeChart = this._createChart(timeCtx, timeData, LabelPrefix.HOURS, LegendName.TIME);
+    this._moneyChart = this._createChart(moneyCtx, this._generateChartsData(LegendName.MONEY, points), LabelPrefix.EURO, LegendName.MONEY, true);
+    this._transportChart = this._createChart(transportCtx, this._generateChartsData(LegendName.TRANSPORT, points), LabelPrefix.TIMES, LegendName.TRANSPORT);
+    this._timeChart = this._createChart(timeCtx, this._generateChartsData(LegendName.TIME, points), LabelPrefix.HOURS, LegendName.TIME);
   }
 
   _resetCharts() {
