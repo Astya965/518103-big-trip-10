@@ -84,7 +84,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, city, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
+    const {type, description, city, price, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(this._destinations);
@@ -188,11 +188,13 @@ export default class EventEdit extends AbstractSmartComponent {
         : ``}
         </header>
 
-        ${city || offers.length > 0 ?
+        ${(city || this._offers.find(
+          (offer) => offer.type === this._tripCard.type).offers).length > 0 ?
         `<section class="event__details">
-
           <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          ${(this._offers.find(
+          (offer) => offer.type === this._tripCard.type).offers).length > 0 ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>` : ``}
+
 
             <div class="event__available-offers">
               ${(this._offers.find(
