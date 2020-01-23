@@ -1,8 +1,7 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {
   Transfers,
-  Activitys,
-  getOffers
+  Activitys
 } from '../mocks/event.js';
 import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
@@ -21,6 +20,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._tripCardForReset = Object.assign({}, tripCard);
 
     this._destinations = Store.getDestinations();
+    this._offers = Store.getOffers();
 
     this._resetHandler = null;
     this._submitHandler = null;
@@ -195,7 +195,8 @@ export default class EventEdit extends AbstractSmartComponent {
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${offers
+              ${(this._offers.find(
+          (offer) => offer.type === this._tripCard.type).offers)
                 .map((offer, i) => {
                   return `
                     <div class="event__offer-selector">
@@ -204,7 +205,7 @@ export default class EventEdit extends AbstractSmartComponent {
                         id="event-offer-${type}-${i + 1}"
                         type="checkbox"
                         name="event-offer-${type}"
-                        ${offer.checked ? `checked` : ``}
+                        ${this._tripCard.offers.find((item) => item.title === offer.title) ? `checked` : ``}
                       />
                       <label class="event__offer-label" for="event-offer-${type}-${i + 1}">
                         <span class="event__offer-title">${offer.title}</span>
@@ -324,7 +325,8 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._tripCard = Object.assign({}, this._tripCard,
-          {offers: getOffers()},
+          {offers: this._offers.find(
+              (offer) => offer.type === this._tripCard.type).offers},
           {type: evt.target.value}
       );
       this.rerender();
@@ -332,7 +334,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       if (this._destinations.find((destination) => destination.name === evt.target.value)) {
-        console.log(this._tripCard);
         this._tripCard = Object.assign({}, this._tripCard,
             {description: this._destinations.find(
                 (destination) => destination.name === this._tripCard.city).description},
@@ -413,7 +414,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     return {
       type: formData.get(`event-type`),
-      destination: formData.get(`event-destination`),
+      city: formData.get(`event-destination`),
       startDate: moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`
       ).valueOf(),
       endDate: moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`).valueOf(),

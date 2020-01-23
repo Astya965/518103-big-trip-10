@@ -20,7 +20,7 @@ export default class Point {
       'destination': {
         description: this.description,
         name: this.city,
-        pictures: this.pictures
+        pictures: this.photos
       },
       'id': this.id,
       'is_favorite': this.isFavorite,
