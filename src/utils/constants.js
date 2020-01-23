@@ -56,3 +56,13 @@ export const EmojiValue = {
   SIGHTSEEING: `🏛`,
   RESTAURANT: `🍴`
 };
+
+export const Method = {
+  POST: `POST`,
+  GET: `GET`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+export const AUTHORIZATION = `Basic er883jdzbdw`;
+export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
