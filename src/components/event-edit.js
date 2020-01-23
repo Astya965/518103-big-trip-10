@@ -64,14 +64,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
   /**
    * Генерация формы выбора пункта назначения
-   * @param {Array} destinations - Массив городов
+   * @param {Array} cities - Массив городов
    * @return {String} Разметка формы выбора пункта назначения
    */
-  createDestinationList(destinations) {
-    return destinations
-      .map((destination) => {
+  createDestinationList(cities) {
+    return cities
+      .map((city) => {
         return (
-          `<option value="${destination}"></option>`
+          `<option value="${city}"></option>`
         );
       })
       .join(`\n`);
@@ -84,7 +84,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
+    const {type, description, city, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(Destinations);
@@ -125,7 +125,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${destination || ``}"
+              value="${city || ``}"
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -171,7 +171,7 @@ export default class EventEdit extends AbstractSmartComponent {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${destination ? `Delete` : `Cancel`}</button>
+          <button class="event__reset-btn" type="reset">${city ? `Delete` : `Cancel`}</button>
 
         ${!isNew ?
         `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
@@ -188,7 +188,7 @@ export default class EventEdit extends AbstractSmartComponent {
         : ``}
         </header>
 
-        ${destination || offers.length > 0 ?
+        ${city || offers.length > 0 ?
         `<section class="event__details">
 
           <section class="event__section  event__section--offers">
@@ -196,18 +196,18 @@ export default class EventEdit extends AbstractSmartComponent {
 
             <div class="event__available-offers">
               ${offers
-                .map((offer) => {
+                .map((offer, i) => {
                   return `
                     <div class="event__offer-selector">
                       <input
                         class="event__offer-checkbox  visually-hidden"
-                        id="event-offer-${offer.type}-1"
+                        id="event-offer-${type}-${i + 1}"
                         type="checkbox"
-                        name="event-offer-${offer.type}"
+                        name="event-offer-${type}"
                         ${offer.checked ? `checked` : ``}
                       />
-                      <label class="event__offer-label" for="event-offer-${offer.type}-1">
-                        <span class="event__offer-title">${offer.name}</span>
+                      <label class="event__offer-label" for="event-offer-${type}-${i + 1}">
+                        <span class="event__offer-title">${offer.title}</span>
                         &plus; &euro;&nbsp;<span class="event__offer-price">
                         ${offer.price}
                         </span>
@@ -227,7 +227,7 @@ export default class EventEdit extends AbstractSmartComponent {
               <div class="event__photos-tape">
                 ${photos
                   .map((photo) => {
-                    return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+                    return `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`;
                   })
                   .join(``)}
               </div>
