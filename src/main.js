@@ -22,11 +22,12 @@ const pointsModel = new PointsModel();
 
 const statisticsComponent = new StatisticsComponent(pointsModel);
 
-api.getPoints().then((points) => {
-  console.log(points);
-  pointsModel.setPoints(points);
-  tripController.render(points);
-});
+Promise.all([api.getDestinations(), api.getOffers(), api.getPoints()]).then(
+    (values) => {
+      pointsModel.setPoints(values[2]);
+      tripController.render(values[2]);
+    }
+);
 
 const filterController = new FilterController(siteControlsElement, pointsModel);
 render(siteControlsElement, menuComponent.getElement(), RenderPosition.BEFOREEND);

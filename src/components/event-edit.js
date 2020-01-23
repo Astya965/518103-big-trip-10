@@ -1,12 +1,10 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {
-  Destinations,
   Transfers,
   Activitys,
-  getOffers,
-  getRandomDescription,
-  getPhotos
+  getOffers
 } from '../mocks/event.js';
+import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
 import flatpickr from 'flatpickr';
@@ -21,6 +19,8 @@ export default class EventEdit extends AbstractSmartComponent {
     super();
     this._tripCard = tripCard;
     this._tripCardForReset = Object.assign({}, tripCard);
+
+    this._destinations = Store.getDestinations();
 
     this._resetHandler = null;
     this._submitHandler = null;
@@ -64,14 +64,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
   /**
    * Генерация формы выбора пункта назначения
-   * @param {Array} cities - Массив городов
+   * @param {Array} destinations - Массив городов
    * @return {String} Разметка формы выбора пункта назначения
    */
-  createDestinationList(cities) {
-    return cities
-      .map((city) => {
+  createDestinationList(destinations) {
+    return destinations
+      .map((destination) => {
         return (
-          `<option value="${city}"></option>`
+          `<option value="${destination.name}"></option>`
         );
       })
       .join(`\n`);
@@ -87,7 +87,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const {type, description, city, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
-    const destinationList = this.createDestinationList(Destinations);
+    const destinationList = this.createDestinationList(this._destinations);
     return (
       `<form class="event event--edit" action="#" method="post">
         <header class="event__header">
@@ -331,11 +331,14 @@ export default class EventEdit extends AbstractSmartComponent {
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (Destinations.includes(evt.target.value)) {
+      if (this._destinations.find((destination) => destination.name === evt.target.value)) {
+        console.log(this._tripCard);
         this._tripCard = Object.assign({}, this._tripCard,
-            {description: getRandomDescription()},
-            {photos: getPhotos()},
-            {destination: evt.target.value}
+            {description: this._destinations.find(
+                (destination) => destination.name === this._tripCard.city).description},
+            {photos: this._destinations.find(
+                (destination) => destination.name === this._tripCard.city).pictures},
+            {city: evt.target.value}
         );
       } else {
         element.querySelector(`.event__input--destination`).setCustomValidity(`Выберите город из списка`);
