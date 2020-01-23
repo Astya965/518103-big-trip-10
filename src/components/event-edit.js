@@ -336,9 +336,9 @@ export default class EventEdit extends AbstractSmartComponent {
       if (this._destinations.find((destination) => destination.name === evt.target.value)) {
         this._tripCard = Object.assign({}, this._tripCard,
             {description: this._destinations.find(
-                (destination) => destination.name === this._tripCard.city).description},
+                (destination) => destination.name === evt.target.value).description},
             {photos: this._destinations.find(
-                (destination) => destination.name === this._tripCard.city).pictures},
+                (destination) => destination.name === evt.target.value).pictures},
             {city: evt.target.value}
         );
       } else {
