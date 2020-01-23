@@ -1,5 +1,6 @@
 import {Method} from '../utils/constants.js';
 import Point from '../models/point.js';
+import Store from "./store.js";
 
 export default class API {
   constructor(endPoint, authorization) {
@@ -36,4 +37,16 @@ export default class API {
   updatePoint() {}
 
   deletePoint() {}
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json())
+      .then(Store.setDestinations);
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then((response) => response.json())
+      .then(Store.setOffers);
+  }
 }
