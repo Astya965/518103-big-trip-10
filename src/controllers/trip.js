@@ -32,6 +32,7 @@ export default class TripController {
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
     this._creatingPoint = null;
     this._isDefaultSorting = true;
+    this._currentSortType = SortType.DEFAULT;
   }
 
   createPoint() {
@@ -68,25 +69,11 @@ export default class TripController {
     this._showedPointControllers = this.renderTripEvents(this._pointsModel.getPoints(), this._container.getElement(), this._onDataChange, this._onViewChange);
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      let sortedEvents = [];
-      this._isDefaultSorting = false;
-
-      switch (sortType) {
-        case SortType.DEFAULT:
-          sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate);
-          this._isDefaultSorting = true;
-          break;
-        case SortType.TIME:
-          sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => getDurationSeconds(b.startDate, b.endDate) - getDurationSeconds(a.startDate, a.endDate));
-          break;
-        case SortType.PRICE:
-          sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => b.price - a.price);
-          break;
-      }
-
-      this._removePoints();
-      this._showedPointControllers = this.renderTripEvents(sortedEvents, this._container.getElement(), this._onDataChange, this._onViewChange, this._isDefaultSorting);
+      this._sortPoints(sortType);
     });
+
+    this._sortPoints(this._currentSortType);
+    this._checkSortType(this._currentSortType);
   }
 
   _toggleNoEventsMessageComponent() {
@@ -208,7 +195,40 @@ export default class TripController {
   }
 
   _onFilterChange() {
+    this._isDefaultSorting = true;
+    this._checkSortType(SortType.DEFAULT);
     this._updatePoints();
+  }
+
+  _sortPoints(sortType) {
+    let sortedEvents = [];
+
+    this._isDefaultSorting = false;
+
+    switch (sortType) {
+      case SortType.DEFAULT:
+        sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate);
+        this._isDefaultSorting = true;
+        this._currentSortType = sortType;
+        break;
+      case SortType.TIME:
+        sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => getDurationSeconds(b.startDate, b.endDate) - getDurationSeconds(a.startDate, a.endDate));
+        this._isDefaultSorting = false;
+        this._currentSortType = sortType;
+        break;
+      case SortType.PRICE:
+        sortedEvents = this._pointsModel.getPoints().slice().sort((a, b) => b.price - a.price);
+        this._isDefaultSorting = false;
+        this._currentSortType = sortType;
+        break;
+    }
+
+    this._removePoints();
+    this._showedPointControllers = this.renderTripEvents(sortedEvents, this._container.getElement(), this._onDataChange, this._onViewChange, this._isDefaultSorting);
+  }
+
+  _checkSortType(sortType) {
+    document.querySelector(`input[data-sort-type=${sortType}]`).checked = true;
   }
 
   _removePoints() {
