@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {Activitys} from '../mocks/event.js';
+import {Activitys} from '../utils/constants';
 import {checkDate, getDuration, formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
 
 /**
@@ -17,10 +17,10 @@ export default class Event extends AbstractComponent {
   * @return {String} Разметка дополнительных предложений
   */
   createEventOfferMarkup(offers) {
-    return offers.filter((offer) => offer.checked).map((offer) => {
+    return offers.slice(0, 3).map((offer) => {
       return (
         `<li class="event__offer">
-          <span class="event__offer-title">${offer.name}</span>
+          <span class="event__offer-title">${offer.title}</span>
           &plus; &euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </li>
@@ -35,7 +35,7 @@ export default class Event extends AbstractComponent {
   * @return {String} Разметка точки маршрута
   */
   getTemplate() {
-    const {type, destination, price, offers, startDate, endDate} = this._tripCard;
+    const {type, city, price, offers, startDate, endDate} = this._tripCard;
     return (
       `<li class="trip-events__item">
         <div class="event">
@@ -47,7 +47,7 @@ export default class Event extends AbstractComponent {
               src="img/icons/${type}.png"
               alt="Event type icon">
           </div>
-          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`} ${destination}</h3>
+          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`} ${city}</h3>
 
           <div class="event__schedule">
             <p class="event__time">

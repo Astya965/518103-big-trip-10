@@ -17,9 +17,12 @@ export default class TripInfo extends AbstractComponent {
   getTripInfoTitle() {
     let destinationsList = [];
     this._tripEvents.forEach((tripEvent) => {
-      destinationsList.push(tripEvent.destination);
+      destinationsList.push(tripEvent.city);
     });
-    return destinationsList.join(` &mdash; `);
+    if (destinationsList.length <= 3) {
+      return destinationsList.join(` &mdash; `);
+    }
+    return `${destinationsList[0]} &mdash; ... &mdash; ${destinationsList[destinationsList.length - 1]}`;
   }
 
   /**

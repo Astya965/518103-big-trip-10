@@ -5,10 +5,10 @@ import StatisticsComponent from './components/statistics.js';
 import TripController from './controllers/trip.js';
 import FilterController from './controllers/filter.js';
 
-import {tripCards} from './mocks/event.js';
 import PointsModel from './models/points.js';
 import {render, RenderPosition} from './utils/render.js';
-import {MenuItem, menuItems} from './utils/constants.js';
+import {MenuItem, menuItems, END_POINT, AUTHORIZATION} from './utils/constants.js';
+import API from "./api/api.js";
 
 const siteControlsElement = document.querySelector(`.trip-controls`);
 const tripMainElement = document.querySelector(`.trip-main`);
@@ -17,8 +17,17 @@ const siteMainElement = document.querySelector(`.page-body__page-main`);
 const menuComponent = new SiteMenuComponent(menuItems);
 const tripDaysComponent = new TripDaysListComponent();
 
+const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
-pointsModel.setPoints(tripCards);
+
+const statisticsComponent = new StatisticsComponent(pointsModel);
+
+Promise.all([api.getDestinations(), api.getOffers(), api.getPoints()]).then(
+    (values) => {
+      pointsModel.setPoints(values[2]);
+      tripController.render(values[2]);
+    }
+);
 
 const filterController = new FilterController(siteControlsElement, pointsModel);
 render(siteControlsElement, menuComponent.getElement(), RenderPosition.BEFOREEND);
@@ -29,13 +38,12 @@ render(tripMainElement, addNewEventButton.getElement(), RenderPosition.BEFOREEND
 
 render(siteTripEventsElement, tripDaysComponent.getElement(), RenderPosition.BEFOREEND);
 
-const tripController = new TripController(tripDaysComponent, pointsModel);
-tripController.render();
+const tripController = new TripController(tripDaysComponent, pointsModel, api);
+
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
   tripController.createPoint();
 });
 
-const statisticsComponent = new StatisticsComponent(pointsModel);
 render(siteMainElement, statisticsComponent.getElement(), RenderPosition.BEFOREEND);
 statisticsComponent.hide();
 

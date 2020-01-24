@@ -1,7 +1,7 @@
 import {FilterType} from '../utils/constants.js';
 import {getPointsByFilter} from '../utils/filter.js';
 
-export default class Point {
+export default class Points {
   constructor() {
     this._points = [];
     this._activeFilterType = FilterType.EVERYTHING;

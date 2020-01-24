@@ -1,17 +1,10 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {
-  Destinations,
-  Transfers,
-  Activitys,
-  getOffers,
-  getRandomDescription,
-  getPhotos
-} from '../mocks/event.js';
+import {Transfers, Activitys} from '../utils/constants.js';
+import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import moment from "moment";
 
 /**
  * Класс формы редактирования точки маршрута
@@ -21,6 +14,9 @@ export default class EventEdit extends AbstractSmartComponent {
     super();
     this._tripCard = tripCard;
     this._tripCardForReset = Object.assign({}, tripCard);
+
+    this._destinations = Store.getDestinations();
+    this._offers = Store.getOffers();
 
     this._resetHandler = null;
     this._submitHandler = null;
@@ -71,7 +67,7 @@ export default class EventEdit extends AbstractSmartComponent {
     return destinations
       .map((destination) => {
         return (
-          `<option value="${destination}"></option>`
+          `<option value="${destination.name}"></option>`
         );
       })
       .join(`\n`);
@@ -84,12 +80,12 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, destination, price, offers, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
+    const {type, description, city, price, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
-    const destinationList = this.createDestinationList(Destinations);
+    const destinationList = this.createDestinationList(this._destinations);
     return (
-      `<form class="event event--edit" action="#" method="post">
+      `<form class="event event--edit" action="#" method="post" ${isNew ? `style="width: 100%"` : ``}>
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -125,7 +121,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${destination || ``}"
+              value="${city || ``}"
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -171,7 +167,7 @@ export default class EventEdit extends AbstractSmartComponent {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${destination ? `Delete` : `Cancel`}</button>
+          <button class="event__reset-btn" type="reset">${city ? `Delete` : `Cancel`}</button>
 
         ${!isNew ?
         `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
@@ -188,26 +184,29 @@ export default class EventEdit extends AbstractSmartComponent {
         : ``}
         </header>
 
-        ${destination || offers.length > 0 ?
+        ${(city || this._offers.find(
+          (offer) => offer.type === this._tripCard.type).offers).length > 0 ?
         `<section class="event__details">
-
           <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          ${(this._offers.find(
+          (offer) => offer.type === this._tripCard.type).offers).length > 0 ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>` : ``}
+
 
             <div class="event__available-offers">
-              ${offers
-                .map((offer) => {
+              ${(this._offers.find(
+          (offer) => offer.type === this._tripCard.type).offers)
+                .map((offer, i) => {
                   return `
                     <div class="event__offer-selector">
                       <input
                         class="event__offer-checkbox  visually-hidden"
-                        id="event-offer-${offer.type}-1"
+                        id="event-offer-${type}-${i + 1}"
                         type="checkbox"
-                        name="event-offer-${offer.type}"
-                        ${offer.checked ? `checked` : ``}
+                        name="event-offer-${type}"
+                        ${this._tripCard.offers.find((item) => item.title === offer.title) ? `checked` : ``}
                       />
-                      <label class="event__offer-label" for="event-offer-${offer.type}-1">
-                        <span class="event__offer-title">${offer.name}</span>
+                      <label class="event__offer-label" for="event-offer-${type}-${i + 1}">
+                        <span class="event__offer-title">${offer.title}</span>
                         &plus; &euro;&nbsp;<span class="event__offer-price">
                         ${offer.price}
                         </span>
@@ -227,7 +226,7 @@ export default class EventEdit extends AbstractSmartComponent {
               <div class="event__photos-tape">
                 ${photos
                   .map((photo) => {
-                    return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+                    return `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`;
                   })
                   .join(``)}
               </div>
@@ -303,14 +302,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-    const formData = new FormData(form);
-
-    return this._parseFormData(formData,
-        this._tripCard.offers,
-        this._tripCard.photos,
-        this._tripCard.description,
-        this._tripCard.id
-    );
+    return new FormData(form);
   }
 
   _subscribeOnEvents() {
@@ -324,18 +316,21 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._tripCard = Object.assign({}, this._tripCard,
-          {offers: getOffers()},
+          {offers: this._offers.find(
+              (offer) => offer.type === this._tripCard.type).offers},
           {type: evt.target.value}
       );
       this.rerender();
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (Destinations.includes(evt.target.value)) {
+      if (this._destinations.find((destination) => destination.name === evt.target.value)) {
         this._tripCard = Object.assign({}, this._tripCard,
-            {description: getRandomDescription()},
-            {photos: getPhotos()},
-            {destination: evt.target.value}
+            {description: this._destinations.find(
+                (destination) => destination.name === evt.target.value).description},
+            {photos: this._destinations.find(
+                (destination) => destination.name === evt.target.value).pictures},
+            {city: evt.target.value}
         );
       } else {
         element.querySelector(`.event__input--destination`).setCustomValidity(`Выберите город из списка`);
@@ -349,17 +344,15 @@ export default class EventEdit extends AbstractSmartComponent {
       }
     });
 
-    // if (this._tripCard.offers.length) {
-    //   element.querySelector(`.event__section--offers`).addEventListener(`change`, () => {
-    //     this._tripCard.offers = [].map.call(element.querySelectorAll(`.event__offer-checkbox:checked`), (offerCheckbox) => {
-    //       const prefix = `event-offer-`;
-    //       const postfix = `-1`;
-    //       const type = offerCheckbox.id.slice(prefix.length, -postfix.length);
-    //       const currentOffer = this._tripCard.offers.find((offer) => offer.type === type);
-    //       return Object.assign({}, currentOffer, {checked: 1});
-    //     });
-    //   });
-    // }
+    if ((this._offers.find((offer) => offer.type === this._tripCard.type).offers).length > 0) {
+      element.querySelectorAll(`.event__offer-checkbox`).forEach((checkbox) => checkbox.addEventListener(`click`, () => {
+        if (checkbox.hasAttribute(`checked`)) {
+          checkbox.removeAttribute(`checked`);
+        } else {
+          checkbox.setAttribute(`checked`, ``);
+        }
+      }));
+    }
   }
 
   _removeFlatpickr() {
@@ -404,31 +397,6 @@ export default class EventEdit extends AbstractSmartComponent {
         this._setTimeValidation();
       }
     });
-  }
-
-  _parseFormData(formData, offers, photos, description, id) {
-
-    return {
-      type: formData.get(`event-type`),
-      destination: formData.get(`event-destination`),
-      startDate: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`
-      ).valueOf(),
-      endDate: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
-      offers: offers.map((offer) => {
-        return {
-          name: offer.name,
-          price: offer.price,
-          type: offer.type,
-          checked:
-            formData.get(`event-offer-${offer.type}`) === `on` ? true : false
-        };
-      }),
-      photos,
-      description,
-      price: formData.get(`event-price`),
-      id,
-      isFavorite: formData.get(`event-favorite`) === `on`
-    };
   }
 
 }

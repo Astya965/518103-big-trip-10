@@ -56,3 +56,43 @@ export const EmojiValue = {
   SIGHTSEEING: `🏛`,
   RESTAURANT: `🍴`
 };
+
+export const Method = {
+  POST: `POST`,
+  GET: `GET`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+export const Transfers = [
+  `taxi`,
+  `bus`,
+  `train`,
+  `ship`,
+  `transport`,
+  `drive`,
+  `flight`,
+];
+
+export const Activitys = [
+  `check-in`,
+  `sightseeing`,
+  `restaurant`,
+];
+
+export const AUTHORIZATION = `Basic er883jdzbdw`;
+export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
+
+export const EmptyPoint = {
+  type: `taxi`,
+  destination: ``,
+  startDate: Date.now(),
+  endDate: Date.now(),
+  offers: [],
+  photos: [],
+  description: ``,
+  price: 0,
+  isFavorite: false,
+  id: `card-${Date.now() + Math.random()}`,
+  isNew: true
+};
