@@ -60,7 +60,7 @@ export default class TripController {
     }
 
     this._sortComponent = new TripSortComponent();
-    this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPoints());
+    this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate));
 
     render(tripInfo, this._tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     render(tripEvents, this._sortComponent.getElement(), RenderPosition.AFTERBEGIN);
