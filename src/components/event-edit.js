@@ -344,17 +344,15 @@ export default class EventEdit extends AbstractSmartComponent {
       }
     });
 
-    // if (this._tripCard.offers.length) {
-    //   element.querySelector(`.event__section--offers`).addEventListener(`change`, () => {
-    //     this._tripCard.offers = [].map.call(element.querySelectorAll(`.event__offer-checkbox:checked`), (offerCheckbox) => {
-    //       const prefix = `event-offer-`;
-    //       const postfix = `-1`;
-    //       const type = offerCheckbox.id.slice(prefix.length, -postfix.length);
-    //       const currentOffer = this._tripCard.offers.find((offer) => offer.type === type);
-    //       return Object.assign({}, currentOffer, {checked: 1});
-    //     });
-    //   });
-    // }
+    if ((this._offers.find((offer) => offer.type === this._tripCard.type).offers).length > 0) {
+      element.querySelectorAll(`.event__offer-checkbox`).forEach((checkbox) => checkbox.addEventListener(`click`, () => {
+        if (checkbox.hasAttribute(`checked`)) {
+          checkbox.removeAttribute(`checked`);
+        } else {
+          checkbox.setAttribute(`checked`, ``);
+        }
+      }));
+    }
   }
 
   _removeFlatpickr() {

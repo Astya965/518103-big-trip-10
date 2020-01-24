@@ -155,9 +155,10 @@ export default class PointContoller {
 
   _parseFormData(formData) {
 
-    const offerLabels = [
-      ...document.querySelectorAll(`label[for^="event-offer"]`)
+    const checkedOffersLabels = [
+      ...document.querySelectorAll(`.event__offer-checkbox[checked=""]+label[for^="event-offer"]`)
     ];
+
     const destination = Store.getDestinations().find(
         (city) => city.name === formData.get(`event-destination`)
     );
@@ -176,7 +177,7 @@ export default class PointContoller {
         pictures: destination.pictures
       },
       'is_favorite': formData.get(`event-favorite`) === `on` ? true : false,
-      'offers': offerLabels.map((offer) => ({
+      'offers': checkedOffersLabels.map((offer) => ({
         title: offer.querySelector(`.event__offer-title`).textContent,
         price: Number(offer.querySelector(`.event__offer-price`).textContent)
       })),
