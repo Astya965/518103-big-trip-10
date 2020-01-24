@@ -1,14 +1,10 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {
-  Transfers,
-  Activitys
-} from '../mocks/event.js';
+import {Transfers, Activitys} from '../utils/constants.js';
 import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import moment from "moment";
 
 /**
  * Класс формы редактирования точки маршрута
@@ -306,14 +302,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement();
-    const formData = new FormData(form);
-
-    return this._parseFormData(formData,
-        this._tripCard.offers,
-        this._tripCard.photos,
-        this._tripCard.description,
-        this._tripCard.id
-    );
+    return new FormData(form);
   }
 
   _subscribeOnEvents() {
@@ -410,31 +399,6 @@ export default class EventEdit extends AbstractSmartComponent {
         this._setTimeValidation();
       }
     });
-  }
-
-  _parseFormData(formData, offers, photos, description, id) {
-
-    return {
-      type: formData.get(`event-type`),
-      city: formData.get(`event-destination`),
-      startDate: moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`
-      ).valueOf(),
-      endDate: moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`).valueOf(),
-      offers: offers.map((offer) => {
-        return {
-          name: offer.name,
-          price: offer.price,
-          type: offer.type,
-          checked:
-            formData.get(`event-offer-${offer.type}`) === `on` ? true : false
-        };
-      }),
-      photos,
-      description,
-      price: formData.get(`event-price`),
-      id,
-      isFavorite: formData.get(`event-favorite`) === `on`
-    };
   }
 
 }

@@ -1,7 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
-import {Transfers} from '../mocks/event.js';
-import {LegendName, LabelPrefix} from '../utils/constants.js';
+import {LegendName, LabelPrefix, Transfers} from '../utils/constants.js';
 import {getLegendWithEmoji} from '../utils/statistics.js';
 
 import Chart from "chart.js";

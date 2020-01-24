@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {Activitys} from '../mocks/event.js';
+import {Activitys} from '../utils/constants';
 import {checkDate, getDuration, formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
 
 /**
