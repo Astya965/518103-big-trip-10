@@ -39,8 +39,11 @@ export default class TripController {
       return;
     }
 
+    const day = new TripDayItemComponent();
+    render(this._container.getElement(), day.getElement(), RenderPosition.AFTERBEGIN);
+
     this._creatingPoint = new PointController(
-        this._container.getElement(),
+        day.getElement().querySelector(`.trip-events__list`),
         this._onDataChange,
         this._onViewChange
     );
@@ -150,31 +153,38 @@ export default class TripController {
         pointController.destroy();
         this._updatePoints();
       } else {
-        this._pointsModel.addPoint(newData);
+        this._api.createPoint(newData).then((pointModel) => {
+          this._pointsModel.addPoint(pointModel);
 
-        this._showedPointControllers = [
-          pointController,
-          ...this._showedPointControllers
-        ];
+          this._showedPointControllers = [
+            pointController,
+            ...this._showedPointControllers
+          ];
 
-        this._removePoints();
+          this._removePoints();
+          this._reset();
 
-        this._showedPointControllers = this.renderTripEvents(
-            this._pointsModel.getPoints(),
-            this._container.getElement(),
-            this._onDataChange,
-            this._onViewChange,
-            this._isDefaultSorting
-        );
+          this._showedPointControllers = this.renderTripEvents(
+              this._pointsModel.getPoints(),
+              this._container.getElement(),
+              this._onDataChange,
+              this._onViewChange,
+              this._isDefaultSorting
+          );
+        });
       }
     } else if (newData === null) {
-      this._pointsModel.removePoint(oldData.id);
-      this._updatePoints();
+      this._api.deletePoint(oldData.id).then(() => {
+        this._pointsModel.removePoint(oldData.id);
+        this._reset();
+        this._updatePoints();
+      });
     } else {
       this._api.updatePoint(oldData.id, newData).then((pointModel) => {
         const isUpdate = this._pointsModel.updatePoint(oldData.id, pointModel);
         if (isUpdate) {
           pointController.render(pointModel, Mode.DEFAULT);
+          this._reset();
           this._updatePoints();
         }
       });
