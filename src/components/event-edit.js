@@ -85,7 +85,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(this._destinations);
     return (
-      `<form class="event event--edit" action="#" method="post" ${isNew ? `style="width: 100%"` : ``}>
+      `<form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
