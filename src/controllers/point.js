@@ -2,8 +2,11 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import {Mode} from '../utils/constants.js';
-import {EmptyPoint} from '../mocks/event.js';
+import {Mode, EmptyPoint} from '../utils/constants.js';
+import PointModel from '../models/point.js';
+import Store from '../api/store.js';
+
+import moment from 'moment';
 
 export default class PointContoller {
   constructor(container, onDataChange, onViewChange) {
@@ -64,7 +67,8 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._eventEditComponent.getData();
+      const formData = this._eventEditComponent.getData();
+      const data = this._parseFormData(formData);
       this._onDataChange(this, this._eventCard, data);
       this._showСard();
     });
@@ -147,6 +151,37 @@ export default class PointContoller {
   */
   _replaceEditToCard() {
     replace(this._eventComponent, this._eventEditComponent);
+  }
+
+  _parseFormData(formData) {
+
+    const offerLabels = [
+      ...document.querySelectorAll(`label[for^="event-offer"]`)
+    ];
+    const destination = Store.getDestinations().find(
+        (city) => city.name === formData.get(`event-destination`)
+    );
+
+    return new PointModel({
+      'base_price': formData.get(`event-price`),
+      'date_from': new Date(
+          moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf()
+      ).toISOString(),
+      'date_to': new Date(
+          moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`).valueOf()
+      ).toISOString(),
+      'destination': {
+        description: destination.description,
+        name: destination.name,
+        pictures: destination.pictures
+      },
+      'is_favorite': formData.get(`event-favorite`) === `on` ? true : false,
+      'offers': offerLabels.map((offer) => ({
+        title: offer.querySelector(`.event__offer-title`).textContent,
+        price: Number(offer.querySelector(`.event__offer-price`).textContent)
+      })),
+      'type': formData.get(`event-type`)
+    });
   }
 
 }

@@ -38,7 +38,7 @@ render(tripMainElement, addNewEventButton.getElement(), RenderPosition.BEFOREEND
 
 render(siteTripEventsElement, tripDaysComponent.getElement(), RenderPosition.BEFOREEND);
 
-const tripController = new TripController(tripDaysComponent, pointsModel);
+const tripController = new TripController(tripDaysComponent, pointsModel, api);
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
   tripController.createPoint();

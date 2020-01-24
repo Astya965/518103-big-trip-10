@@ -4,10 +4,9 @@ import TripInfoComponent from '../components/trip-info.js';
 import TripDayItemComponent from '../components/day.js';
 
 import PointController from './point.js';
-import {Mode, SortType} from '../utils/constants.js';
+import {Mode, EmptyPoint, SortType} from '../utils/constants.js';
 import {getDurationSeconds} from '../utils/util.js';
 import {render, remove, RenderPosition} from '../utils/render.js';
-import {EmptyPoint} from '../mocks/event.js';
 
 const tripEvents = document.querySelector(`.trip-events`);
 const tripInfo = document.querySelector(`.trip-main__trip-info`);
@@ -17,10 +16,11 @@ const tripInfo = document.querySelector(`.trip-main__trip-info`);
  * либо приветственное собщение при остутствии карточек)
  */
 export default class TripController {
-  constructor(container, pointsModel) {
+  constructor(container, pointsModel, api) {
     this._container = container;
     this._pointsModel = pointsModel;
     this._showedPointControllers = [];
+    this._api = api;
 
     this._sortComponent = null;
     this._tripInfoComponent = null;
@@ -171,10 +171,13 @@ export default class TripController {
       this._pointsModel.removePoint(oldData.id);
       this._updatePoints();
     } else {
-      const isUpdate = this._pointsModel.updatePoint(oldData.id, newData);
-      if (isUpdate) {
-        pointController.render(newData, Mode.DEFAULT);
-      }
+      this._api.updatePoint(oldData.id, newData).then((pointModel) => {
+        const isSuccess = this._pointsModel.updatePoint(oldData.id, pointModel);
+        if (isSuccess) {
+          pointController.render(pointModel, Mode.DEFAULT);
+          this._updatePoints();
+        }
+      });
     }
 
     this._toggleNoEventsMessageComponent();
