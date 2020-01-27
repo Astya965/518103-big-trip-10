@@ -64,7 +64,6 @@ export default class TripController {
 
     render(tripInfo, this._tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     render(tripEvents, this._sortComponent.getElement(), RenderPosition.AFTERBEGIN);
-    this._getFullPrice();
 
     this._showedPointControllers = this.renderTripEvents(this._pointsModel.getPoints(), this._container.getElement(), this._onDataChange, this._onViewChange);
 
@@ -74,6 +73,7 @@ export default class TripController {
 
     this._sortPoints(this._currentSortType);
     this._checkSortType(this._currentSortType);
+    this._getFullPrice();
   }
 
   _toggleNoEventsMessageComponent() {
@@ -96,7 +96,6 @@ export default class TripController {
 
   _reset() {
     this._container.getElement().innerHTML = ``;
-    this._getFullPrice();
 
     if (this._tripInfoComponent) {
       remove(this._tripInfoComponent);
@@ -110,6 +109,8 @@ export default class TripController {
       this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPoints());
       this.render();
     }
+
+    this._getFullPrice();
   }
 
   /**
