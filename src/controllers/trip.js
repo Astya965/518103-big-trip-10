@@ -134,7 +134,7 @@ export default class TripController {
   * @param {Function} newData - Новая точка маршрута
   */
   _onDataChange(pointController, oldData, newData) {
-    if (oldData === null) {
+    if (oldData === EmptyPoint) {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
