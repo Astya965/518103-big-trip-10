@@ -62,6 +62,7 @@ export default class PointContoller {
         deleteButton: `Deleting...`
       });
       this._onDataChange(this, this._eventCard, null);
+      this._eventEditComponent.blockForm();
     });
 
     /**
@@ -77,6 +78,7 @@ export default class PointContoller {
       });
 
       this._onDataChange(this, this._eventCard, data);
+      this._eventEditComponent.blockForm();
     });
 
     switch (mode) {

@@ -249,6 +249,13 @@ export default class EventEdit extends AbstractSmartComponent {
     this.rerender();
   }
 
+  blockForm() {
+    const form = this.getElement();
+
+    form.querySelectorAll(`input`).forEach((input) => (input.disabled = true));
+    form.querySelectorAll(`button`).forEach((button) => (button.disabled = true));
+  }
+
   /**
   * Обраточик события клика на кнопку
   * @param {Function} handler - События при клике на стрелку
