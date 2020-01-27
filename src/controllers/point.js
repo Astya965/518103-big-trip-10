@@ -2,7 +2,7 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import {Mode, EmptyPoint} from '../utils/constants.js';
+import {Mode, EmptyPoint, SHAKE_ANIMATION_TIMEOUT} from '../utils/constants.js';
 import PointModel from '../models/point.js';
 import Store from '../api/store.js';
 
@@ -99,6 +99,23 @@ export default class PointContoller {
         render(this._container, this._eventEditComponent.getElement(), RenderPosition.AFTERBEGIN);
         break;
     }
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT /
+      1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT /
+      1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setText({
+        saveButton: `Save`,
+        deleteButton: `Delete`
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   /**

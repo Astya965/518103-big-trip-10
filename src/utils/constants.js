@@ -101,3 +101,5 @@ export const ButtonText = {
   deleteButton: `Delete`,
   saveButton: `Save`
 };
+
+export const SHAKE_ANIMATION_TIMEOUT = 600;

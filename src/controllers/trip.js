@@ -134,7 +134,7 @@ export default class TripController {
   * @param {Function} newData - Новая точка маршрута
   */
   _onDataChange(pointController, oldData, newData) {
-    if (oldData === EmptyPoint) {
+    if (oldData === null) {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
@@ -158,12 +158,18 @@ export default class TripController {
               this._isDefaultSorting
           );
           this._toggleNoEventsMessageComponent();
+        })
+        .catch(() => {
+          pointController.shake();
         });
       }
     } else if (newData === null) {
       this._api.deletePoint(oldData.id).then(() => {
         this._pointsModel.removePoint(oldData.id);
         this._toggleNoEventsMessageComponent();
+      })
+      .catch(() => {
+        pointController.shake();
       });
     } else {
       this._api.updatePoint(oldData.id, newData).then((pointModel) => {
@@ -173,6 +179,9 @@ export default class TripController {
           this._updatePoints();
           this._reset();
         }
+      })
+      .catch(() => {
+        pointController.shake();
       });
     }
   }
