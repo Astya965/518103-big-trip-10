@@ -149,7 +149,6 @@ export default class TripController {
           ];
 
           this._removePoints();
-          this._reset();
 
           this._showedPointControllers = this.renderTripEvents(
               this._pointsModel.getPoints(),
@@ -158,26 +157,24 @@ export default class TripController {
               this._onViewChange,
               this._isDefaultSorting
           );
+          this._toggleNoEventsMessageComponent();
         });
       }
     } else if (newData === null) {
       this._api.deletePoint(oldData.id).then(() => {
         this._pointsModel.removePoint(oldData.id);
-        this._reset();
-        this._updatePoints();
+        this._toggleNoEventsMessageComponent();
       });
     } else {
       this._api.updatePoint(oldData.id, newData).then((pointModel) => {
         const isUpdate = this._pointsModel.updatePoint(oldData.id, pointModel);
         if (isUpdate) {
           pointController.render(pointModel, Mode.DEFAULT);
-          this._reset();
           this._updatePoints();
+          this._reset();
         }
       });
     }
-
-    this._toggleNoEventsMessageComponent();
   }
 
   hide() {
