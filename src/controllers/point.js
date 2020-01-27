@@ -59,10 +59,9 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnDeleteHandler(() => {
       this._eventEditComponent.setText({
-        saveButton: `Deleting...`
+        deleteButton: `Deleting...`
       });
       this._onDataChange(this, this._eventCard, null);
-      this._showСard();
     });
 
     /**
@@ -70,13 +69,14 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
+      const formData = this._eventEditComponent.getData();
+      const data = this._parseFormData(formData);
+
       this._eventEditComponent.setText({
         saveButton: `Saving...`
       });
-      const formData = this._eventEditComponent.getData();
-      const data = this._parseFormData(formData);
+
       this._onDataChange(this, this._eventCard, data);
-      this._showСard();
     });
 
     switch (mode) {
