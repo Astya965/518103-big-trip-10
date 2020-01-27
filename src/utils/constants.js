@@ -96,3 +96,8 @@ export const EmptyPoint = {
   id: `card-${Date.now() + Math.random()}`,
   isNew: true
 };
+
+export const ButtonText = {
+  deleteButton: `Delete`,
+  saveButton: `Save`
+};

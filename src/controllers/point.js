@@ -58,6 +58,9 @@ export default class PointContoller {
     * Событие закрытия формы редактирования при клике на кнопку сброса
     */
     this._eventEditComponent.setBtnDeleteHandler(() => {
+      this._eventEditComponent.setText({
+        saveButton: `Deleting...`
+      });
       this._onDataChange(this, this._eventCard, null);
       this._showСard();
     });
@@ -67,6 +70,9 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
+      this._eventEditComponent.setText({
+        saveButton: `Saving...`
+      });
       const formData = this._eventEditComponent.getData();
       const data = this._parseFormData(formData);
       this._onDataChange(this, this._eventCard, data);

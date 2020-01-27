@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {Transfers, Activitys} from '../utils/constants.js';
+import {Transfers, Activitys, ButtonText} from '../utils/constants.js';
 import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
@@ -17,6 +17,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._destinations = Store.getDestinations();
     this._offers = Store.getOffers();
+    this._buttonText = ButtonText;
 
     this._resetHandler = null;
     this._submitHandler = null;
@@ -166,8 +167,8 @@ export default class EventEdit extends AbstractSmartComponent {
               required">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${city ? `Delete` : `Cancel`}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonText.saveButton}</button>
+          <button class="event__reset-btn" type="reset">${!isNew ? this._buttonText.deleteButton : `Cancel`}</button>
 
         ${!isNew ?
         `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
@@ -303,6 +304,11 @@ export default class EventEdit extends AbstractSmartComponent {
   getData() {
     const form = this.getElement();
     return new FormData(form);
+  }
+
+  setText(text) {
+    this._buttonText = Object.assign({}, ButtonText, text);
+    this.rerender();
   }
 
   _subscribeOnEvents() {
