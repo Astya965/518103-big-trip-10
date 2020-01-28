@@ -80,7 +80,7 @@ export const Activitys = [
   `restaurant`,
 ];
 
-export const AUTHORIZATION = `Basic er883jdzbdw`;
+export const AUTHORIZATION = `Basic er882jdzbdw`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
 
 export const EmptyPoint = {
@@ -103,3 +103,8 @@ export const ButtonText = {
 };
 
 export const SHAKE_ANIMATION_TIMEOUT = 600;
+
+export const NoEventMessage = {
+  LOADING: `Loading...`,
+  NO_POINTS: `Click New Event to create your first point`
+};

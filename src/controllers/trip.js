@@ -66,6 +66,7 @@ export default class TripController {
     render(tripEvents, this._sortComponent.getElement(), RenderPosition.AFTERBEGIN);
 
     this._showedPointControllers = this.renderTripEvents(this._pointsModel.getPoints(), this._container.getElement(), this._onDataChange, this._onViewChange);
+    this._noEventsMessageComponent = null;
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
       this._sortPoints(sortType);
@@ -81,6 +82,7 @@ export default class TripController {
       if (!this._noEventsMessageComponent) {
         this._reset();
         this._noEventsMessageComponent = new NoEventsComponent();
+        this._noEventsMessageComponent.setMessage(`Click New Event to create your first point`);
         render(tripEvents, this._noEventsMessageComponent.getElement(), RenderPosition.BEFOREEND
         );
       }

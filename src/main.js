@@ -2,6 +2,7 @@ import SiteMenuComponent from './components/site-menu.js';
 import EventAddBtnComponent from './components/event-add-button.js';
 import TripDaysListComponent from './components/days-list.js';
 import StatisticsComponent from './components/statistics.js';
+import NoEventsComponent from './components/no-events.js';
 import TripController from './controllers/trip.js';
 import FilterController from './controllers/filter.js';
 
@@ -20,7 +21,9 @@ const tripDaysComponent = new TripDaysListComponent();
 const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
 
+const noEventsMessageComponent = new NoEventsComponent();
 const statisticsComponent = new StatisticsComponent(pointsModel);
+noEventsMessageComponent.setMessage(`Loading...`);
 
 Promise.all([api.getDestinations(), api.getOffers(), api.getPoints()]).then(
     (values) => {
@@ -37,6 +40,7 @@ const addNewEventButton = new EventAddBtnComponent();
 render(tripMainElement, addNewEventButton.getElement(), RenderPosition.BEFOREEND);
 
 render(siteTripEventsElement, tripDaysComponent.getElement(), RenderPosition.BEFOREEND);
+render(tripDaysComponent.getElement(), noEventsMessageComponent.getElement(), RenderPosition.BEFOREEND);
 
 const tripController = new TripController(tripDaysComponent, pointsModel, api);
 
