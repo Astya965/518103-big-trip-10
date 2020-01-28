@@ -80,12 +80,12 @@ export const Activitys = [
   `restaurant`,
 ];
 
-export const AUTHORIZATION = `Basic er882jdzbdw`;
+export const AUTHORIZATION = `Basic er881jdzbdw`;
 export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
 
 export const EmptyPoint = {
   type: `taxi`,
-  destination: ``,
+  city: ``,
   startDate: Date.now(),
   endDate: Date.now(),
   offers: [],

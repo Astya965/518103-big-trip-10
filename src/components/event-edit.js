@@ -81,7 +81,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, city, price, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
+    const {type, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(this._destinations);
@@ -122,7 +122,8 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${city || ``}"
+              value="${this._tripCard.city || ``}"
+              required
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -163,8 +164,9 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-price-1"
               type="number"
               name="event-price"
-              value="${price}"
-              required">
+              value="${this._tripCard.price}"
+              min="0"
+              required>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonText.saveButton}</button>
@@ -183,6 +185,7 @@ export default class EventEdit extends AbstractSmartComponent {
           <span class="visually-hidden">Open event</span>
         </button>`
         : ``}
+
         </header>
 
         ${(city || this._offers.find(
@@ -338,6 +341,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       if (this._destinations.find((destination) => destination.name === evt.target.value)) {
+        element.querySelector(`input[name=event-destination]`).setCustomValidity(``);
         this._tripCard = Object.assign({}, this._tripCard,
             {description: this._destinations.find(
                 (destination) => destination.name === evt.target.value).description},
@@ -345,15 +349,21 @@ export default class EventEdit extends AbstractSmartComponent {
                 (destination) => destination.name === evt.target.value).pictures},
             {city: evt.target.value}
         );
+        this.rerender();
       } else {
-        element.querySelector(`.event__input--destination`).setCustomValidity(`Выберите город из списка`);
+        this._tripCard.city = ``;
+        element.querySelector(`input[name=event-destination]`).setAttribute(`style`, `outline: 1px solid red`);
+        element.querySelector(`input[name=event-destination]`).setCustomValidity(`Choose a city from the list`);
       }
-      this.rerender();
     });
 
     element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
-      if (evt.valid) {
+      if (+evt.target.value < 0 || +evt.target.value % 1 !== 0) {
+        element.querySelector(`input[name=event-price]`).setAttribute(`style`, `outline: 1px solid red`);
+        element.querySelector(`input[name=event-price]`).setCustomValidity(`Price should be a positive integer`);
+      } else {
         this._tripCard.price = +evt.target.value;
+        this.rerender();
       }
     });
 
@@ -365,6 +375,12 @@ export default class EventEdit extends AbstractSmartComponent {
           checkbox.setAttribute(`checked`, ``);
         }
       }));
+    }
+
+    const form = this.getElement();
+    this.getElement().querySelector(`.event__save-btn`).disabled = true;
+    if (form.checkValidity()) {
+      this.getElement().querySelector(`.event__save-btn`).disabled = false;
     }
   }
 
@@ -389,8 +405,10 @@ export default class EventEdit extends AbstractSmartComponent {
     const startDateInput = this.getElement().querySelector(`input[name=event-start-time]`);
     if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
       startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
+      this.getElement().querySelector(`.event__save-btn`).disabled = true;
     } else {
       startDateInput.setCustomValidity(``);
+      this.getElement().querySelector(`.event__save-btn`).disabled = false;
     }
   }
 
