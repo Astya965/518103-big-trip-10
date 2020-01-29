@@ -39,7 +39,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @param {Object} tripCard - Объект точки маршрута (содержащий определенную ативность)
    * @return {String} Разметка формы выбора активностей
    */
-  createTypeTemplate(types, tripCard) {
+  getTypeTemplate(types, tripCard) {
     return types
       .map((typeItem) => {
         return (
@@ -65,7 +65,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @param {Array} destinations - Массив городов
    * @return {String} Разметка формы выбора пункта назначения
    */
-  createDestinationList(destinations) {
+  getDestinationListTemplate(destinations) {
     return destinations
       .map((destination) => {
         return (
@@ -83,9 +83,9 @@ export default class EventEdit extends AbstractSmartComponent {
    */
   getTemplate() {
     const {type, price, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
-    const transferType = this.createTypeTemplate(Transfers, this._tripCard);
-    const activityType = this.createTypeTemplate(Activitys, this._tripCard);
-    const destinationList = this.createDestinationList(this._destinations);
+    const transferType = this.getTypeTemplate(Transfers, this._tripCard);
+    const activityType = this.getTypeTemplate(Activitys, this._tripCard);
+    const destinationList = this.getDestinationListTemplate(this._destinations);
     return (
       `<form class="event event--edit" action="#" method="post">
         <header class="event__header">
@@ -243,6 +243,16 @@ export default class EventEdit extends AbstractSmartComponent {
     );
   }
 
+  getData() {
+    const form = this.getElement();
+    return new FormData(form);
+  }
+
+  setText(text) {
+    this._buttonText = Object.assign({}, DefaultText, text);
+    this.rerender();
+  }
+
   rerender() {
     super.rerender();
     this._applyFlatpickr();
@@ -261,59 +271,6 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на стрелку
-  */
-  setArrowBtnCloseHandler(handler) {
-    if (!this._resetHandler) {
-      this._resetHandler = handler;
-    }
-
-    if (!this._tripCard.isNew) {
-      this.getElement().querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, handler);
-    }
-
-  }
-
-  /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на кнопку сброса
-  */
-  setBtnDeleteHandler(handler) {
-    if (!this._deleteHandler) {
-      this._deleteHandler = handler;
-    }
-
-    this.getElement().querySelector(`.event__reset-btn`)
-      .addEventListener(`click`, handler);
-  }
-
-  /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на кнопку отправки
-  */
-  setBtnSubmitHandler(handler) {
-    if (!this._submitHandler) {
-      this._submitHandler = handler;
-    }
-
-    this.getElement().querySelector(`.event__save-btn`)
-    .addEventListener(`click`, handler);
-  }
-
-  setFavoriteBtnClickHandler(handler) {
-    if (!this._favoriteHandler) {
-      this._favoriteHandler = handler;
-    }
-
-    if (!this._tripCard.isNew) {
-      this.getElement().querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`click`, handler);
-    }
-  }
-
-  /**
   * Восстановление обработчиков событий
   */
   recoveryListeners() {
@@ -322,16 +279,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setBtnDeleteHandler(this._deleteHandler);
     this.setFavoriteBtnClickHandler(this._favoriteHandler);
     this._subscribeOnEvents();
-  }
-
-  getData() {
-    const form = this.getElement();
-    return new FormData(form);
-  }
-
-  setText(text) {
-    this._buttonText = Object.assign({}, DefaultText, text);
-    this.rerender();
   }
 
   _subscribeOnEvents() {
@@ -419,7 +366,6 @@ export default class EventEdit extends AbstractSmartComponent {
     }
   }
 
-
   _createFlatpickrInput(node, date) {
     return flatpickr(node, {
       allowInput: true,
@@ -435,6 +381,59 @@ export default class EventEdit extends AbstractSmartComponent {
         this._setTimeValidation();
       }
     });
+  }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на стрелку
+  */
+  setArrowBtnCloseHandler(handler) {
+    if (!this._resetHandler) {
+      this._resetHandler = handler;
+    }
+
+    if (!this._tripCard.isNew) {
+      this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    }
+
+  }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку сброса
+  */
+  setBtnDeleteHandler(handler) {
+    if (!this._deleteHandler) {
+      this._deleteHandler = handler;
+    }
+
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку отправки
+  */
+  setBtnSubmitHandler(handler) {
+    if (!this._submitHandler) {
+      this._submitHandler = handler;
+    }
+
+    this.getElement().querySelector(`.event__save-btn`)
+    .addEventListener(`click`, handler);
+  }
+
+  setFavoriteBtnClickHandler(handler) {
+    if (!this._favoriteHandler) {
+      this._favoriteHandler = handler;
+    }
+
+    if (!this._tripCard.isNew) {
+      this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, handler);
+    }
   }
 
 }

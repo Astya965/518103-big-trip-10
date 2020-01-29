@@ -53,6 +53,40 @@ export default class TripController {
     this._onViewChange();
   }
 
+  renderCards(cards, container, onDataChange, onViewChange, isDefaultSorting = true) {
+    const pointControllers = [];
+    const dates = isDefaultSorting
+      ? [...new Set(cards.map((card) => new Date(card.startDate).toDateString()))]
+      : [true];
+
+    // Сортировка по дням
+    dates.forEach((date, dateIndex) => {
+      const day = isDefaultSorting
+        ? new TripDayItemComponent(new Date(date), dateIndex + 1)
+        : new TripDayItemComponent();
+
+      // Отбор карточек для каждого дня, если это дефолтная сортировка, а далее генарация самих карточек
+      cards.filter((_card) => {
+        return isDefaultSorting
+          ? new Date(_card.startDate).toDateString() === date
+          : _card;
+      })
+      .forEach((_card) => {
+        const pointController = new PointController(
+            day.getElement().querySelector(`.trip-events__list`),
+            onDataChange,
+            onViewChange
+        );
+        pointController.render(_card, Mode.DEFAULT);
+        pointControllers.push(pointController);
+      });
+
+      render(container, day.getElement(), RenderPosition.BEFOREEND);
+    });
+
+    return pointControllers;
+  }
+
   render() {
     if (this._pointsModel.getPoints().length === 0) {
       this._toggleNoEventsMessageComponent();
@@ -77,23 +111,33 @@ export default class TripController {
     this._getFullPrice();
   }
 
-  _toggleNoEventsMessageComponent() {
-    if (this._pointsModel.getPoints().length === 0) {
-      if (!this._noEventsMessageComponent) {
-        this._reset();
-        this._noEventsMessageComponent = new NoEventsComponent();
-        this._noEventsMessageComponent.setMessage(`Click New Event to create your first point`);
-        render(tripEvents, this._noEventsMessageComponent.getElement(), RenderPosition.BEFOREEND
-        );
-      }
-    } else {
-      if (this._noEventsMessageComponent) {
-        remove(this._noEventsMessageComponent);
-        this._noEventsMessageComponent = null;
-        this.render();
-      }
-    }
-    this._reset();
+  hide() {
+    this._container.hide();
+    this._sortComponent.hide();
+  }
+
+  show() {
+    this._container.show();
+    this._sortComponent.show();
+  }
+
+  _removePoints() {
+    this._container.getElement().innerHTML = ``;
+    this._showedPointControllers.forEach((pointController) =>
+      pointController.destroy()
+    );
+    this._showedPointControllers = [];
+  }
+
+  _updatePoints() {
+    this._removePoints();
+
+    this._showedPointControllers = this.renderCards(
+        this._pointsModel.getPoints(),
+        this._container.getElement(),
+        this._onDataChange,
+        this._onViewChange
+    );
   }
 
   _reset() {
@@ -113,6 +157,25 @@ export default class TripController {
     }
 
     this._getFullPrice();
+  }
+
+  _toggleNoEventsMessageComponent() {
+    if (this._pointsModel.getPoints().length === 0) {
+      if (!this._noEventsMessageComponent) {
+        this._reset();
+        this._noEventsMessageComponent = new NoEventsComponent();
+        this._noEventsMessageComponent.setMessage(`Click New Event to create your first point`);
+        render(tripEvents, this._noEventsMessageComponent.getElement(), RenderPosition.BEFOREEND
+        );
+      }
+    } else {
+      if (this._noEventsMessageComponent) {
+        remove(this._noEventsMessageComponent);
+        this._noEventsMessageComponent = null;
+        this.render();
+      }
+    }
+    this._reset();
   }
 
   /**
@@ -189,16 +252,6 @@ export default class TripController {
     }
   }
 
-  hide() {
-    this._container.hide();
-    this._sortComponent.hide();
-  }
-
-  show() {
-    this._container.show();
-    this._sortComponent.show();
-  }
-
   _onViewChange() {
     this._showedPointControllers.forEach((controller) => controller.setDefaultView());
   }
@@ -238,58 +291,5 @@ export default class TripController {
 
   _checkSortType(sortType) {
     document.querySelector(`input[data-sort-type=${sortType}]`).checked = true;
-  }
-
-  _removePoints() {
-    this._container.getElement().innerHTML = ``;
-    this._showedPointControllers.forEach((pointController) =>
-      pointController.destroy()
-    );
-    this._showedPointControllers = [];
-  }
-
-  _updatePoints() {
-    this._removePoints();
-
-    this._showedPointControllers = this.renderCards(
-        this._pointsModel.getPoints(),
-        this._container.getElement(),
-        this._onDataChange,
-        this._onViewChange
-    );
-  }
-
-  renderCards(cards, container, onDataChange, onViewChange, isDefaultSorting = true) {
-    const pointControllers = [];
-    const dates = isDefaultSorting
-      ? [...new Set(cards.map((card) => new Date(card.startDate).toDateString()))]
-      : [true];
-
-    // Сортировка по дням
-    dates.forEach((date, dateIndex) => {
-      const day = isDefaultSorting
-        ? new TripDayItemComponent(new Date(date), dateIndex + 1)
-        : new TripDayItemComponent();
-
-      // Отбор карточек для каждого дня, если это дефолтная сортировка, а далее генарация самих карточек
-      cards.filter((_card) => {
-        return isDefaultSorting
-          ? new Date(_card.startDate).toDateString() === date
-          : _card;
-      })
-      .forEach((_card) => {
-        const pointController = new PointController(
-            day.getElement().querySelector(`.trip-events__list`),
-            onDataChange,
-            onViewChange
-        );
-        pointController.render(_card, Mode.DEFAULT);
-        pointControllers.push(pointController);
-      });
-
-      render(container, day.getElement(), RenderPosition.BEFOREEND);
-    });
-
-    return pointControllers;
   }
 }

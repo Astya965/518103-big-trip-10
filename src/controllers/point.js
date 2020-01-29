@@ -25,6 +25,15 @@ export default class PointContoller {
   }
 
   /**
+  * Возвращение карточек в обычное состояние
+  */
+  setDefaultView() {
+    if (this._mode === Mode.EDIT) {
+      this._showСard();
+    }
+  }
+
+  /**
   * Рендеринг точки маршрута
   * @param {Object} eventCard - Данные для точки маршрута
   * @param {String} mode - Режим карточки
@@ -129,15 +138,6 @@ export default class PointContoller {
         deleteButton: ButtonText.DELETE
       });
     }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
-  /**
-  * Возвращение карточек в обычное состояние
-  */
-  setDefaultView() {
-    if (this._mode === Mode.EDIT) {
-      this._showСard();
-    }
   }
 
   destroy() {
