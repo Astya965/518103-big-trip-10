@@ -2,7 +2,7 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import {Mode, EmptyPoint, SHAKE_ANIMATION_TIMEOUT} from '../utils/constants.js';
+import {Key, Mode, ButtonText, EmptyPoint, SHAKE, SHAKE_ANIMATION_TIMEOUT} from '../utils/constants.js';
 import PointModel from '../models/point.js';
 import Store from '../api/store.js';
 
@@ -59,7 +59,7 @@ export default class PointContoller {
     */
     this._eventEditComponent.setBtnDeleteHandler(() => {
       this._eventEditComponent.setText({
-        deleteButton: `Deleting...`
+        deleteButton: ButtonText.DELETING
       });
       this._onDataChange(this, this._eventCard, null);
       this._eventEditComponent.blockForm();
@@ -74,7 +74,7 @@ export default class PointContoller {
       const data = this._parseFormData(formData);
 
       this._eventEditComponent.setText({
-        saveButton: `Saving...`
+        saveButton: ButtonText.SAVING
       });
 
       this._onDataChange(this, this._eventCard, data);
@@ -104,9 +104,9 @@ export default class PointContoller {
   }
 
   shake() {
-    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT /
+    this._eventEditComponent.getElement().style.animation = `${SHAKE} ${SHAKE_ANIMATION_TIMEOUT /
       1000}s`;
-    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT /
+    this._eventComponent.getElement().style.animation = `${SHAKE} ${SHAKE_ANIMATION_TIMEOUT /
       1000}s`;
 
     setTimeout(() => {
@@ -114,8 +114,8 @@ export default class PointContoller {
       this._eventComponent.getElement().style.animation = ``;
 
       this._eventEditComponent.setText({
-        saveButton: `Save`,
-        deleteButton: `Delete`
+        saveButton: ButtonText.SAVE,
+        deleteButton: ButtonText.DELETE
       });
     }, SHAKE_ANIMATION_TIMEOUT);
   }
@@ -140,7 +140,7 @@ export default class PointContoller {
   * @param {evt} evt
   */
   _onEscKeyDown(evt) {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+    const isEscKey = evt.key === Key.ESCAPE || evt.key === Key.ESC;
     if (isEscKey) {
       if (this._mode === Mode.ADD) {
         this._onDataChange(this, EmptyPoint, null);

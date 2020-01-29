@@ -1,3 +1,11 @@
+export const MAX_SHOWED_OFFERS_AMOUNT = 3;
+
+export const AUTHORIZATION = `Basic er881jdzbdw`;
+export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
+
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const SHAKE = `shake`;
+
 export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
@@ -80,9 +88,6 @@ export const Activitys = [
   `restaurant`,
 ];
 
-export const AUTHORIZATION = `Basic er881jdzbdw`;
-export const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
-
 export const EmptyPoint = {
   type: `taxi`,
   city: ``,
@@ -98,13 +103,23 @@ export const EmptyPoint = {
 };
 
 export const ButtonText = {
-  deleteButton: `Delete`,
-  saveButton: `Save`
+  SAVE: `Save`,
+  DELETE: `Delete`,
+  SAVING: `Saving...`,
+  DELETING: `Deleting...`
 };
 
-export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const DefaultText = {
+  deleteButton: ButtonText.DELETE,
+  saveButton: ButtonText.SAVE
+};
 
 export const NoEventMessage = {
   LOADING: `Loading...`,
   NO_POINTS: `Click New Event to create your first point`
+};
+
+export const Key = {
+  ESCAPE: `Escape`,
+  ESC: `Esc`
 };

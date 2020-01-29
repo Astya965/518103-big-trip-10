@@ -200,7 +200,7 @@ export default class TripController {
   }
 
   _onViewChange() {
-    this._showedPointControllers.forEach((it) => it.setDefaultView());
+    this._showedPointControllers.forEach((controller) => controller.setDefaultView());
   }
 
   _onFilterChange() {
@@ -262,7 +262,7 @@ export default class TripController {
   renderTripEvents(cards, container, onDataChange, onViewChange, isDefaultSorting = true) {
     const pointControllers = [];
     const dates = isDefaultSorting
-      ? [...new Set(cards.map((item) => new Date(item.startDate).toDateString()))]
+      ? [...new Set(cards.map((card) => new Date(card.startDate).toDateString()))]
       : [true];
 
     // Сортировка по дням

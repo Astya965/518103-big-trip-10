@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {Transfers, Activitys, ButtonText} from '../utils/constants.js';
+import {Transfers, Activitys, DefaultText} from '../utils/constants.js';
 import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
@@ -17,7 +17,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._destinations = Store.getDestinations();
     this._offers = Store.getOffers();
-    this._buttonText = ButtonText;
+    this._buttonText = DefaultText;
 
     this._resetHandler = null;
     this._submitHandler = null;
@@ -207,7 +207,7 @@ export default class EventEdit extends AbstractSmartComponent {
                         id="event-offer-${type}-${i + 1}"
                         type="checkbox"
                         name="event-offer-${type}"
-                        ${this._tripCard.offers.find((item) => item.title === offer.title) ? `checked` : ``}
+                        ${this._tripCard.offers.find((offerItem) => offerItem.title === offer.title) ? `checked` : ``}
                       />
                       <label class="event__offer-label" for="event-offer-${type}-${i + 1}">
                         <span class="event__offer-title">${offer.title}</span>
@@ -317,7 +317,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   setText(text) {
-    this._buttonText = Object.assign({}, ButtonText, text);
+    this._buttonText = Object.assign({}, DefaultText, text);
     this.rerender();
   }
 

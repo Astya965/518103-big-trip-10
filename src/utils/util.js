@@ -122,7 +122,7 @@ export const getDuration = (startDate, endDate) => {
   const durationHours = duration.hours();
   const durationMinutes = duration.minutes();
 
-  return `${durationDays > 0 ? (durationDays) + `D` : ``} ${durationHours > 0 ? durationHours + `H` : ``} ${durationMinutes}M`;
+  return `${durationDays > 0 ? `${durationDays}D` : ``} ${durationHours > 0 ? `${durationHours}H` : ``} ${durationMinutes}M`;
 };
 
 /**
