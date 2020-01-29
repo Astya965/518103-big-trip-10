@@ -22,8 +22,10 @@ const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
 
 const noEventsMessageComponent = new NoEventsComponent();
+const addNewEventButton = new EventAddBtnComponent();
 const statisticsComponent = new StatisticsComponent(pointsModel);
-noEventsMessageComponent.setMessage(`Loading...`);
+const filterController = new FilterController(siteControlsElement, pointsModel);
+const tripController = new TripController(tripDaysComponent, pointsModel, api);
 
 Promise.all([api.getDestinations(), api.getOffers(), api.getPoints()]).then(
     (values) => {
@@ -32,19 +34,15 @@ Promise.all([api.getDestinations(), api.getOffers(), api.getPoints()]).then(
     }
 );
 
-const filterController = new FilterController(siteControlsElement, pointsModel);
 render(siteControlsElement, menuComponent.getElement(), RenderPosition.BEFOREEND);
 filterController.render();
-
-const addNewEventButton = new EventAddBtnComponent();
+noEventsMessageComponent.setMessage(`Loading...`);
 render(tripMainElement, addNewEventButton.getElement(), RenderPosition.BEFOREEND);
 
 render(siteTripEventsElement, tripDaysComponent.getElement(), RenderPosition.BEFOREEND);
 render(tripDaysComponent.getElement(), noEventsMessageComponent.getElement(), RenderPosition.BEFOREEND);
 
-const tripController = new TripController(tripDaysComponent, pointsModel, api);
-
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+addNewEventButton.getElement().addEventListener(`click`, () => {
   tripController.createPoint();
 });
 
@@ -65,4 +63,3 @@ menuComponent.setChangeHandler((menuItem) => {
       break;
   }
 });
-
