@@ -2,7 +2,7 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import {Mode, EmptyPoint} from '../utils/constants.js';
+import {Key, Mode, ButtonText, EmptyPoint, SHAKE, SHAKE_ANIMATION_TIMEOUT} from '../utils/constants.js';
 import PointModel from '../models/point.js';
 import Store from '../api/store.js';
 
@@ -22,6 +22,15 @@ export default class PointContoller {
     this._onViewChange = onViewChange;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
+  }
+
+  /**
+  * Возвращение карточек в обычное состояние
+  */
+  setDefaultView() {
+    if (this._mode === Mode.EDIT) {
+      this._showСard();
+    }
   }
 
   /**
@@ -58,8 +67,12 @@ export default class PointContoller {
     * Событие закрытия формы редактирования при клике на кнопку сброса
     */
     this._eventEditComponent.setBtnDeleteHandler(() => {
+      this._eventEditComponent.setText({
+        deleteButton: ButtonText.DELETING
+      });
       this._onDataChange(this, this._eventCard, null);
-      this._showСard();
+      this._eventEditComponent.blockForm();
+      this._eventEditComponent.reset();
     });
 
     /**
@@ -69,8 +82,23 @@ export default class PointContoller {
       evt.preventDefault();
       const formData = this._eventEditComponent.getData();
       const data = this._parseFormData(formData);
+
+      this._eventEditComponent.setText({
+        saveButton: ButtonText.SAVING
+      });
+
       this._onDataChange(this, this._eventCard, data);
-      this._showСard();
+      this._eventEditComponent.blockForm();
+    });
+
+    /**
+    * Событие клика на кнопку Избранное
+    */
+    this._eventEditComponent.setFavoriteBtnClickHandler(() => {
+      const newEventCard = PointModel.clone(eventCard);
+      newEventCard.isFavorite = !newEventCard.isFavorite;
+
+      this._onDataChange(this, eventCard, newEventCard);
     });
 
     switch (mode) {
@@ -95,13 +123,21 @@ export default class PointContoller {
     }
   }
 
-  /**
-  * Возвращение карточек в обычное состояние
-  */
-  setDefaultView() {
-    if (this._mode === Mode.EDIT) {
-      this._showСard();
-    }
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `${SHAKE} ${SHAKE_ANIMATION_TIMEOUT /
+      1000}s`;
+    this._eventComponent.getElement().style.animation = `${SHAKE} ${SHAKE_ANIMATION_TIMEOUT /
+      1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setText({
+        saveButton: ButtonText.SAVE,
+        deleteButton: ButtonText.DELETE
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   destroy() {
@@ -115,7 +151,7 @@ export default class PointContoller {
   * @param {evt} evt
   */
   _onEscKeyDown(evt) {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+    const isEscKey = evt.key === Key.ESCAPE || evt.key === Key.ESC;
     if (isEscKey) {
       if (this._mode === Mode.ADD) {
         this._onDataChange(this, EmptyPoint, null);

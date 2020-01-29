@@ -13,4 +13,8 @@ export default class NoEvents extends AbstractComponent {
       `<p class="trip-events__msg">Click New Event to create your first point</p>`
     );
   }
+
+  setMessage(text) {
+    this.getElement().innerText = text;
+  }
 }

@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {Transfers, Activitys} from '../utils/constants.js';
+import {Transfers, Activitys, DefaultText} from '../utils/constants.js';
 import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
@@ -17,10 +17,12 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._destinations = Store.getDestinations();
     this._offers = Store.getOffers();
+    this._buttonText = DefaultText;
 
     this._resetHandler = null;
     this._submitHandler = null;
     this._deleteHandler = null;
+    this._favoriteHandler = null;
     this._flatpickr = {
       START: null,
       END: null
@@ -37,7 +39,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @param {Object} tripCard - Объект точки маршрута (содержащий определенную ативность)
    * @return {String} Разметка формы выбора активностей
    */
-  createTypeTemplate(types, tripCard) {
+  getTypeTemplate(types, tripCard) {
     return types
       .map((typeItem) => {
         return (
@@ -63,7 +65,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @param {Array} destinations - Массив городов
    * @return {String} Разметка формы выбора пункта назначения
    */
-  createDestinationList(destinations) {
+  getDestinationListTemplate(destinations) {
     return destinations
       .map((destination) => {
         return (
@@ -80,12 +82,12 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, city, price, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
-    const transferType = this.createTypeTemplate(Transfers, this._tripCard);
-    const activityType = this.createTypeTemplate(Activitys, this._tripCard);
-    const destinationList = this.createDestinationList(this._destinations);
+    const {type, price, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
+    const transferType = this.getTypeTemplate(Transfers, this._tripCard);
+    const activityType = this.getTypeTemplate(Activitys, this._tripCard);
+    const destinationList = this.getDestinationListTemplate(this._destinations);
     return (
-      `<form class="event event--edit" action="#" method="post" ${isNew ? `style="width: 100%"` : ``}>
+      `<form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -121,7 +123,8 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-destination-1"
               type="text"
               name="event-destination"
-              value="${city || ``}"
+              value="${this._tripCard.city || ``}"
+              required
               list="destination-list-1">
               <datalist id="destination-list-1">
               ${destinationList}
@@ -163,11 +166,12 @@ export default class EventEdit extends AbstractSmartComponent {
               type="number"
               name="event-price"
               value="${price}"
-              required">
+              min="0"
+              required>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${city ? `Delete` : `Cancel`}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${this._buttonText.saveButton}</button>
+          <button class="event__reset-btn" type="reset">${!isNew ? this._buttonText.deleteButton : `Cancel`}</button>
 
         ${!isNew ?
         `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
@@ -182,6 +186,7 @@ export default class EventEdit extends AbstractSmartComponent {
           <span class="visually-hidden">Open event</span>
         </button>`
         : ``}
+
         </header>
 
         ${(city || this._offers.find(
@@ -203,7 +208,7 @@ export default class EventEdit extends AbstractSmartComponent {
                         id="event-offer-${type}-${i + 1}"
                         type="checkbox"
                         name="event-offer-${type}"
-                        ${this._tripCard.offers.find((item) => item.title === offer.title) ? `checked` : ``}
+                        ${this._tripCard.offers.find((offerItem) => offerItem.title === offer.title) ? `checked` : ``}
                       />
                       <label class="event__offer-label" for="event-offer-${type}-${i + 1}">
                         <span class="event__offer-title">${offer.title}</span>
@@ -219,7 +224,7 @@ export default class EventEdit extends AbstractSmartComponent {
           </section>
 
           <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            ${city ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>` : ``}
             <p class="event__destination-description">${description}</p>
 
             <div class="event__photos-container">
@@ -238,6 +243,16 @@ export default class EventEdit extends AbstractSmartComponent {
     );
   }
 
+  getData() {
+    const form = this.getElement();
+    return new FormData(form);
+  }
+
+  setText(text) {
+    this._buttonText = Object.assign({}, DefaultText, text);
+    this.rerender();
+  }
+
   rerender() {
     super.rerender();
     this._applyFlatpickr();
@@ -246,6 +261,126 @@ export default class EventEdit extends AbstractSmartComponent {
   reset() {
     this._tripCard = Object.assign({}, this._tripCardForReset, {isFavorite: this._tripCard.isFavorite});
     this.rerender();
+  }
+
+  blockForm() {
+    const form = this.getElement();
+
+    form.querySelectorAll(`input`).forEach((input) => (input.disabled = true));
+    form.querySelectorAll(`button`).forEach((button) => (button.disabled = true));
+  }
+
+  /**
+  * Восстановление обработчиков событий
+  */
+  recoveryListeners() {
+    this.setBtnSubmitHandler(this._submitHandler);
+    this.setArrowBtnCloseHandler(this._resetHandler);
+    this.setBtnDeleteHandler(this._deleteHandler);
+    this.setFavoriteBtnClickHandler(this._favoriteHandler);
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
+      this._tripCard = Object.assign({}, this._tripCard,
+          {offers: this._offers.find(
+              (offer) => offer.type === this._tripCard.type).offers},
+          {type: evt.target.value}
+      );
+      this.rerender();
+    });
+
+    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+      if (this._destinations.find((destination) => destination.name === evt.target.value)) {
+        element.querySelector(`input[name=event-destination]`).setCustomValidity(``);
+        this._tripCard = Object.assign({}, this._tripCard,
+            {description: this._destinations.find(
+                (destination) => destination.name === evt.target.value).description},
+            {photos: this._destinations.find(
+                (destination) => destination.name === evt.target.value).pictures},
+            {city: evt.target.value}
+        );
+        this.rerender();
+      } else {
+        this._tripCard.city = ``;
+        element.querySelector(`input[name=event-destination]`).setAttribute(`style`, `outline: 1px solid red`);
+        element.querySelector(`input[name=event-destination]`).setCustomValidity(`Choose a city from the list`);
+      }
+    });
+
+    element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
+      if (+evt.target.value < 0 || +evt.target.value % 1 !== 0) {
+        element.querySelector(`input[name=event-price]`).setAttribute(`style`, `outline: 1px solid red`);
+        element.querySelector(`input[name=event-price]`).setCustomValidity(`Price should be a positive integer`);
+      } else {
+        this._tripCard.price = +evt.target.value;
+        this.rerender();
+      }
+    });
+
+    if ((this._offers.find((offer) => offer.type === this._tripCard.type).offers).length > 0) {
+      element.querySelectorAll(`.event__offer-checkbox`).forEach((checkbox) => checkbox.addEventListener(`click`, () => {
+        if (checkbox.hasAttribute(`checked`)) {
+          checkbox.removeAttribute(`checked`);
+        } else {
+          checkbox.setAttribute(`checked`, ``);
+        }
+      }));
+    }
+
+    const form = this.getElement();
+    this.getElement().querySelector(`.event__save-btn`).disabled = true;
+    if (form.checkValidity()) {
+      this.getElement().querySelector(`.event__save-btn`).disabled = false;
+    }
+  }
+
+  _removeFlatpickr() {
+    if (this._flatpickr.START && this._flatpickr.END) {
+      this._flatpickr.START.destroy();
+      this._flatpickr.END.destroy();
+      this._flatpickr.START = null;
+      this._flatpickr.END = null;
+    }
+  }
+
+  _applyFlatpickr() {
+    this._removeFlatpickr();
+
+    const [startDateInput, endDateInput] = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
+    this._flatpickr.START = this._createFlatpickrInput(startDateInput, this._tripCard.startDate);
+    this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._tripCard.endDate);
+  }
+
+  _setTimeValidation() {
+    const startDateInput = this.getElement().querySelector(`input[name=event-start-time]`);
+    if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
+      startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
+      this.getElement().querySelector(`.event__save-btn`).disabled = true;
+    } else {
+      startDateInput.setCustomValidity(``);
+      this.getElement().querySelector(`.event__save-btn`).disabled = false;
+    }
+  }
+
+  _createFlatpickrInput(node, date) {
+    return flatpickr(node, {
+      allowInput: true,
+      enableTime: true,
+      defaultDate: new Date(date),
+      dateFormat: `d/m/Y H:i`,
+      onValueUpdate: (pickerDate) => {
+        if (node.name === `event-start-time`) {
+          this._tripCard.startDate = pickerDate[0];
+        } else {
+          this._tripCard.endDate = pickerDate[0];
+        }
+        this._setTimeValidation();
+      }
+    });
   }
 
   /**
@@ -290,113 +425,15 @@ export default class EventEdit extends AbstractSmartComponent {
     .addEventListener(`click`, handler);
   }
 
-  /**
-  * Восстановление обработчиков событий
-  */
-  recoveryListeners() {
-    this.setBtnSubmitHandler(this._submitHandler);
-    this.setArrowBtnCloseHandler(this._resetHandler);
-    this.setBtnDeleteHandler(this._deleteHandler);
-    this._subscribeOnEvents();
-  }
-
-  getData() {
-    const form = this.getElement();
-    return new FormData(form);
-  }
-
-  _subscribeOnEvents() {
-    const element = this.getElement();
+  setFavoriteBtnClickHandler(handler) {
+    if (!this._favoriteHandler) {
+      this._favoriteHandler = handler;
+    }
 
     if (!this._tripCard.isNew) {
-      element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
-        this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
-      });
+      this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, handler);
     }
-
-    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
-      this._tripCard = Object.assign({}, this._tripCard,
-          {offers: this._offers.find(
-              (offer) => offer.type === this._tripCard.type).offers},
-          {type: evt.target.value}
-      );
-      this.rerender();
-    });
-
-    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      if (this._destinations.find((destination) => destination.name === evt.target.value)) {
-        this._tripCard = Object.assign({}, this._tripCard,
-            {description: this._destinations.find(
-                (destination) => destination.name === evt.target.value).description},
-            {photos: this._destinations.find(
-                (destination) => destination.name === evt.target.value).pictures},
-            {city: evt.target.value}
-        );
-      } else {
-        element.querySelector(`.event__input--destination`).setCustomValidity(`Выберите город из списка`);
-      }
-      this.rerender();
-    });
-
-    element.querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
-      if (evt.valid) {
-        this._tripCard.price = +evt.target.value;
-      }
-    });
-
-    if ((this._offers.find((offer) => offer.type === this._tripCard.type).offers).length > 0) {
-      element.querySelectorAll(`.event__offer-checkbox`).forEach((checkbox) => checkbox.addEventListener(`click`, () => {
-        if (checkbox.hasAttribute(`checked`)) {
-          checkbox.removeAttribute(`checked`);
-        } else {
-          checkbox.setAttribute(`checked`, ``);
-        }
-      }));
-    }
-  }
-
-  _removeFlatpickr() {
-    if (this._flatpickr.START && this._flatpickr.END) {
-      this._flatpickr.START.destroy();
-      this._flatpickr.END.destroy();
-      this._flatpickr.START = null;
-      this._flatpickr.END = null;
-    }
-  }
-
-  _applyFlatpickr() {
-    this._removeFlatpickr();
-
-    const [startDateInput, endDateInput] = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
-    this._flatpickr.START = this._createFlatpickrInput(startDateInput, this._tripCard.startDate);
-    this._flatpickr.END = this._createFlatpickrInput(endDateInput, this._tripCard.endDate);
-  }
-
-  _setTimeValidation() {
-    const startDateInput = this.getElement().querySelector(`input[name=event-start-time]`);
-    if (getDatesDiff(this._tripCard.startDate, this._tripCard.endDate) > 0) {
-      startDateInput.setCustomValidity(`The start time should be earlier than the end time`);
-    } else {
-      startDateInput.setCustomValidity(``);
-    }
-  }
-
-
-  _createFlatpickrInput(node, date) {
-    return flatpickr(node, {
-      allowInput: true,
-      enableTime: true,
-      defaultDate: new Date(date),
-      dateFormat: `d/m/Y H:i`,
-      onValueUpdate: (pickerDate) => {
-        if (node.name === `event-start-time`) {
-          this._tripCard.startDate = pickerDate[0];
-        } else {
-          this._tripCard.endDate = pickerDate[0];
-        }
-        this._setTimeValidation();
-      }
-    });
   }
 
 }

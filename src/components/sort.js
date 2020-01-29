@@ -14,7 +14,7 @@ export default class FormTripSort extends AbstractComponent {
   * Генерация иконок для пунктов меню сортировки точек маршрута
   * @return {String} Разметка иконок для пунктов меню сортировки точек маршрута
   */
-  createDirectionIcon() {
+  getDirectionIconTemplate() {
     return `
     <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
       <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
@@ -28,8 +28,8 @@ export default class FormTripSort extends AbstractComponent {
   * @param {Boolean} isChecked - Выбран ли данный пункт
   * @return {String} Разметка сортировки точек маршрута
   */
-  createSortFitlerTemplate(sortType, isChecked) {
-    const directionIcon = (sortType === SortType.TIME || sortType === SortType.PRICE) ? this.createDirectionIcon() : ``;
+  getSortFitlerTemplate(sortType, isChecked) {
+    const directionIcon = (sortType === SortType.TIME || sortType === SortType.PRICE) ? this.getDirectionIconTemplate() : ``;
 
     return `
     <div class="trip-sort__item  trip-sort__item--${sortType}">
@@ -51,7 +51,7 @@ export default class FormTripSort extends AbstractComponent {
   * @return {String} Разметка сортировки точек маршрута
   */
   getTemplate() {
-    const sortFitlersTemplate = Object.values(SortType).map((sortType, i) => this.createSortFitlerTemplate(sortType, i === 0)).join(`\n`);
+    const sortFitlersTemplate = Object.values(SortType).map((sortType, i) => this.getSortFitlerTemplate(sortType, i === 0)).join(`\n`);
 
     return (
       `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">

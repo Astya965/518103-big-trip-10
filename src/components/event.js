@@ -16,7 +16,7 @@ export default class Event extends AbstractComponent {
   * @param {Array} offers - Массив дополнительных предложений
   * @return {String} Разметка дополнительных предложений
   */
-  createEventOfferMarkup(offers) {
+  getOfferMarkupTemplate(offers) {
     return offers.slice(0, 3).map((offer) => {
       return (
         `<li class="event__offer">
@@ -68,7 +68,7 @@ export default class Event extends AbstractComponent {
 
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-            ${this.createEventOfferMarkup(offers)}
+            ${this.getOfferMarkupTemplate(offers)}
           </ul>
 
           <button class="event__rollup-btn" type="button">
