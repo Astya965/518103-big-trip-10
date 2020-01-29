@@ -15,8 +15,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._tripCard = tripCard;
     this._tripCardForReset = Object.assign({}, tripCard);
 
-    this._isFavorite = tripCard.isFavorite;
-
     this._destinations = Store.getDestinations();
     this._offers = Store.getOffers();
     this._buttonText = DefaultText;
@@ -24,6 +22,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._resetHandler = null;
     this._submitHandler = null;
     this._deleteHandler = null;
+    this._favoriteHandler = null;
     this._flatpickr = {
       START: null,
       END: null
@@ -251,7 +250,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
   reset() {
     this._tripCard = Object.assign({}, this._tripCardForReset, {isFavorite: this._tripCard.isFavorite});
-    console.log(this._tripCard.isFavorite);
     this.rerender();
   }
 
@@ -304,6 +302,17 @@ export default class EventEdit extends AbstractSmartComponent {
     .addEventListener(`click`, handler);
   }
 
+  setFavoriteBtnClickHandler(handler) {
+    if (!this._favoriteHandler) {
+      this._favoriteHandler = handler;
+    }
+
+    if (!this._tripCard.isNew) {
+      this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, handler);
+    }
+  }
+
   /**
   * Восстановление обработчиков событий
   */
@@ -311,6 +320,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setBtnSubmitHandler(this._submitHandler);
     this.setArrowBtnCloseHandler(this._resetHandler);
     this.setBtnDeleteHandler(this._deleteHandler);
+    this.setFavoriteBtnClickHandler(this._favoriteHandler);
     this._subscribeOnEvents();
   }
 
@@ -326,13 +336,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
-    if (!this._tripCard.isNew) {
-      element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
-        this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
-        console.log(this._tripCard.isFavorite);
-      });
-    }
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._tripCard = Object.assign({}, this._tripCard,

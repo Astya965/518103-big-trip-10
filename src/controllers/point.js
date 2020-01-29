@@ -82,6 +82,16 @@ export default class PointContoller {
       this._eventEditComponent.blockForm();
     });
 
+    /**
+    * Событие клика на кнопку Избранное
+    */
+    this._eventEditComponent.setFavoriteBtnClickHandler(() => {
+      const newEventCard = PointModel.clone(eventCard);
+      newEventCard.isFavorite = !newEventCard.isFavorite;
+
+      this._onDataChange(this, eventCard, newEventCard);
+    });
+
     switch (mode) {
       case Mode.DEFAULT:
         if (oldEventComponent && oldEventEditComponent) {
