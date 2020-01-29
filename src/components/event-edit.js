@@ -15,6 +15,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._tripCard = tripCard;
     this._tripCardForReset = Object.assign({}, tripCard);
 
+    this._isFavorite = tripCard.isFavorite;
+
     this._destinations = Store.getDestinations();
     this._offers = Store.getOffers();
     this._buttonText = DefaultText;
@@ -81,7 +83,7 @@ export default class EventEdit extends AbstractSmartComponent {
    * @return {String} Разметка формы редактирования точки маршрута
    */
   getTemplate() {
-    const {type, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
+    const {type, price, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.createTypeTemplate(Transfers, this._tripCard);
     const activityType = this.createTypeTemplate(Activitys, this._tripCard);
     const destinationList = this.createDestinationList(this._destinations);
@@ -164,7 +166,7 @@ export default class EventEdit extends AbstractSmartComponent {
               id="event-price-1"
               type="number"
               name="event-price"
-              value="${this._tripCard.price}"
+              value="${price}"
               min="0"
               required>
           </div>
@@ -249,6 +251,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   reset() {
     this._tripCard = Object.assign({}, this._tripCardForReset, {isFavorite: this._tripCard.isFavorite});
+    console.log(this._tripCard.isFavorite);
     this.rerender();
   }
 
@@ -327,6 +330,7 @@ export default class EventEdit extends AbstractSmartComponent {
     if (!this._tripCard.isNew) {
       element.querySelector(`.event__favorite-btn`).addEventListener(`click`, () => {
         this._tripCard = Object.assign({}, this._tripCard, {isFavorite: !this._tripCard.isFavorite});
+        console.log(this._tripCard.isFavorite);
       });
     }
 

@@ -14,4 +14,12 @@ export default class EventAddBtn extends AbstractComponent {
       `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>`
     );
   }
+
+  /**
+  * Обраточик события клика на кнопку
+  * @param {Function} handler - События при клике на кнопку
+  */
+  setClickHandler(handler) {
+    this.getElement().addEventListener(`click`, handler);
+  }
 }

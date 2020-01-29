@@ -65,7 +65,7 @@ export default class TripController {
     render(tripInfo, this._tripInfoComponent.getElement(), RenderPosition.AFTERBEGIN);
     render(tripEvents, this._sortComponent.getElement(), RenderPosition.AFTERBEGIN);
 
-    this._showedPointControllers = this.renderTripEvents(this._pointsModel.getPoints(), this._container.getElement(), this._onDataChange, this._onViewChange);
+    this._showedPointControllers = this.renderCards(this._pointsModel.getPoints(), this._container.getElement(), this._onDataChange, this._onViewChange);
     this._noEventsMessageComponent = null;
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
@@ -153,7 +153,7 @@ export default class TripController {
 
           this._removePoints();
 
-          this._showedPointControllers = this.renderTripEvents(
+          this._showedPointControllers = this.renderCards(
               this._pointsModel.getPoints(),
               this._container.getElement(),
               this._onDataChange,
@@ -233,7 +233,7 @@ export default class TripController {
     }
 
     this._removePoints();
-    this._showedPointControllers = this.renderTripEvents(sortedEvents, this._container.getElement(), this._onDataChange, this._onViewChange, this._isDefaultSorting);
+    this._showedPointControllers = this.renderCards(sortedEvents, this._container.getElement(), this._onDataChange, this._onViewChange, this._isDefaultSorting);
   }
 
   _checkSortType(sortType) {
@@ -251,7 +251,7 @@ export default class TripController {
   _updatePoints() {
     this._removePoints();
 
-    this._showedPointControllers = this.renderTripEvents(
+    this._showedPointControllers = this.renderCards(
         this._pointsModel.getPoints(),
         this._container.getElement(),
         this._onDataChange,
@@ -259,7 +259,7 @@ export default class TripController {
     );
   }
 
-  renderTripEvents(cards, container, onDataChange, onViewChange, isDefaultSorting = true) {
+  renderCards(cards, container, onDataChange, onViewChange, isDefaultSorting = true) {
     const pointControllers = [];
     const dates = isDefaultSorting
       ? [...new Set(cards.map((card) => new Date(card.startDate).toDateString()))]

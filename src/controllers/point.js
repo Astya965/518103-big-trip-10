@@ -63,6 +63,7 @@ export default class PointContoller {
       });
       this._onDataChange(this, this._eventCard, null);
       this._eventEditComponent.blockForm();
+      this._eventEditComponent.reset();
     });
 
     /**

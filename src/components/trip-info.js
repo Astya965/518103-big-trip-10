@@ -14,7 +14,7 @@ export default class TripInfo extends AbstractComponent {
   * Генерация разметки списка городов
   * @return {HTMLElement} Разметка списка городов
   */
-  getTripInfoTitle() {
+  getTitle() {
     let destinationsList = [];
     this._tripEvents.forEach((tripEvent) => {
       destinationsList.push(tripEvent.city);
@@ -29,7 +29,7 @@ export default class TripInfo extends AbstractComponent {
   * Генерация разметки периода путешествия
   * @return {HTMLElement} Разметка периода путешествия
   */
-  getTripInfoDates() {
+  getDates() {
     const startDate = this._tripEvents[0].startDate;
     const endDate = this._tripEvents[this._tripEvents.length - 1].endDate;
 
@@ -43,9 +43,9 @@ export default class TripInfo extends AbstractComponent {
   getTemplate() {
     return (
       `<div class="trip-info__main">
-        <h1 class="trip-info__title">${this.getTripInfoTitle()}</h1>
+        <h1 class="trip-info__title">${this.getTitle()}</h1>
 
-        <p class="trip-info__dates">${this.getTripInfoDates()}</p>
+        <p class="trip-info__dates">${this.getDates()}</p>
       </div>`
     );
   }
