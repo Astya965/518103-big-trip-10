@@ -3,7 +3,7 @@ import AbstractComponent from './abstract-component.js';
 /**
  * Класс кнопки добавления новых элементов
  */
-export default class EventAddBtn extends AbstractComponent {
+export default class EventAddButton extends AbstractComponent {
 
   /**
   * Генерация разметки фильтра точек маршрута

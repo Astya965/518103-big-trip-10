@@ -4,7 +4,7 @@ import {formatMonthDay} from '../utils/util.js';
 /**
  * Класс списка дней маршрута
  */
-export default class TripDays extends AbstractComponent {
+export default class Day extends AbstractComponent {
   constructor(date, day) {
     super();
     this._date = date;

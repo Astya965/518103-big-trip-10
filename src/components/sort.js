@@ -5,7 +5,7 @@ import {SortType} from '../utils/constants.js';
 /**
  * Класс формы сортировки точек маршрута
  */
-export default class FormTripSort extends AbstractComponent {
+export default class Sort extends AbstractComponent {
   constructor() {
     super();
     this._currentSortType = SortType.DEFAULT;

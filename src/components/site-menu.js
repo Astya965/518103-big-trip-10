@@ -3,7 +3,7 @@ import AbstractComponent from './abstract-component.js';
 /**
  * Класс меню
  */
-export default class Menu extends AbstractComponent {
+export default class SiteMenu extends AbstractComponent {
   constructor(menuItems) {
     super();
     this._menuItems = menuItems;
