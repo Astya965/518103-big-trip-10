@@ -1,15 +1,15 @@
 export default class Point {
-  constructor(data) {
-    this.type = data[`type`];
-    this.city = data[`destination`][`name`];
-    this.startDate = new Date(data[`date_from`]).getTime();
-    this.endDate = new Date(data[`date_to`]).getTime();
-    this.offers = data[`offers`];
-    this.photos = data[`destination`][`pictures`];
-    this.description = data[`destination`][`description`];
-    this.price = data[`base_price`];
-    this.isFavorite = data[`is_favorite`];
-    this.id = data[`id`];
+  constructor(point) {
+    this.type = point[`type`];
+    this.city = point[`destination`][`name`];
+    this.startDate = new Date(point[`date_from`]).getTime();
+    this.endDate = new Date(point[`date_to`]).getTime();
+    this.offers = point[`offers`];
+    this.photos = point[`destination`][`pictures`];
+    this.description = point[`destination`][`description`];
+    this.price = point[`base_price`];
+    this.isFavorite = point[`is_favorite`];
+    this.id = point[`id`];
   }
 
   toRAW() {
