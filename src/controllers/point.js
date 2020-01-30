@@ -2,7 +2,7 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
-import {Key, Mode, ButtonText, EmptyPoint, SHAKE, SHAKE_ANIMATION_TIMEOUT} from '../utils/constants.js';
+import {Key, Mode, ButtonText, emptyPoint, SHAKE, SHAKE_ANIMATION_TIMEOUT} from '../utils/constants.js';
 import PointModel from '../models/point.js';
 import Store from '../api/store.js';
 
@@ -154,7 +154,7 @@ export default class PointContoller {
     const isEscKey = evt.key === Key.ESCAPE || evt.key === Key.ESC;
     if (isEscKey) {
       if (this._mode === Mode.ADD) {
-        this._onDataChange(this, EmptyPoint, null);
+        this._onDataChange(this, emptyPoint, null);
       }
       this._showСard();
       document.removeEventListener(`keydown`, this._onEscKeyDown);

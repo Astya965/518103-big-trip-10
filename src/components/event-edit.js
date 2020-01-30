@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {Transfers, Activitys, DefaultText} from '../utils/constants.js';
+import {transfers, activitys, defaultText} from '../utils/constants.js';
 import Store from "../api/store.js";
 import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util.js';
 
@@ -17,7 +17,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._destinations = Store.getDestinations();
     this._offers = Store.getOffers();
-    this._buttonText = DefaultText;
+    this._buttonText = defaultText;
 
     this._resetHandler = null;
     this._submitHandler = null;
@@ -83,8 +83,8 @@ export default class EventEdit extends AbstractSmartComponent {
    */
   getTemplate() {
     const {type, price, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
-    const transferType = this.getTypeTemplate(Transfers, this._tripCard);
-    const activityType = this.getTypeTemplate(Activitys, this._tripCard);
+    const transferType = this.getTypeTemplate(transfers, this._tripCard);
+    const activityType = this.getTypeTemplate(activitys, this._tripCard);
     const destinationList = this.getDestinationListTemplate(this._destinations);
     return (
       `<form class="event event--edit" action="#" method="post">
@@ -115,7 +115,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-            ${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`}
+            ${capitalizeFirstLetter(type)} ${activitys.includes(type) ? `in` : `to`}
             </label>
             <input
               class="event__input
@@ -249,7 +249,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   setText(text) {
-    this._buttonText = Object.assign({}, DefaultText, text);
+    this._buttonText = Object.assign({}, defaultText, text);
     this.rerender();
   }
 

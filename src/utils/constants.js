@@ -72,7 +72,7 @@ export const Method = {
   DELETE: `DELETE`
 };
 
-export const Transfers = [
+export const transfers = [
   `taxi`,
   `bus`,
   `train`,
@@ -82,13 +82,13 @@ export const Transfers = [
   `flight`,
 ];
 
-export const Activitys = [
+export const activitys = [
   `check-in`,
   `sightseeing`,
   `restaurant`,
 ];
 
-export const EmptyPoint = {
+export const emptyPoint = {
   type: `taxi`,
   city: ``,
   startDate: Date.now(),
@@ -102,16 +102,16 @@ export const EmptyPoint = {
   isNew: true
 };
 
+export const defaultText = {
+  deleteButton: ButtonText.DELETE,
+  saveButton: ButtonText.SAVE
+};
+
 export const ButtonText = {
   SAVE: `Save`,
   DELETE: `Delete`,
   SAVING: `Saving...`,
   DELETING: `Deleting...`
-};
-
-export const DefaultText = {
-  deleteButton: ButtonText.DELETE,
-  saveButton: ButtonText.SAVE
 };
 
 export const NoEventMessage = {

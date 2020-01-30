@@ -1,6 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
-import {LegendName, LabelPrefix, Transfers} from '../utils/constants.js';
+import {LegendName, LabelPrefix, transfers} from '../utils/constants.js';
 import {getLegendWithEmoji} from '../utils/statistics.js';
 
 import Chart from "chart.js";
@@ -66,7 +66,7 @@ export default class Statistics extends AbstractSmartComponent {
 
       case LegendName.TRANSPORT:
         return labels
-        .filter((label) => Transfers.includes(label))
+        .filter((label) => transfers.includes(label))
         .map((label) => ({
           label,
           value: points.filter((point) => point.type === label).length

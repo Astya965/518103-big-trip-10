@@ -4,7 +4,7 @@ import TripInfoComponent from '../components/trip-info.js';
 import TripDayItemComponent from '../components/day.js';
 
 import PointController from './point.js';
-import {Mode, EmptyPoint, SortType} from '../utils/constants.js';
+import {Mode, emptyPoint, SortType} from '../utils/constants.js';
 import {getDurationSeconds} from '../utils/util.js';
 import {render, remove, RenderPosition} from '../utils/render.js';
 
@@ -49,7 +49,7 @@ export default class TripController {
         this._onViewChange
     );
 
-    this._creatingPoint.render(EmptyPoint, Mode.ADD);
+    this._creatingPoint.render(emptyPoint, Mode.ADD);
     this._onViewChange();
   }
 
@@ -200,7 +200,7 @@ export default class TripController {
   * @param {Function} newData - Новая точка маршрута
   */
   _onDataChange(pointController, oldData, newData) {
-    if (oldData === EmptyPoint) {
+    if (oldData === emptyPoint) {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();

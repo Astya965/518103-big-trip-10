@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {Activitys} from '../utils/constants';
+import {activitys} from '../utils/constants';
 import {checkDate, getDuration, formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
 
 /**
@@ -47,7 +47,7 @@ export default class Event extends AbstractComponent {
               src="img/icons/${type}.png"
               alt="Event type icon">
           </div>
-          <h3 class="event__title">${capitalizeFirstLetter(type)} ${Activitys.includes(type) ? `in` : `to`} ${city}</h3>
+          <h3 class="event__title">${capitalizeFirstLetter(type)} ${activitys.includes(type) ? `in` : `to`} ${city}</h3>
 
           <div class="event__schedule">
             <p class="event__time">
