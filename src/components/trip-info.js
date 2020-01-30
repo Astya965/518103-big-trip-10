@@ -15,7 +15,7 @@ export default class TripInfo extends AbstractComponent {
   * @return {HTMLElement} Разметка списка городов
   */
   getTitleTemplate() {
-    let destinationsList = [];
+    const destinationsList = [];
     this._tripEvents.forEach((tripEvent) => {
       destinationsList.push(tripEvent.city);
     });
