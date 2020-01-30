@@ -212,7 +212,7 @@ export default class PointContoller {
         name: destination.name,
         pictures: destination.pictures
       },
-      'is_favorite': formData.get(`event-favorite`) === `on` ? true : false,
+      'is_favorite': formData.get(`event-favorite`) === `on`,
       'offers': checkedOffersLabels.map((offer) => ({
         title: offer.querySelector(`.event__offer-title`).textContent,
         price: Number(offer.querySelector(`.event__offer-price`).textContent)
