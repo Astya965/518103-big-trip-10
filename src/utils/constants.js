@@ -107,16 +107,16 @@ export const emptyPoint = {
   isNew: true
 };
 
-export const defaultText = {
-  deleteButton: ButtonText.DELETE,
-  saveButton: ButtonText.SAVE
-};
-
 export const ButtonText = {
   SAVE: `Save`,
   DELETE: `Delete`,
   SAVING: `Saving...`,
   DELETING: `Deleting...`
+};
+
+export const defaultText = {
+  deleteButton: ButtonText.DELETE,
+  saveButton: ButtonText.SAVE
 };
 
 export const NoEventMessage = {
