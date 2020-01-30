@@ -1,4 +1,4 @@
-import {Method} from '../utils/constants.js';
+import {Method, HTTPStatusCode} from '../utils/constants.js';
 import Point from '../models/point.js';
 import Store from "./store.js";
 
@@ -63,7 +63,7 @@ export default class API {
   }
 
   _checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status >= HTTPStatusCode.SUCCESS && response.status < HTTPStatusCode.REDIRECTION) {
       return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);

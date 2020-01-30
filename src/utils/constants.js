@@ -72,6 +72,11 @@ export const Method = {
   DELETE: `DELETE`
 };
 
+export const HTTPStatusCode = {
+  SUCCESS: 200,
+  REDIRECTION: 300
+};
+
 export const transfers = [
   `taxi`,
   `bus`,
