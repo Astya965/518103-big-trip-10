@@ -59,7 +59,6 @@ export default class PointContoller {
     * Событие закрытия формы редактирования при клике на стрелку
     */
     this._eventEditComponent.setArrowBtnCloseHandler(() => {
-      this._eventEditComponent.reset();
       this._showСard();
     });
 
@@ -117,7 +116,6 @@ export default class PointContoller {
           remove(oldEventEditComponent);
         }
         document.addEventListener(`keydown`, this._onEscKeyDown);
-        this.setDefaultView();
         render(this._container, this._eventEditComponent.getElement(), RenderPosition.AFTERBEGIN);
         break;
     }

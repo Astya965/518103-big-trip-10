@@ -320,7 +320,10 @@ export default class EventEdit extends AbstractSmartComponent {
         element.querySelector(`input[name=event-price]`).setAttribute(`style`, `outline: 1px solid red`);
         element.querySelector(`input[name=event-price]`).setCustomValidity(`Price should be a positive integer`);
       } else {
-        this._tripCard.price = +evt.target.value;
+        element.querySelector(`input[name=event-destination]`).setCustomValidity(``);
+        this._tripCard = Object.assign({}, this._tripCard,
+            {price: +evt.target.value}
+        );
         this.rerender();
       }
     });
@@ -378,9 +381,13 @@ export default class EventEdit extends AbstractSmartComponent {
       dateFormat: `d/m/Y H:i`,
       onValueUpdate: (pickerDate) => {
         if (node.name === `event-start-time`) {
-          this._tripCard.startDate = pickerDate[0];
+          this._tripCard = Object.assign({}, this._tripCard,
+              {startDate: pickerDate[0]}
+          );
         } else {
-          this._tripCard.endDate = pickerDate[0];
+          this._tripCard = Object.assign({}, this._tripCard,
+              {endDate: pickerDate[0]}
+          );
         }
         this._setTimeValidation();
       }
