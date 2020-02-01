@@ -2,18 +2,12 @@ import AbstractComponent from './abstract-component.js';
 
 import {SortType} from '../utils/constants.js';
 
-/**
- * Класс формы сортировки точек маршрута
- */
 export default class Sort extends AbstractComponent {
   constructor() {
     super();
     this._currentSortType = SortType.DEFAULT;
   }
-  /**
-  * Генерация иконок для пунктов меню сортировки точек маршрута
-  * @return {String} Разметка иконок для пунктов меню сортировки точек маршрута
-  */
+
   getDirectionIconTemplate() {
     return `
     <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
@@ -22,12 +16,6 @@ export default class Sort extends AbstractComponent {
   `;
   }
 
-  /**
-  * Генерация разметки сортировки точек маршрута
-  * @param {String} sortType - Тип пункта меню
-  * @param {Boolean} isChecked - Выбран ли данный пункт
-  * @return {String} Разметка сортировки точек маршрута
-  */
   getSortFitlerTemplate(sortType, isChecked) {
     const directionIcon = (sortType === SortType.TIME || sortType === SortType.PRICE) ? this.getDirectionIconTemplate() : ``;
 
@@ -46,10 +34,6 @@ export default class Sort extends AbstractComponent {
     </div>`;
   }
 
-  /**
-  * Генерация разметки сортировки точек маршрута
-  * @return {String} Разметка сортировки точек маршрута
-  */
   getTemplate() {
     const sortFitlersTemplate = Object.values(SortType).map((sortType, i) => this.getSortFitlerTemplate(sortType, i === 0)).join(`\n`);
 

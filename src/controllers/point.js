@@ -24,20 +24,12 @@ export default class PointContoller {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  /**
-  * Возвращение карточек в обычное состояние
-  */
   setDefaultView() {
     if (this._mode === Mode.EDIT) {
       this._showСard();
     }
   }
 
-  /**
-  * Рендеринг точки маршрута
-  * @param {Object} eventCard - Данные для точки маршрута
-  * @param {String} mode - Режим карточки
-  */
   render(eventCard, mode) {
     this._eventCard = eventCard;
     this._mode = mode;
@@ -48,23 +40,14 @@ export default class PointContoller {
     this._eventComponent = new EventComponent(eventCard);
     this._eventEditComponent = new EventEditComponent(eventCard);
 
-    /**
-    * Событие открытия формы редактирования при клике на стрелку
-    */
     this._eventComponent.setArrowBtnOpenHandler(() => {
       this._showEdit();
     });
 
-    /**
-    * Событие закрытия формы редактирования при клике на стрелку
-    */
     this._eventEditComponent.setArrowBtnCloseHandler(() => {
       this._showСard();
     });
 
-    /**
-    * Событие закрытия формы редактирования при клике на кнопку сброса
-    */
     this._eventEditComponent.setBtnDeleteHandler(() => {
       this._eventEditComponent.setText({
         deleteButton: ButtonText.DELETING
@@ -74,9 +57,6 @@ export default class PointContoller {
       this._eventEditComponent.reset();
     });
 
-    /**
-    * Событие закрытия формы редактирования при клике на кнопку отправки
-    */
     this._eventEditComponent.setBtnSubmitHandler((evt) => {
       evt.preventDefault();
       const formData = this._eventEditComponent.getData();
@@ -90,9 +70,6 @@ export default class PointContoller {
       this._eventEditComponent.blockForm();
     });
 
-    /**
-    * Событие клика на кнопку Избранное
-    */
     this._eventEditComponent.setFavoriteBtnClickHandler(() => {
       const newEventCard = PointModel.clone(eventCard);
       newEventCard.isFavorite = !newEventCard.isFavorite;
@@ -144,10 +121,6 @@ export default class PointContoller {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  /**
-  * Событие нажатия на Esc
-  * @param {evt} evt
-  */
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === Key.ESCAPE || evt.key === Key.ESC;
     if (isEscKey) {
@@ -173,16 +146,10 @@ export default class PointContoller {
     this._mode = Mode.EDIT;
   }
 
-  /**
-  * Замена карточку маршрута на форму редактирования точки марщрута
-  */
   _replaceCardToEdit() {
     replace(this._eventEditComponent, this._eventComponent);
   }
 
-  /**
-  * Замена формы редактирования точки марщрута на карточку маршрута
-  */
   _replaceEditToCard() {
     replace(this._eventComponent, this._eventEditComponent);
   }

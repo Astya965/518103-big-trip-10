@@ -11,10 +11,6 @@ import {render, remove, RenderPosition} from '../utils/render.js';
 const tripEvents = document.querySelector(`.trip-events`);
 const tripInfo = document.querySelector(`.trip-main__trip-info`);
 
-/**
- * Класс основной панели взаимодействия (инфрмация, сортировка, карточки
- * либо приветственное собщение при остутствии карточек)
- */
 export default class TripController {
   constructor(container, pointsModel, api) {
     this._container = container;
@@ -178,9 +174,6 @@ export default class TripController {
     this._reset();
   }
 
-  /**
-  * Получение полной стоимости маршрута, включая offersЫ
-  */
   _getFullPrice() {
     const fullPrice = this._pointsModel.getPoints().reduce((acc, item) => {
       return (
@@ -193,12 +186,6 @@ export default class TripController {
     document.querySelector(`.trip-info__cost-value`).textContent = fullPrice;
   }
 
-  /**
-  * Изменение точки маршрута на основе новых данных
-  * @param {Class} pointController
-  * @param {Function} oldData - Старая точка маршрута
-  * @param {Function} newData - Новая точка маршрута
-  */
   _onDataChange(pointController, oldData, newData) {
     if (oldData === emptyPoint) {
       this._creatingPoint = null;

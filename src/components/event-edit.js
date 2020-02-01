@@ -6,9 +6,6 @@ import {formatDateTime, getDatesDiff, capitalizeFirstLetter} from '../utils/util
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-/**
- * Класс формы редактирования точки маршрута
- */
 export default class EventEdit extends AbstractSmartComponent {
   constructor(tripCard) {
     super();
@@ -33,12 +30,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._removeFlatpickr = this._removeFlatpickr.bind(this);
   }
 
-  /**
-   * Генерация формы выбора активностей
-   * @param {Array} types - Массив типов активностей
-   * @param {Object} tripCard - Объект точки маршрута (содержащий определенную ативность)
-   * @return {String} Разметка формы выбора активностей
-   */
   getTypeTemplate(types, tripCard) {
     return types
       .map((typeItem) => {
@@ -60,11 +51,6 @@ export default class EventEdit extends AbstractSmartComponent {
       .join(`\n`);
   }
 
-  /**
-   * Генерация формы выбора пункта назначения
-   * @param {Array} destinations - Массив городов
-   * @return {String} Разметка формы выбора пункта назначения
-   */
   getDestinationListTemplate(destinations) {
     return destinations
       .map((destination) => {
@@ -75,12 +61,6 @@ export default class EventEdit extends AbstractSmartComponent {
       .join(`\n`);
   }
 
-  /**
-   * Генерация формы редактирования точки маршрута
-   * @param {Array} newEvent - Случайная точка маршрута
-   * @param {Array} tripDays - Массив дней путешествия
-   * @return {String} Разметка формы редактирования точки маршрута
-   */
   getTemplate() {
     const {type, price, description, city, startDate, endDate, photos, isFavorite, isNew} = this._tripCard;
     const transferType = this.getTypeTemplate(transfers, this._tripCard);
@@ -274,9 +254,6 @@ export default class EventEdit extends AbstractSmartComponent {
     });
   }
 
-  /**
-  * Восстановление обработчиков событий
-  */
   recoveryListeners() {
     this.setBtnSubmitHandler(this._submitHandler);
     this.setArrowBtnCloseHandler(this._resetHandler);
@@ -394,10 +371,6 @@ export default class EventEdit extends AbstractSmartComponent {
     });
   }
 
-  /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на стрелку
-  */
   setArrowBtnCloseHandler(handler) {
     if (!this._resetHandler) {
       this._resetHandler = handler;
@@ -410,10 +383,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
   }
 
-  /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на кнопку сброса
-  */
   setBtnDeleteHandler(handler) {
     if (!this._deleteHandler) {
       this._deleteHandler = handler;
@@ -423,10 +392,6 @@ export default class EventEdit extends AbstractSmartComponent {
       .addEventListener(`click`, handler);
   }
 
-  /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на кнопку отправки
-  */
   setBtnSubmitHandler(handler) {
     if (!this._submitHandler) {
       this._submitHandler = handler;

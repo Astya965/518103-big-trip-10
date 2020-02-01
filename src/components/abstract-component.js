@@ -2,9 +2,6 @@ import {createElement} from '../utils/render.js';
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-/**
-* Класс абстрактного компонента
-*/
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
@@ -13,17 +10,10 @@ export default class AbstractComponent {
     this._element = null;
   }
 
-  /**
-   * Проверка выводит ошибку, если у потомков не переопределен данный метод
-   */
   getTemplate() {
     throw new Error(`Abstract method not implemented: getTemplate`);
   }
 
-  /**
-  * Создание DOM-элемента
-  * @return {HTMLElement} Возвращать созданный DOM-элемент
-  */
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
@@ -31,9 +21,6 @@ export default class AbstractComponent {
     return this._element;
   }
 
-  /**
-  * Удаление ссылки на DOM-элемент
-  */
   removeElement() {
     this._element = null;
   }

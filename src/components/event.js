@@ -2,20 +2,12 @@ import AbstractComponent from './abstract-component.js';
 import {activitys} from '../utils/constants';
 import {checkDate, getDuration, formatDateTime, capitalizeFirstLetter} from '../utils/util.js';
 
-/**
- * Класс формы точки маршрута
- */
 export default class Event extends AbstractComponent {
   constructor(tripCard) {
     super();
     this._tripCard = tripCard;
   }
 
-  /**
-  * Генерация разметки дополнительных предложений
-  * @param {Array} offers - Массив дополнительных предложений
-  * @return {String} Разметка дополнительных предложений
-  */
   getOfferMarkupTemplate(offers) {
     return offers.slice(0, 3).map((offer) => {
       return (
@@ -29,11 +21,6 @@ export default class Event extends AbstractComponent {
     .join(``);
   }
 
-  /**
-  * Генерация разметки точки маршрута
-  * @param {Array} tripCard - Массив дней путешествия
-  * @return {String} Разметка точки маршрута
-  */
   getTemplate() {
     const {type, city, price, offers, startDate, endDate} = this._tripCard;
     return (
@@ -79,10 +66,6 @@ export default class Event extends AbstractComponent {
     );
   }
 
-  /**
-  * Обраточик события клика на кнопку
-  * @param {Function} handler - События при клике на кнопку
-  */
   setArrowBtnOpenHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);

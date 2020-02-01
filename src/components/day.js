@@ -1,9 +1,7 @@
 import AbstractComponent from './abstract-component.js';
 import {formatMonthDay} from '../utils/util.js';
 
-/**
- * Класс списка дней маршрута
- */
+
 export default class Day extends AbstractComponent {
   constructor(date, day) {
     super();
@@ -11,11 +9,6 @@ export default class Day extends AbstractComponent {
     this._day = day;
   }
 
-  /**
-  * Генерация разметки дней и точек маршрута
-  * @param {Array} tripDays - Массив дней путешествия
-  * @return {String} Разметка дней и точек маршрута
-  */
   getTemplate() {
     return (
       `<li class="trip-days__item  day">

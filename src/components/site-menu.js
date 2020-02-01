@@ -1,17 +1,11 @@
 import AbstractComponent from './abstract-component.js';
 
-/**
- * Класс меню
- */
 export default class SiteMenu extends AbstractComponent {
   constructor(menuItems) {
     super();
     this._menuItems = menuItems;
   }
-  /**
-  * Генерация разметки меню
-  * @return {String} Разметка меню
-  */
+
   getTemplate() {
     return (
       `<nav class="trip-controls__trip-tabs  trip-tabs">

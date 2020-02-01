@@ -1,18 +1,11 @@
 import AbstractComponent from './abstract-component.js';
 
-/**
- * Класс фильтра точек маршрута
- */
 export default class Filter extends AbstractComponent {
   constructor(filters) {
     super();
     this._filters = filters;
   }
 
-  /**
-  * Генерация разметки фильтра точек маршрута
-  * @return {String} Разметка фильтра точек маршрута
-  */
   getTemplate() {
     return (
       `<form class="trip-filters" action="#" method="get">
